@@ -1,30 +1,35 @@
 package net.catenax.prs.acceptancetests;
 
-import io.cucumber.spring.CucumberContextConfiguration;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.context.annotation.Bean;
+import org.springframework.boot.web.server.LocalServerPort;
+import org.springframework.context.annotation.Scope;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.client.ClientHttpRequest;
 import org.springframework.http.client.ClientHttpResponse;
+import org.springframework.stereotype.Component;
 import org.springframework.web.client.RequestCallback;
 import org.springframework.web.client.ResponseErrorHandler;
-import org.springframework.web.client.ResponseExtractor;
 import org.springframework.web.client.RestTemplate;
 
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
-@CucumberContextConfiguration
-@SpringBootTest
-public class AcceptanceTestsBase {
+import static io.cucumber.spring.CucumberTestContext.SCOPE_CUCUMBER_GLUE;
 
+@Component
+@Scope(SCOPE_CUCUMBER_GLUE)
+public class CucumberHttpClient {
+
+    private final static String SERVER_URL = "http://localhost";
+
+    @LocalServerPort
+    private int port;
+
+    private final RestTemplate restTemplate = new RestTemplate();
     protected static ResponseResults latestResponse = null;
-    protected RestTemplate restTemplate = new RestTemplate();
 
-    protected void executeGet(String url) {
+    protected void executeGet(String path) {
         final Map<String, String> headers = new HashMap<>();
         headers.put("Accept", "application/json");
 
@@ -32,7 +37,7 @@ public class AcceptanceTestsBase {
         final ResponseResultErrorHandler errorHandler = new ResponseResultErrorHandler();
 
         restTemplate.setErrorHandler(errorHandler);
-        latestResponse = restTemplate.execute(url, HttpMethod.GET, requestCallback, response -> {
+        latestResponse = restTemplate.execute(getUrl(path), HttpMethod.GET, requestCallback, response -> {
             if (errorHandler.hadError) {
                 return (errorHandler.getResults());
             }
@@ -41,7 +46,7 @@ public class AcceptanceTestsBase {
 
     }
 
-    protected void executePost(String url) {
+    protected void executePost(String path) {
         final Map<String, String> headers = new HashMap<>();
         headers.put("Accept", "application/json");
 
@@ -49,7 +54,7 @@ public class AcceptanceTestsBase {
         final ResponseResultErrorHandler errorHandler = new ResponseResultErrorHandler();
 
         restTemplate.setErrorHandler(errorHandler);
-        latestResponse = restTemplate.execute(url, HttpMethod.POST, requestCallback, response -> {
+        latestResponse = restTemplate.execute(getUrl(path), HttpMethod.POST, requestCallback, response -> {
             if (errorHandler.hadError) {
                 return (errorHandler.getResults());
             } else {
@@ -57,6 +62,10 @@ public class AcceptanceTestsBase {
             }
         });
 
+    }
+
+    private String getUrl(String path) {
+        return SERVER_URL + ":" + port + path;
     }
 
     private static class ResponseResultErrorHandler implements ResponseErrorHandler {
@@ -86,10 +95,6 @@ public class AcceptanceTestsBase {
 
         public HeaderSettingRequestCallback(final Map<String, String> headers) {
             this.requestHeaders = headers;
-        }
-
-        public void setBody(final String postBody) {
-            this.body = postBody;
         }
 
         @Override
