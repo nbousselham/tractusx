@@ -42,9 +42,7 @@ jobs:
        
     - uses: azure/docker-login@v1
       with:
-        login-server: ${{ env.ACR_NAME }}
-        username: ${{ secrets.AZURE_REGISTRY_USERNAME }}
-        password: ${{ secrets.AZURE_REGISTRY_PASSWORD }}
+        creds: ${{ secrets.AZURE_CREDENTIALS }}
     - name: Building and pusing docker image to acr
       run: |
         sudo cp -r tractusx/meta-broker/Dockerfile-azure-pipeline metadata-broker-open-core
@@ -64,7 +62,7 @@ jobs:
 
     - name: login to acr using helm
       run: |
-        echo ${{ secrets.AZURE_REGISTRY_PASSWORD }} | helm registry login  ${{ env.ACR_NAME }} --username ${{ secrets.AZURE_REGISTRY_USERNAME }} --password-stdin 
+        #echo ${{ secrets.AZURE_REGISTRY_PASSWORD }} | helm registry login  ${{ env.ACR_NAME }} --username ${{ secrets.AZURE_REGISTRY_USERNAME }} --password-stdin 
 
     - name: save helm chart to local registry
       run: |
