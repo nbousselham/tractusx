@@ -42,7 +42,9 @@ jobs:
        
     - uses: azure/docker-login@v1
       with:
-        creds: ${{ secrets.AZURE_CREDENTIALS }}
+        login-server: ${{ env.ACR_NAME }}
+        username: ${{ secrets.AZURE_REGISTRY_USERNAME }}
+        password: ${{ secrets.AZURE_REGISTRY_PASSWORD }}
     - name: Building and pusing docker image to acr
       run: |
         sudo cp -r tractusx/meta-broker/Dockerfile-azure-pipeline metadata-broker-open-core
