@@ -30,7 +30,7 @@ public class SwaggerDocumentationConfig {
 
     ApiInfo apiInfo() {
         return new ApiInfoBuilder()
-            .title("Catena-X Speedboat Test Data Generator")
+            .title("Catena-X Speedboat Test Data Generator (TDG)")
             .description("Disclaimer: This service serves synthetic, none-productive data for testing purposes only. All BOMs, part trees, VINs, serialNos etc. are synthetic")
             .license("Apache 2.0")
             .licenseUrl("http://www.apache.org/licenses/LICENSE-2.0.html")
@@ -44,7 +44,7 @@ public class SwaggerDocumentationConfig {
     public OpenAPI openApi() {
         return new OpenAPI()
             .info(new Info()
-                .title("Catena-X Speedboat Test Data Generator")
+                .title("Catena-X Speedboat Test Data Generator (TDG)")
                 .description("Disclaimer: This service serves synthetic, none-productive data for testing purposes only. All BOMs, part trees, VINs, serialNos etc. are synthetic")
                 .termsOfService("")
                 .version("0.0.1 Speedboat")
