@@ -5,18 +5,24 @@ import java.io.Serializable;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 
+import com.opencsv.bean.CsvBindByName;
+
 @Entity
 public class PartMapping implements Serializable {
 
 	private static final long serialVersionUID = 888583131406517872L;
 
 	@Id
+	@CsvBindByName
 	private String partNumberManufacturer = null;
 	
+	@CsvBindByName
 	private String partNameManufacturer = null;
 	
+	@CsvBindByName
 	private String partNumberCustomer = null;
 	
+	@CsvBindByName
 	private String partNameCustomer = null;
 
 	public PartMapping() {

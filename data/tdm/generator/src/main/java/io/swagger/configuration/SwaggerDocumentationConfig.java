@@ -13,7 +13,7 @@ import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.oas.models.info.Info;
 import io.swagger.v3.oas.models.info.License;
 
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2021-09-10T07:44:31.526Z[GMT]")
+@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2021-09-22T08:24:51.189Z[GMT]")
 @Configuration
 public class SwaggerDocumentationConfig {
 
@@ -30,8 +30,8 @@ public class SwaggerDocumentationConfig {
 
     ApiInfo apiInfo() {
         return new ApiInfoBuilder()
-            .title("Catena-X Speedboat TDM MockData")
-            .description("Catena-X Speedboat TDM MockData Services")
+            .title("Catena-X Speedboat Test Data Generator")
+            .description("Disclaimer: This service serves synthetic, none-productive data for testing purposes only. All BOMs, part trees, VINs, serialNos etc. are synthetic")
             .license("Apache 2.0")
             .licenseUrl("http://www.apache.org/licenses/LICENSE-2.0.html")
             .termsOfServiceUrl("")
@@ -44,8 +44,8 @@ public class SwaggerDocumentationConfig {
     public OpenAPI openApi() {
         return new OpenAPI()
             .info(new Info()
-                .title("Catena-X Speedboat TDM MockData")
-                .description("Catena-X Speedboat TDM MockData Services")
+                .title("Catena-X Speedboat Test Data Generator")
+                .description("Disclaimer: This service serves synthetic, none-productive data for testing purposes only. All BOMs, part trees, VINs, serialNos etc. are synthetic")
                 .termsOfService("")
                 .version("0.0.1 Speedboat")
                 .license(new License()

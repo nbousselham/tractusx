@@ -1,5 +1,7 @@
 package com.catenax.tdm.api;
 
+import java.io.IOException;
+import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -42,10 +44,13 @@ import com.catenax.tdm.model.v1.PartRelationshipUpdateList;
 import com.catenax.tdm.model.v1.PartRelationshipWithInfos;
 import com.catenax.tdm.model.v1.PartTypeNameUpdate;
 import com.catenax.tdm.model.v1.Traceability;
+import com.catenax.tdm.resource.TDMResourceLoader;
 import com.catenax.tdm.sampledata.BusinessPartnerSampleData;
 import com.catenax.tdm.sampledata.InitialSampleData;
 import com.catenax.tdm.sampledata.TraceabilitySampleData;
 import com.catenax.tdm.sampledata.VehicleSampleData;
+import com.opencsv.CSVReader;
+import com.opencsv.bean.CsvToBeanBuilder;
 
 public class CatenaXApiControllerDelegateImpl implements CatenaXApiControllerDelegate {
 
@@ -261,7 +266,7 @@ public class CatenaXApiControllerDelegateImpl implements CatenaXApiControllerDel
 
 	@Transactional
 	private void initializeTestData() {
-		log.info("Initialize Test Data ...");
+		log.info("-= Initialize Test Data =-");
 		InitialSampleData sd = new InitialSampleData();
 
 		List<InitialSampleData.BPMC> businessPartners = sd.createInitialBusinessPartners();
@@ -274,32 +279,26 @@ public class CatenaXApiControllerDelegateImpl implements CatenaXApiControllerDel
 			}
 		}
 		
-		this.partMappingDao.create(new PartMapping("I01", "i3s 120", null, "i3"));
-		this.partMappingDao.create(new PartMapping("G30", "520i", null, "5-series sedan"));
-		
-		this.partMappingDao.create(new PartMapping("8HP51XB47O1", "8HP51X B47O1", "9487330", "LU GETRIEBE GA8X51CZ B47D2001  CODE SW92"));
-		this.partMappingDao.create(new PartMapping("2412117", "VM ZB SE09 HVS MH D-MUSTER EXV", null, null));
-		this.partMappingDao.create(new PartMapping("6127713", "<HVB Module>", null, null));
-		this.partMappingDao.create(new PartMapping("6127714", "<HVB Cell>", null, null));
-		
+		try {
+			InputStreamReader reader = new InputStreamReader(TDMResourceLoader.loadResource("testdata/partmapping.csv"));
+			CSVReader csvReader = new CSVReader(reader);//new FileReader("yourfile.csv"), '\t', '\'', 2);
+			CsvToBeanBuilder<PartMapping> builder = new CsvToBeanBuilder<PartMapping>(csvReader).withType(PartMapping.class);
+			
+			for(PartMapping partMapping : builder.build().parse()) {
+				log.info("Create PartMapping for: " + partMapping.getPartNumberManufacturer());
+				this.partMappingDao.create(partMapping);
+			}
+		} catch (IOException e) {
+			log.error(e.getMessage());
+			e.printStackTrace();
+		}
+
 		TraceabilitySampleData.setPartMapping(this.partMappingDao.findAll());
 		
-		log.info("Testdata successfully initialized");
+		log.info("-= Testdata successfully initialized =-");
 	}
 
 	// BOM - PRS
-
-	public ResponseEntity<List<PartRelationshipWithInfos>> getBOM(String oneIDManufacturer, String objectIDManufacturer,
-			String aspect, Integer depth) {
-		try {
-			ResponseEntity<List<PartRelationshipWithInfos>> result = new ResponseEntity<List<PartRelationshipWithInfos>>(
-					new ArrayList<PartRelationshipWithInfos>(), HttpStatus.NOT_IMPLEMENTED);
-			return result;
-		} catch (Exception e) {
-			log.error("Couldn't serialize response for content type application/json", e);
-			return new ResponseEntity<List<PartRelationshipWithInfos>>(HttpStatus.INTERNAL_SERVER_ERROR);
-		}
-	}
 
 	@Transactional
 	public ResponseEntity<List<PartRelationshipWithInfos>> createVehicle(String oneid, Integer count,

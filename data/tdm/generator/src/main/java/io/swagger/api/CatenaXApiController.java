@@ -14,7 +14,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import org.threeten.bp.LocalDate;
 
 import com.catenax.tdm.api.CatenaXApiControllerDelegate;
@@ -86,7 +85,7 @@ public class CatenaXApiController implements CatenaXApi {
 
 		return new ResponseEntity<List<PartRelationshipWithInfos>>(HttpStatus.NOT_IMPLEMENTED);
 	}
-
+	/*
 	public ResponseEntity<List<PartRelationshipWithInfos>> getBOM(
 			@Parameter(in = ParameterIn.PATH, description = "Readable ID of manufacturer including plant", required = true, schema = @Schema()) @PathVariable("oneIDManufacturer") String oneIDManufacturer,
 			@Parameter(in = ParameterIn.PATH, description = "Unique identifier of a single, unique physical (sub)component/part/batch, given by its manufacturer", required = true, schema = @Schema()) @PathVariable("objectIDManufacturer") String objectIDManufacturer,
@@ -99,7 +98,7 @@ public class CatenaXApiController implements CatenaXApi {
 
 		return new ResponseEntity<List<PartRelationshipWithInfos>>(HttpStatus.NOT_IMPLEMENTED);
 	}
-
+	*/
 	@Override
 	public ResponseEntity<List<PartAspectUpdate>> getPartAspectUpdate(
 			@Parameter(in = ParameterIn.QUERY, description = "", schema = @Schema()) @Valid @RequestParam(value = "bpn", required = false) String bpn,

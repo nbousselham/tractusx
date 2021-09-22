@@ -28,9 +28,10 @@ public interface CatenaXApiControllerDelegate {
 
 	public ResponseEntity<String> purgeTestData(String API_KEY);
 
+	/*
 	public ResponseEntity<List<PartRelationshipWithInfos>> getBOM(String oneIDManufacturer, String objectIDManufacturer,
 			String aspect, Integer depth);
-
+	*/
 	public ResponseEntity<List<PartRelationshipWithInfos>> createVehicle(String oneid, Integer count,
 			String vehicleType);
 
