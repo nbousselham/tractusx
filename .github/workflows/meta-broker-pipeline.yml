@@ -8,9 +8,7 @@ on:
   push:
     paths:
       - 'meta-broker/**'
-        
-  
-
+       
   # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
   
@@ -51,6 +49,7 @@ jobs:
         #sudo rm -rf tractusx
         #cd metadata-broker-open-core && docker build -f Dockerfile-azure-pipeline -t ${{ env.ACR_NAME }}/meta-broker:latest .
         #docker push ${{ env.ACR_NAME }}/meta-broker:latest 
+
         
     - name: install helm
       uses: Azure/setup-helm@v1
@@ -73,3 +72,6 @@ jobs:
     - name: publish chart to acr
       run: |
         helm chart push ${{ env.ACR_NAME }}/helm/meta-broker:latest
+
+      
+  

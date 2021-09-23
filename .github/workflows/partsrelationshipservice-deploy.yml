@@ -1,4 +1,4 @@
-name: Deploy
+name: Deploy PRS
 
 on:
   push:
@@ -7,6 +7,8 @@ on:
     paths:
       - coreservices/partsrelationshipservice/**
       - .github/workflows/partsrelationshipservice-deploy.yml
+
+  workflow_dispatch:
 
 jobs:
   deploy:
