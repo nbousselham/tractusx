@@ -64,4 +64,5 @@ jobs:
           popd
 
           pushd cd/test-data
-            ./load-test-data.sh
+            # RUN --mount=type=cache is used in the tdm generator Dockerfile and the --mount option requires BuildKit.
+            DOCKER_BUILDKIT=1 ./load-test-data.sh
