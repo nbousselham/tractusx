@@ -6,9 +6,9 @@ name: meta-broker-pipeine_action
 on:
   # Triggers the workflow on push or pull request events but only for the main branch
   push:
-    branches: [ main ]
-  pull_request:
-    branches: [ main ]
+    paths:
+      - 'meta-broker/**'
+        
   
 
   # Allows you to run this workflow manually from the Actions tab
@@ -47,10 +47,10 @@ jobs:
         password: ${{ secrets.AZURE_REGISTRY_PASSWORD }}
     - name: Building and pusing docker image to acr
       run: |
-        sudo cp -r tractusx/meta-broker/Dockerfile-azure-pipeline metadata-broker-open-core
-        sudo rm -rf tractusx
-        cd metadata-broker-open-core && docker build -f Dockerfile-azure-pipeline -t ${{ env.ACR_NAME }}/meta-broker:latest .
-        docker push ${{ env.ACR_NAME }}/meta-broker:latest 
+        #sudo cp -r tractusx/meta-broker/Dockerfile-azure-pipeline metadata-broker-open-core
+        #sudo rm -rf tractusx
+        #cd metadata-broker-open-core && docker build -f Dockerfile-azure-pipeline -t ${{ env.ACR_NAME }}/meta-broker:latest .
+        #docker push ${{ env.ACR_NAME }}/meta-broker:latest 
         
     - name: install helm
       uses: Azure/setup-helm@v1
