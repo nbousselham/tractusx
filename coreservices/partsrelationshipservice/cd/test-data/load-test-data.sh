@@ -24,7 +24,7 @@ export API_KEY=SPEEDBOAT
 docker-compose -f $tdm_dock up -d
 
 echo "Waiting for TDM to start up..."
-until curl -f http://localhost:8080 ; do sleep 10; done
+until curl -f http://localhost:8080 ; do sleep 1; done
 
 ./generate-test-data.sh > $sql_data_file
 psql -v ON_ERROR_STOP=1 "host=$POSTGRES_HOST dbname=$POSTGRES_DB user=$POSTGRES_USER password=$POSTGRES_PASSWORD" -f $sql_data_file

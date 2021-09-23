@@ -1,0 +1,47 @@
+{
+  "catenax_eventhubs_namespace_name": {
+    "sensitive": false,
+    "type": "string",
+    "value": "catenaprs1-dev-prs-ehub"
+  },
+  "catenax_events_receive_primary_connection_string": {
+    "sensitive": true,
+    "type": "string",
+    "value": "Endpoint=sb://catenaprs1-dev-prs-ehub.servicebus.windows.net/;SharedAccessKeyName=Listen;SharedAccessKey=yneZrl88UoKY80ZI0ekhRny6ffdgbgnWpTNaTjE6Txw=;EntityPath=catenax_events"
+  },
+  "catenax_events_send_primary_connection_string": {
+    "sensitive": true,
+    "type": "string",
+    "value": "Endpoint=sb://catenaprs1-dev-prs-ehub.servicebus.windows.net/;SharedAccessKeyName=Send;SharedAccessKey=qzK4t+bURSo+Dr988FtLL8IiSrOjTGzgrCQk7kUJiOs=;EntityPath=catenax_events"
+  },
+  "catenax_events_topic": {
+    "sensitive": false,
+    "type": "string",
+    "value": "catenax_events"
+  },
+  "prs_app_insights_connection_string": {
+    "sensitive": true,
+    "type": "string",
+    "value": "InstrumentationKey=49211b7c-0d92-461a-94c7-9ef333d087e0;IngestionEndpoint=https://germanywestcentral-0.in.applicationinsights.azure.com/"
+  },
+  "prs_db_administrator_login_password": {
+    "sensitive": true,
+    "type": "string",
+    "value": "$Oj!bk#r3fg0w4pV"
+  },
+  "prs_db_administrator_username": {
+    "sensitive": false,
+    "type": "string",
+    "value": "psqladmin@catenaprs1-dev-prs-psql"
+  },
+  "prs_db_fqdn": {
+    "sensitive": false,
+    "type": "string",
+    "value": "catenaprs1-dev-prs-psql.postgres.database.azure.com"
+  },
+  "prs_db_name": {
+    "sensitive": false,
+    "type": "string",
+    "value": "prs"
+  }
+}
