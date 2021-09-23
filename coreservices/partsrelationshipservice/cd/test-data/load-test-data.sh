@@ -9,7 +9,7 @@ echo "PostgreSQL user: $POSTGRES_USER"
 cleanup() {
     echo "Cleaning up..."
     docker-compose -f $tdm_dock down  # in case a previous run failed in the middle
-    exit
+    exit 1
 }
 
 trap cleanup INT TERM ERR
