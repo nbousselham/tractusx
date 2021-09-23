@@ -17,6 +17,7 @@ jobs:
       run:
         working-directory: coreservices/partsrelationshipservice
     env:
+      # Variables prefixed with TF_VAR_ are automatically picked up as Terraform inputs
       TF_VAR_image_registry: catenaxdev001acr.azurecr.io
       # Ingress host to reach the PRS service.
       TF_VAR_ingress_host: catenaxdev001akssrv.germanywestcentral.cloudapp.azure.com
@@ -33,17 +34,28 @@ jobs:
         run: cd/build_and_push_docker.sh "$TF_VAR_image_registry" "$TF_VAR_image_tag"
       - name: "Deploy to AKS"
         run: |
-          # Read terraform outputs (TF_OUT_ variables)
+          # Settings and credential for Terraform azurerm provider
           export ARM_CLIENT_ID=$(echo $AZURE_CREDENTIALS | jq -r .clientId)
           export ARM_CLIENT_SECRET=$(echo $AZURE_CREDENTIALS | jq -r .clientSecret)
           export ARM_TENANT_ID=$(echo $AZURE_CREDENTIALS | jq -r .tenantId)
           export ARM_SUBSCRIPTION_ID=$(az account show --query "id" --output tsv)
 
-          cd terraform
-          terraform init
-          terraform plan
-          terraform apply -auto-approve
+          pushd terraform
+            terraform init
+            terraform apply -auto-approve
 
         env:
           AZURE_CREDENTIALS: ${{ secrets.AZURE_CREDENTIALS }}
 
+      - name: "Load test data"
+        run: |
+          # Read database connection settings from terraform outputs
+          pushd terraform
+            export POSTGRES_USER=$(terraform output -raw prs_db_administrator_username)
+            export POSTGRES_PASSWORD=$(terraform output -raw prs_db_administrator_login_password)
+            export POSTGRES_HOST=$(terraform output -raw prs_db_fqdn)
+            export POSTGRES_DB=$(terraform output -raw prs_db_name)
+          popd
+
+          pushd cd/test-data
+            ./load-test-data.sh
