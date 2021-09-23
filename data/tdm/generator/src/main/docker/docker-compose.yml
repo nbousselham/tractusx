@@ -4,7 +4,8 @@ services:
   tdmapp:
     image: 'springbootapp:latest'
     build:
-      context: .
+      context: ../../..
+      dockerfile: src/main/docker/Dockerfile
     container_name: tdmapp
     environment:
       - TDM_API_KEY=${API_KEY}
