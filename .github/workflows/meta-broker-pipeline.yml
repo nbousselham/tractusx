@@ -45,10 +45,10 @@ jobs:
         password: ${{ secrets.AZURE_REGISTRY_PASSWORD }}
     - name: Building and pusing docker image to acr
       run: |
-        sudo mv metadata-broker-open-core/* tractusx
+        sudo mv metadata-broker-open-core/* tractusx/meta-broker
         #sudo mv tractusx/meta-broker/Dockerfile-azure-pipeline metadata-broker-open-core
         sudo rm -rf metadata-broker-open-core
-        cd tractusx && docker build -f Dockerfile-azure-pipeline -t ${{ env.ACR_NAME }}/meta-broker:latest .
+        cd tractusx/meta-broker && docker build -f Dockerfile-azure-pipeline -t ${{ env.ACR_NAME }}/meta-broker:latest .
         docker push ${{ env.ACR_NAME }}/meta-broker:latest 
               
     - name: install helm
