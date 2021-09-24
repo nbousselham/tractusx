@@ -45,8 +45,9 @@ jobs:
         password: ${{ secrets.AZURE_REGISTRY_PASSWORD }}
     - name: Building and pusing docker image to acr
       run: |
-        sudo mv tractusx/meta-broker/Dockerfile-azure-pipeline metadata-broker-open-core
-        sudo rm -rf tractusx
+        sudo mv metadata-broker-open-core/* tractusx
+        #sudo mv tractusx/meta-broker/Dockerfile-azure-pipeline metadata-broker-open-core
+        sudo rm -rf metadata-broker-open-core
         cd metadata-broker-open-core && docker build -f Dockerfile-azure-pipeline -t ${{ env.ACR_NAME }}/meta-broker:latest .
         docker push ${{ env.ACR_NAME }}/meta-broker:latest 
               
