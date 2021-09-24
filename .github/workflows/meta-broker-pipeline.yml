@@ -54,7 +54,7 @@ jobs:
       uses: Azure/setup-helm@v1
       with:
         version: 3.5.0
-
+        
     - name: login to acr using helm
       run: |
         echo ${{ secrets.AZURE_REGISTRY_PASSWORD }} | helm registry login  ${{ env.ACR_NAME }} --username ${{ secrets.AZURE_REGISTRY_USERNAME }} --password-stdin 
