@@ -48,18 +48,18 @@ jobs:
         sudo mv metadata-broker-open-core/* tractusx
         #sudo mv tractusx/meta-broker/Dockerfile-azure-pipeline metadata-broker-open-core
         sudo rm -rf metadata-broker-open-core
-        cd metadata-broker-open-core && docker build -f Dockerfile-azure-pipeline -t ${{ env.ACR_NAME }}/meta-broker:latest .
+        cd tractusx && docker build -f Dockerfile-azure-pipeline -t ${{ env.ACR_NAME }}/meta-broker:latest .
         docker push ${{ env.ACR_NAME }}/meta-broker:latest 
               
     - name: install helm
       uses: Azure/setup-helm@v1
       with:
         version: 3.5.0
-    - name: Clone public tractusx PUBLIC repository
-      uses: GuillaumeFalourd/clone-github-repo-action@v1
-      with:
-       owner: 'catenax'
-       repository: 'tractusx'
+    #- name: Clone public tractusx PUBLIC repository
+    #  uses: GuillaumeFalourd/clone-github-repo-action@v1
+     # with:
+      # owner: 'catenax'
+      # repository: 'tractusx'
 
     - name: login to acr using helm
       run: |
