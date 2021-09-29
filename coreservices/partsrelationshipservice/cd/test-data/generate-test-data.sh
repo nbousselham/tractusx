@@ -16,10 +16,10 @@ curl -f 'http://localhost:8080/catena-x/tdm/1.0/vehicle/create/CAXLZJVJEBYWYYZZ?
 # Get relationships for a known business partner
 curl -f 'http://localhost:8080/catena-x/tdm/1.0/prs/broker/PartRelationshipUpdateList?bpn=CAXLZJVJEBYWYYZZ' -H "accept: application/json" > $json_data_file
 
-## Generate SQL to load part_relationship data (parent-child relationships)
-#echo 'COPY public.part_relationship (oneidmanufacturer, objectidmanufacturer, parent_oneidmanufacturer, parent_objectidmanufacturer, part_relationship_list_id, upload_date_time) FROM stdin CSV;'
-#jq -r '(now | strftime("%Y-%m-%dT%H:%M:%S%z")) as $n | .[].relationships | .[].relationship | [.child.oneIDManufacturer, .child.objectIDManufacturer, .parent.oneIDManufacturer, .parent.objectIDManufacturer, "78F4BB1B-2EBB-418C-9C16-3E74BACCBEAC", $n] | @csv' $json_data_file
-#echo '\.'
+# Generate SQL to load part_relationship data (parent-child relationships)
+echo 'COPY public.part_relationship (oneidmanufacturer, objectidmanufacturer, parent_oneidmanufacturer, parent_objectidmanufacturer, part_relationship_list_id, upload_date_time) FROM stdin CSV;'
+jq -r '(now | strftime("%Y-%m-%dT%H:%M:%S%z")) as $n | .[].relationships | .[].relationship | [.child.oneIDManufacturer, .child.objectIDManufacturer, .parent.oneIDManufacturer, .parent.objectIDManufacturer, "78F4BB1B-2EBB-418C-9C16-3E74BACCBEAC", $n] | @csv' $json_data_file
+echo '\.'
 
 # Get part aspects for a known business partner
 curl -f 'http://localhost:8080/catena-x/tdm/1.0/prs/broker/PartAspectUpdate?bpn=CAXLZJVJEBYWYYZZ' -H "accept: application/json" > $json_data_file
