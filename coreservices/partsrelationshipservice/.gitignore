@@ -37,3 +37,6 @@ build/
 
 ### docker-compose ###
 .env
+
+### terraform ###
+terraform-outputs.json
