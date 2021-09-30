@@ -557,7 +557,7 @@ public class CatenaXApiControllerDelegateImpl implements CatenaXApiControllerDel
 
 		log.info("-= Testdata successfully initialized =-");
 
-		final boolean createVehicles = true;
+		final boolean createVehicles = false;
 		if (createVehicles) {
 			final int num_cars = 1;
 			log.info("-= Creating test vehicles .... =-");
