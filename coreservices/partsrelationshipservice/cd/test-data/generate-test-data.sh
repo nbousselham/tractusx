@@ -5,18 +5,11 @@ set -euo pipefail
 purge_output_file=purge.txt.tmp
 json_data_file=data.json.tmp
 
-###### Remove these steps once TDM is deployed and use deployed server url instead of localhost ######
-
-# Purge the TDM database, which also creates business partners with fixed IDs
-curl -f 'http://localhost:8080/catena-x/tdm/1.0/admin/purge?API_KEY=SPEEDBOAT' -H "accept: application/json" > $purge_output_file
-
-# Generate vehicles for a known business partner
-curl -f 'http://localhost:8080/catena-x/tdm/1.0/vehicle/create/CAXLZJVJEBYWYYZZ?count=3&vehicleType=G31' -H "accept: application/json" > $json_data_file
-
-#######################################################################################################
+# Replace with TDM url once available
+TDM_URL=localhost:8080
 
 # Get relationships for a known business partner
-curl -f 'http://localhost:8080/catena-x/tdm/1.0/prs/broker/PartRelationshipUpdateList' -H "accept: application/json" > $json_data_file
+curl -f 'http://'$TDM_URL'/catena-x/tdm/1.0/prs/broker/PartRelationshipUpdateList' -H "accept: application/json" > $json_data_file
 
 # Generate SQL to load part_relationship data (parent-child relationships)
 echo 'COPY public.part_relationship (oneidmanufacturer, objectidmanufacturer, parent_oneidmanufacturer, parent_objectidmanufacturer, part_relationship_list_id, upload_date_time) FROM stdin CSV;'
@@ -24,7 +17,7 @@ jq -r '(now | strftime("%Y-%m-%dT%H:%M:%S%z")) as $n | .[].relationships | .[].r
 echo '\.'
 
 # Get part aspects for a known business partner
-curl -f 'http://localhost:8080/catena-x/tdm/1.0/prs/broker/PartAspectUpdate' -H "accept: application/json" > $json_data_file
+curl -f 'http://'$TDM_URL'/catena-x/tdm/1.0/prs/broker/PartAspectUpdate' -H "accept: application/json" > $json_data_file
 
 # Generate SQL to load part_aspect data (aspect URLs)
 echo 'COPY public.part_aspect (name, oneidmanufacturer, objectidmanufacturer, url, effect_time, last_modified_time) FROM stdin CSV;'
@@ -32,7 +25,7 @@ jq -r '(now | strftime("%Y-%m-%dT%H:%M:%S%z")) as $n | .[] | .part as $p | .aspe
 echo '\.'
 
 # Get part attributes for a known business partner
-curl -f 'http://localhost:8080/catena-x/tdm/1.0/prs/broker/PartTypeNameUpdate' -H "accept: application/json" > $json_data_file
+curl -f 'http://'$TDM_URL'/catena-x/tdm/1.0/prs/broker/PartTypeNameUpdate' -H "accept: application/json" > $json_data_file
 
 # Generate SQL to load part_attribute data (partTypeName field)
 echo 'COPY public.part_attribute (name, oneidmanufacturer, objectidmanufacturer, value, effect_time, last_modified_time) FROM stdin CSV;'
