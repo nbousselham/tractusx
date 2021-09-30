@@ -1,0 +1,28 @@
+{
+	"staticData": {
+		"customerContractOneID": "@bpnCustomerContract@",
+		"customerOneID": "@bpnCustomer@",
+		"manufactureContractOneID": "@bpnManufacturerContract@",
+		"manufacturerOneID": "@bpnManufacturer@",
+		"partNameCustomer": "@partNameCustomer@",
+		"partNameManufacturer": "@partNameManufacturer@",
+		"partNumberCustomer": "@partNumberCustomer@",
+		"partNumberManufacturer": "@partNumberManufacturer@"
+	},
+	"uniqueData": {
+		"customerUniqueID": null,
+		"manufacturerUniqueID": null,
+		"uniqueID": null
+	},
+	"individualData": {
+		"productionCountryCode": "@country1@",
+		"productionDateGMT": null
+	},
+	"supplierTree": {
+		"isParentOf": []
+	},
+	"partTree": {
+		"isParentOf": []
+	},
+	"qualityAlertData": null
+}
