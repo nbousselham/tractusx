@@ -34,7 +34,9 @@ import YellowPages from './yellowpages';
 import { NewSemanticModel } from './newsemanticmodel';
 import SemanticHub from './semantichub';
 import SemanticModelDetail from './semanticmodeldetail';
+import Aspect from './aspect';
 import DigitalTwins from './digitaltwins';
+import Onboarding from './onboarding';
 
 const navStyles: Partial<INavStyles> = {
   root: {
@@ -176,6 +178,8 @@ const navLinkGroupsSemantics: INavLinkGroup[] = [
   }
 ];
 
+
+
 const noNav = ['digitaltwins', 'semanticmodel', 'developerhub', 'appstore', 'notification', 'organization', 'partners', 'usermanagement'];
 
 @observer
@@ -226,6 +230,7 @@ class Home extends React.Component<RouteComponentProps> {
               <Route path='/home/semantichub' component={(props) => <SemanticHub {...props} />} />
               <Route path='/home/newsemanticmodel' component={(props) => <NewSemanticModel {...props} />} />
               <Route path='/home/semanticmodel/:id' component={(props) => <SemanticModelDetail {...props} />} />
+              <Route path='/home/aspect/:offer/:representation/:artifact' component={(props) => <Aspect {...props} />} />
               <Route path='/home/digitaltwins' component={(props) => <DigitalTwins {...props} />} />
               <Route path='/home/developerhub' component={(props) => <DeveloperHub {...props} />} />
               <Route path='/home/appdetail/:id' component={(props) => <AppDetail {...props} />} />
@@ -236,6 +241,7 @@ class Home extends React.Component<RouteComponentProps> {
               <Route path='/home/partners' component={(props) => <YellowPages {...props} />} />
               <Route path='/home/notification' component={(props) => <NotificationCenter {...props} />} />
               <Route path='/home/notimp' component={(props) => <NotImp {...props} />} />
+              <Route path='/home/onboarding' component={(props) => <Onboarding {...props} />} />
             </Switch>
           </div>
         </div>

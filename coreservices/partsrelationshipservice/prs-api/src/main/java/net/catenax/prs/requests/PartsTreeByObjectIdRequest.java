@@ -9,7 +9,6 @@
 //
 package net.catenax.prs.requests;
 
-import com.catenax.partsrelationshipservice.dtos.PartsTreeView;
 import io.swagger.v3.oas.annotations.Parameter;
 import lombok.Builder;
 import lombok.Value;
@@ -45,8 +44,8 @@ public class PartsTreeByObjectIdRequest extends PartsTreeRequestBase {
      * @param aspect               see {@link #getAspect()}
      * @param depth                see {@link #getDepth()}
      */
-    @Builder
-    public PartsTreeByObjectIdRequest(final String oneIDManufacturer, final String objectIDManufacturer, final PartsTreeView view, final String aspect, final Integer depth) {
+    @Builder(toBuilder = true)
+    public PartsTreeByObjectIdRequest(final String oneIDManufacturer, final String objectIDManufacturer, final String view, final String aspect, final Integer depth) {
         super(view, aspect, depth);
         this.oneIDManufacturer = oneIDManufacturer;
         this.objectIDManufacturer = objectIDManufacturer;
