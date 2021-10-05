@@ -26,11 +26,6 @@ jobs:
    
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
-       # This is needed to access blob storage and other resources directly
-    - name: Login to Azure
-      uses: azure/login@v1
-      with:
-        creds: ${{ secrets.AZURE_CREDENTIALS }}
         
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
     - name: Clone public Fraunhofer PUBLIC repository
@@ -64,14 +59,12 @@ jobs:
         
     - name: login to acr using helm
       run: |
-        #echo ${{ secrets.AZURE_REGISTRY_USERNAME }} | helm registry login  ${{ env.ACR_NAME }} --username ${{ secrets.AZURE_REGISTRY_PASSWORD }} --password-stdin 
-        az login -u ${{ secrets.CATENAX_ADMIN_USER }} -p ${{secrets.CATENAX_ADMIN_PASSWORD}}
+         echo ${{ secrets.AZURE_REGISTRY_USERNAME }} | helm registry login  ${{ env.ACR_NAME }} --username ${{ secrets.AZURE_REGISTRY_PASSWORD }} --password-stdin 
     - name: save helm chart to local registry
       run: |
         helm chart save tractusx/meta-broker/helm-chart ${{ env.ACR_NAME }}/helm/meta-broker:latest
       
     - name: publish chart to acr
       run: |
-        #helm chart push ${{ env.ACR_NAME }}/helm/meta-broker:latest
-        az acr helm push --name=catenaxacr --password=${{secrets.CATENAX_ADMIN_PASSWORD}} --username=${{secrets.CATENAX_ADMIN_USER}} --resource-group=/subscriptions/caca6914-764f-4187-8c70-67cd966339cf/resourceGroups/shared-services-rg/providers/Microsoft.ContainerRegistry/registries/catenaxacr ${{ env.ACR_NAME }}/helm/meta-broker:latest
+        helm chart push ${{ env.ACR_NAME }}/helm/meta-broker:latest
 
