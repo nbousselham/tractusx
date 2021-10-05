@@ -34,7 +34,7 @@ paths:
           enum:
           - AS_BUILT
           - AS_MAINTAINED
-      - description: Aspect information to add to the returned tree
+      - description: Aspect information to add to the returned tree (use 'ALL' to retrieve all aspects available)
         example: CE
         in: query
         name: aspect
@@ -85,7 +85,7 @@ paths:
           enum:
           - AS_BUILT
           - AS_MAINTAINED
-      - description: Aspect information to add to the returned tree
+      - description: Aspect information to add to the returned tree (use 'ALL' to retrieve all aspects available)
         example: CE
         in: query
         name: aspect

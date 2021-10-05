@@ -16,6 +16,7 @@ import com.catenax.partsrelationshipservice.dtos.PartRelationship;
 import com.catenax.partsrelationshipservice.dtos.PartRelationshipsWithInfos;
 import com.github.javafaker.Faker;
 
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -85,11 +86,11 @@ public class DtoMother {
      *
      * @param partId       part identifier.
      * @param partTypeName part type name.
-     * @param aspectOrNull optional aspect to be included in the result. May be {@literal null}.
+     * @param aspects list of aspects to be included in the result.
      * @return a {@link PartInfo} containing the provided {@code partId} and optionally {@code aspect}.
      */
-    public PartInfo partInfo(final PartId partId, final String partTypeName, final Aspect aspectOrNull) {
-        return base.partInfo(partId, partTypeName, aspectOrNull);
+    public PartInfo partInfo(final PartId partId, final String partTypeName, final Aspect... aspects) {
+        return base.partInfo(partId, partTypeName, Arrays.asList(aspects));
     }
 
     /**

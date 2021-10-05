@@ -29,6 +29,7 @@ import org.springframework.stereotype.Service;
 import java.text.MessageFormat;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -79,9 +80,7 @@ public class PartsTreeQueryService {
         final var allIds = getAllIds(tree);
 
         final var typeNames = attributeRepository.findAllBy(allIds, PrsConfiguration.PART_TYPE_NAME_ATTRIBUTE_NAME);
-        final var aspects = request.getAspect()
-                .map(aspect -> aspectRepository.findAllBy(allIds, aspect))
-                .orElseGet(Collections::emptyList);
+        final var aspects = getAspects(request, allIds);
         return mapper.toPartRelationshipsWithInfos(tree, allIds, typeNames, aspects);
     }
 
@@ -90,5 +89,15 @@ public class PartsTreeQueryService {
         // forEachOrdered guarantees non-concurrent execution
         tree.stream().map(e -> e.getKey().getChildId()).forEachOrdered(allIds::add);
         return allIds;
+    }
+
+    private List<PartAspectEntity> getAspects(PartsTreeByObjectIdRequest request, Set<PartIdEntityPart> allIds) {
+        if (request.isAllAspects()) {
+            // return all available aspects for the given ids
+            return aspectRepository.findAllBy(allIds);
+        }
+        return request.getAspect()
+                .map(aspect -> aspectRepository.findAllBy(allIds, aspect))
+                .orElseGet(Collections::emptyList);
     }
 }

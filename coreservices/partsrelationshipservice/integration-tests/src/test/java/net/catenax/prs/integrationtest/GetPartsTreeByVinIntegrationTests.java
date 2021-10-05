@@ -198,19 +198,38 @@ public class GetPartsTreeByVinIntegrationTests extends PrsIntegrationTestsBase {
     @Test
     public void getPartsTreeByVin_withCEAspect_success() {
         var response =
-                given()
-                        .pathParam(VIN, SAMPLE_VIN)
-                        .queryParam(VIEW, AS_MAINTAINED)
-                        .queryParam(ASPECT, "CE")
-                .when()
-                        .get(PATH)
-                .then()
-                        .assertThat()
-                        .statusCode(HttpStatus.OK.value())
-                        .extract().asString();
+            given()
+                .pathParam(VIN, SAMPLE_VIN)
+                .queryParam(VIEW, AS_MAINTAINED)
+                .queryParam(ASPECT, "CE")
+            .when()
+                .get(PATH)
+            .then()
+                .assertThat()
+                .statusCode(HttpStatus.OK.value())
+                .extract().asString();
 
         assertThatJson(response)
                 .when(IGNORING_ARRAY_ORDER)
-                .isEqualTo(expected.sampleVinPartTreeWithAspects());
+                .isEqualTo(expected.sampleVinPartTreeWithCEAspects());
+    }
+
+    @Test
+    public void getPartsTreeByVin_withALLAspects_success() {
+        var response =
+            given()
+                .pathParam(VIN, SAMPLE_VIN)
+                .queryParam(VIEW, AS_MAINTAINED)
+                .queryParam(ASPECT, "ALL")
+            .when()
+                .get(PATH)
+            .then()
+                .assertThat()
+                .statusCode(HttpStatus.OK.value())
+                .extract().asString();
+
+        assertThatJson(response)
+                .when(IGNORING_ARRAY_ORDER)
+                .isEqualTo(expected.sampleVinPartTreeWithALLAspects());
     }
 }

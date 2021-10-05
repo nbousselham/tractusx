@@ -5,6 +5,7 @@ import net.catenax.prs.controllers.ApiErrorsConstants;
 import net.catenax.prs.testing.BaseDtoMother;
 import org.springframework.http.HttpStatus;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -38,6 +39,7 @@ public class PartsTreeMother {
     private static final String BEARING = "bearing";
     private static final String VIN = "YS3DD78N4X7055320";
     private static final String ASPECT_CE = "CE";
+    private static final String ASPECT_ABC = "ABC";
 
     private final PartId vehiclePartId = vehiclePartId();
     private final PartId bearingPartId = bearingPartId();
@@ -81,10 +83,24 @@ public class PartsTreeMother {
      *
      * @return a {@link PartRelationshipsWithInfos} containing fixed part tree of gearbox with aspects.
      */
-    public PartRelationshipsWithInfos sampleGearboxPartTreeWithAspects() {
+    public PartRelationshipsWithInfos sampleGearboxPartTreeWithCEAspects() {
         return partRelationshipsWithInfos(
                 gearboxPartsTree,
                 List.of(partInfo(gearboxPartId, GEARBOX, bmwCEAspect()),
+                        partInfo(gearwheelPartId, GEARWHEEL, boschCEAspect()),
+                        partInfo(gearwheelpinPartId1, GEARWHEELPIN, boschCEAspect()),
+                        partInfo(gearwheelpinPartId2, GEARWHEELPIN, boschCEAspect())));
+    }
+
+    /**
+     * Generate a {@link PartRelationshipsWithInfos} containing fixed part tree of gearbox with aspects.
+     *
+     * @return a {@link PartRelationshipsWithInfos} containing fixed part tree of gearbox with aspects.
+     */
+    public PartRelationshipsWithInfos sampleGearboxPartTreeWithALLAspects() {
+        return partRelationshipsWithInfos(
+                gearboxPartsTree,
+                List.of(partInfo(gearboxPartId, GEARBOX, bmwCEAspect(), bmwABCAspect()),
                         partInfo(gearwheelPartId, GEARWHEEL, boschCEAspect()),
                         partInfo(gearwheelpinPartId1, GEARWHEELPIN, boschCEAspect()),
                         partInfo(gearwheelpinPartId2, GEARWHEELPIN, boschCEAspect())));
@@ -124,12 +140,28 @@ public class PartsTreeMother {
      *
      * @return a {@link PartRelationshipsWithInfos} containing fixed part tree of vehicle with aspects.
      */
-    public PartRelationshipsWithInfos sampleVinPartTreeWithAspects() {
+    public PartRelationshipsWithInfos sampleVinPartTreeWithCEAspects() {
         return partRelationshipsWithInfos(
                 vehiclePartsTree,
                 List.of(partInfo(vehiclePartId, VEHICLE, bmwCEAspect()),
                         partInfo(bearingPartId, BEARING, schaefflerCEAspect()),
                         partInfo(gearboxPartId, GEARBOX, bmwCEAspect()),
+                        partInfo(gearwheelPartId, GEARWHEEL, boschCEAspect()),
+                        partInfo(gearwheelpinPartId1, GEARWHEELPIN, boschCEAspect()),
+                        partInfo(gearwheelpinPartId2, GEARWHEELPIN, boschCEAspect())));
+    }
+
+    /**
+     * Generate a {@link PartRelationshipsWithInfos} containing fixed part tree of vehicle with aspects.
+     *
+     * @return a {@link PartRelationshipsWithInfos} containing fixed part tree of vehicle with aspects.
+     */
+    public PartRelationshipsWithInfos sampleVinPartTreeWithALLAspects() {
+        return partRelationshipsWithInfos(
+                vehiclePartsTree,
+                List.of(partInfo(vehiclePartId, VEHICLE, bmwCEAspect(), bmwABCAspect()),
+                        partInfo(bearingPartId, BEARING, schaefflerCEAspect()),
+                        partInfo(gearboxPartId, GEARBOX, bmwCEAspect(), bmwABCAspect()),
                         partInfo(gearwheelPartId, GEARWHEEL, boschCEAspect()),
                         partInfo(gearwheelpinPartId1, GEARWHEELPIN, boschCEAspect()),
                         partInfo(gearwheelpinPartId2, GEARWHEELPIN, boschCEAspect())));
@@ -234,8 +266,16 @@ public class PartsTreeMother {
         return "http://aspect-" + name + "/" + ASPECT_CE + "/1234";
     }
 
+    private String abcAspectUrl(String name) {
+        return "http://aspect-" + name + "/" + ASPECT_ABC + "/1234";
+    }
+
     private Aspect bmwCEAspect() {
         return base.partAspect(ASPECT_CE, ceAspectUrl("BMW"));
+    }
+
+    private Aspect bmwABCAspect() {
+        return base.partAspect(ASPECT_ABC, abcAspectUrl("BMW"));
     }
 
     private Aspect boschCEAspect() {
@@ -246,8 +286,8 @@ public class PartsTreeMother {
         return base.partAspect(ASPECT_CE, ceAspectUrl(SCHAEFFLER_ONE_ID));
     }
 
-    private PartInfo partInfo(final PartId partId, final String partTypeName, final Aspect aspectOrNull) {
-        return base.partInfo(partId, partTypeName, aspectOrNull);
+    private PartInfo partInfo(final PartId partId, final String partTypeName, final Aspect... aspects) {
+        return base.partInfo(partId, partTypeName, Arrays.asList(aspects));
     }
 
     private PartInfo partInfo(final PartId partId, final String partTypeName) {

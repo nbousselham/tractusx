@@ -9,17 +9,9 @@
 //
 package net.catenax.prs.testing;
 
-import com.catenax.partsrelationshipservice.dtos.Aspect;
-import com.catenax.partsrelationshipservice.dtos.PartId;
-import com.catenax.partsrelationshipservice.dtos.PartInfo;
-import com.catenax.partsrelationshipservice.dtos.PartRelationship;
-import com.catenax.partsrelationshipservice.dtos.PartRelationshipsWithInfos;
+import com.catenax.partsrelationshipservice.dtos.*;
 
-import java.util.Collections;
 import java.util.List;
-import java.util.Optional;
-
-import static java.util.Collections.emptyList;
 
 /**
  * Base object mother class to create DTOs for testing.
@@ -97,14 +89,14 @@ public class BaseDtoMother {
      *
      * @param partId       part identifier.
      * @param partTypeName part type name.
-     * @param aspectOrNull optional aspect to be included in the result. May be {@literal null}.
+     * @param aspects list of aspects to be included in the result.
      * @return a {@link PartInfo} containing the provided {@code partId} and optionally {@code aspect}.
      */
-    public PartInfo partInfo(final PartId partId, final String partTypeName, final Aspect aspectOrNull) {
+    public PartInfo partInfo(final PartId partId, final String partTypeName, final List<Aspect> aspects) {
         return PartInfo.builder()
                 .withPart(partId)
                 .withPartTypeName(partTypeName)
-                .withAspects(Optional.ofNullable(aspectOrNull).map(Collections::singletonList).orElse(emptyList()))
+                .withAspects(aspects)
                 .build();
     }
 }

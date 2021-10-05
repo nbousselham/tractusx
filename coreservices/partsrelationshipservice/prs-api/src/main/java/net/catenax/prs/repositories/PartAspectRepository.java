@@ -38,4 +38,20 @@ public interface PartAspectRepository extends JpaRepository<PartAspectEntity, Pa
      */
     @Query("SELECT a FROM PartAspectEntity a WHERE a.key.partId IN (:partIds) AND a.key.name = :name")
     List<PartAspectEntity> findAllBy(Collection<PartIdEntityPart> partIds, String name);
+
+    /**
+     * Returns all instances of the type {@link PartAspectEntity} for the given Part IDs.
+     * <p>
+     * If some or all Part IDs are not found, no entities are returned for these IDs.
+     * <p>
+     * Note that the order of elements in the result is not guaranteed.
+     *
+     * @param partIds Part IDs to retrieve aspect for.
+     *                Must not be {@literal null} nor contain any {@literal null} values.
+     * @return guaranteed to be not {@literal null}.
+     * The size can be equal or less than the number of given {@literal partIds}.
+     * @see org.springframework.data.repository.CrudRepository#findAllById(Iterable)
+     */
+    @Query("SELECT a FROM PartAspectEntity a WHERE a.key.partId IN (:partIds)")
+    List<PartAspectEntity> findAllBy(Collection<PartIdEntityPart> partIds);
 }

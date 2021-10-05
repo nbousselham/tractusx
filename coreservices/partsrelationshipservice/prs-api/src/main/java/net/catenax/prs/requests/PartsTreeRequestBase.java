@@ -29,13 +29,19 @@ import static io.swagger.v3.oas.annotations.enums.ParameterIn.QUERY;
 @RequiredArgsConstructor
 @SuppressWarnings({"PMD.CommentRequired", "PMD.AbstractClassWithoutAbstractMethod"})
 abstract class PartsTreeRequestBase {
+
+    /**
+     * Value for "aspect" parameter to return all available aspects
+     */
+    private final String ALL_ASPECTS = "ALL";
+
     @NotNull(message = ApiErrorsConstants.PARTS_TREE_VIEW_NOT_NULL)
     @ValueOfEnum(enumClass = PartsTreeView.class, message = ApiErrorsConstants.PARTS_TREE_VIEW_MUST_MATCH_ENUM)
     @Parameter(description = "PartsTree View to retrieve", in = QUERY, required = true, schema = @Schema(implementation = PartsTreeView.class))
     protected final String view;
 
     @Nullable
-    @Parameter(description = "Aspect information to add to the returned tree", in = QUERY, example = "CE", schema = @Schema(implementation = String.class))
+    @Parameter(description = "Aspect information to add to the returned tree (use 'ALL' to retrieve all aspects available)", in = QUERY, example = "CE", schema = @Schema(implementation = String.class))
     protected final String aspect;
 
     @Nullable
@@ -49,6 +55,10 @@ abstract class PartsTreeRequestBase {
 
     public Optional<String> getAspect() {
         return Optional.ofNullable(aspect);
+    }
+
+    public boolean isAllAspects() {
+        return getAspect().map(ALL_ASPECTS::equals).orElse(false);
     }
 
     public Optional<Integer> getDepth() {

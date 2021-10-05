@@ -206,7 +206,29 @@ public class GetPartsTreeByObjectIdIntegrationTests extends PrsIntegrationTestsB
 
         assertThatJson(response)
                 .when(IGNORING_ARRAY_ORDER)
-                .isEqualTo(expected.sampleGearboxPartTreeWithAspects());
+                .isEqualTo(expected.sampleGearboxPartTreeWithCEAspects());
+    }
+
+    @ParameterizedTest
+    @EnumSource(PartsTreeView.class)
+    public void getPartsTreeByObjectId_ALLAspect_success(PartsTreeView view) {
+
+        var response =
+            given()
+                .pathParam(ONE_ID_MANUFACTURER, PART_ONE_ID)
+                .pathParam(OBJECT_ID_MANUFACTURER, PART_OBJECT_ID)
+                .queryParam(VIEW, view)
+                .queryParam(ASPECT, "ALL")
+            .when()
+                .get(PATH)
+            .then()
+                .assertThat()
+                .statusCode(HttpStatus.OK.value())
+                .extract().asString();
+
+        assertThatJson(response)
+                .when(IGNORING_ARRAY_ORDER)
+                .isEqualTo(expected.sampleGearboxPartTreeWithALLAspects());
     }
 
     @ParameterizedTest
