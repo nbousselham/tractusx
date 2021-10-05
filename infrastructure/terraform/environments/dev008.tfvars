@@ -3,5 +3,5 @@
 ####################################################################################################
 
 prefix="catenax"
-environment="dev007"
+environment="dev008"
 location="germanywestcentral"
