@@ -39,11 +39,11 @@ jobs:
        owner: 'catenax'
        repository: 'tractusx'
        
-    #- uses: azure/docker-login@v1
-     # with:
-      #  login-server: ${{ env.ACR_NAME }}
-      #  username: ${{ secrets.AZURE_REGISTRY_USERNAME }}
-       # password: ${{ secrets.AZURE_REGISTRY_PASSWORD }}
+    - uses: azure/docker-login@v1
+      with:
+        login-server: ${{ env.ACR_NAME }}
+        username: ${{ secrets.AZURE_REGISTRY_USERNAME }}
+        password: ${{ secrets.AZURE_REGISTRY_PASSWORD }}
     - name: Building and pusing docker image to acr
       run: |
         sudo mv metadata-broker-open-core/* tractusx/meta-broker
