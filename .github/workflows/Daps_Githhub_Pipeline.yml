@@ -48,9 +48,7 @@ jobs:
         cd omejdn-daps && docker build -f Dockerfile -t ${{ env.ACR_NAME }}/daps:latest .
         docker push ${{ env.ACR_NAME }}/daps:latest 
 
-      
-
-        
+             
         
     - name: install helm
       uses: Azure/setup-helm@v1
