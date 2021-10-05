@@ -65,7 +65,7 @@ jobs:
     - name: login to acr using helm
       run: |
         #echo ${{ secrets.AZURE_REGISTRY_USERNAME }} | helm registry login  ${{ env.ACR_NAME }} --username ${{ secrets.AZURE_REGISTRY_PASSWORD }} --password-stdin 
-        
+        az login -u ${{ secrets.CATENAX_ADMIN_USER }} -p ${{secrets.CATENAX_ADMIN_PASSWORD}}
     - name: save helm chart to local registry
       run: |
         helm chart save tractusx/meta-broker/helm-chart ${{ env.ACR_NAME }}/helm/meta-broker:latest
