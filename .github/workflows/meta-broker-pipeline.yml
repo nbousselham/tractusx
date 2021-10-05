@@ -23,9 +23,15 @@ jobs:
   build:
     # The type of runner that the job will run on
     runs-on: ubuntu-latest
-
+   
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
+       # This is needed to access blob storage and other resources directly
+    - name: Login to Azure
+      uses: azure/login@v1
+      with:
+        creds: ${{ secrets.AZURE_CREDENTIALS }}
+        
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
     - name: Clone public Fraunhofer PUBLIC repository
       uses: GuillaumeFalourd/clone-github-repo-action@v1
@@ -38,11 +44,11 @@ jobs:
        owner: 'catenax'
        repository: 'tractusx'
        
-    - uses: azure/docker-login@v1
-      with:
-        login-server: ${{ env.ACR_NAME }}
-        username: ${{ secrets.AZURE_REGISTRY_USERNAME }}
-        password: ${{ secrets.AZURE_REGISTRY_PASSWORD }}
+    #- uses: azure/docker-login@v1
+     # with:
+      #  login-server: ${{ env.ACR_NAME }}
+      #  username: ${{ secrets.AZURE_REGISTRY_USERNAME }}
+       # password: ${{ secrets.AZURE_REGISTRY_PASSWORD }}
     - name: Building and pusing docker image to acr
       run: |
         sudo mv metadata-broker-open-core/* tractusx/meta-broker
@@ -65,4 +71,6 @@ jobs:
       
     - name: publish chart to acr
       run: |
-        helm chart push ${{ env.ACR_NAME }}/helm/meta-broker:latest
+        #helm chart push ${{ env.ACR_NAME }}/helm/meta-broker:latest
+        az acr helm push --name=helm --password=${{secrets.CATENAX_ADMIN_PASSWORD}} --username=${{secrets.CATENAX_ADMIN_PASSWORD}} --resource-group=/subscriptions/caca6914-764f-4187-8c70-67cd966339cf/resourceGroups/shared-services-rg/providers/Microsoft.ContainerRegistry/registries/catenaxacr ${{ env.ACR_NAME }}/helm/meta-broker:latest
+
