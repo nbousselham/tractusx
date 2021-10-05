@@ -14,7 +14,7 @@ on:
   
 env:
   HELM_EXPERIMENTAL_OCI: 1
-  ACR_NAME: catenaxdev001acr.azurecr.io
+  ACR_NAME: catenaxacr.azurecr.io
   
 
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
