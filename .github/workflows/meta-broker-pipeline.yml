@@ -72,5 +72,5 @@ jobs:
     - name: publish chart to acr
       run: |
         #helm chart push ${{ env.ACR_NAME }}/helm/meta-broker:latest
-        az acr helm push --name=helm --password=${{secrets.CATENAX_ADMIN_PASSWORD}} --username=${{secrets.CATENAX_ADMIN_PASSWORD}} --resource-group=/subscriptions/caca6914-764f-4187-8c70-67cd966339cf/resourceGroups/shared-services-rg/providers/Microsoft.ContainerRegistry/registries/catenaxacr ${{ env.ACR_NAME }}/helm/meta-broker:latest
+        az acr helm push --name=catenaxacr --password=${{secrets.CATENAX_ADMIN_PASSWORD}} --username=${{secrets.CATENAX_ADMIN_PASSWORD}} --resource-group=/subscriptions/caca6914-764f-4187-8c70-67cd966339cf/resourceGroups/shared-services-rg/providers/Microsoft.ContainerRegistry/registries/catenaxacr ${{ env.ACR_NAME }}/helm/meta-broker:latest
 
