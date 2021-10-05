@@ -98,7 +98,7 @@ jobs:
                   echo "::set-output name=workspace::dev042"
               elif [[ "${{github.ref}}" = refs/heads/feature/CATART0PO2-42 ]]; then
                   echo "Determined LRP landscape"
-                  echo "::set-output name=workspace::dev007"
+                  echo "::set-output name=workspace::dev008"
               else 
                   echo "Unsupported Branch on CATENAX. Leaving Workspace empty."
               fi
