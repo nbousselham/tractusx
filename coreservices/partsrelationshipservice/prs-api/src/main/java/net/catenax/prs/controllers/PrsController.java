@@ -23,9 +23,9 @@ import net.catenax.prs.PrsApplication;
 import net.catenax.prs.annotations.ExcludeFromCodeCoverageGeneratedReport;
 import net.catenax.prs.requests.PartsTreeByObjectIdRequest;
 import net.catenax.prs.requests.PartsTreeByVinRequest;
+import net.catenax.prs.services.PartsTreeQueryByVinService;
 import net.catenax.prs.services.PartsTreeQueryService;
 import org.springdoc.api.annotations.ParameterObject;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -47,32 +47,36 @@ import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 public class PrsController {
 
     private final PartsTreeQueryService queryService;
+    private final PartsTreeQueryByVinService queryByVinService;
 
     @Operation(operationId = "getPartsTreeByVin", summary = "Get a PartsTree for a VIN")
     @ApiResponses(value = {
-        @ApiResponse(responseCode = "200", description = "Found the PartsTree",
+        @ApiResponse(responseCode = "200", description = "Parts tree for a vehicle",
                 content = {@Content(mediaType = APPLICATION_JSON_VALUE,
                         schema = @Schema(implementation = PartRelationshipsWithInfos.class))}),
-        @ApiResponse(responseCode = "404", description = "PartsTree not found",
+        @ApiResponse(responseCode = "404", description = "A vehicle was not found with the given VIN",
                 content = {@Content(mediaType = APPLICATION_JSON_VALUE,
-                        schema = @Schema(implementation = ErrorResponse.class))})
+                        schema = @Schema(implementation = ErrorResponse.class))}),
+        @ApiResponse(responseCode = "400", description = "Bad request",
+                content = {@Content(mediaType = APPLICATION_JSON_VALUE,
+                        schema = @Schema(implementation = ErrorResponse.class))}),
     })
     @GetMapping("/vins/{vin}/partsTree")
-    public ResponseEntity<PartRelationshipsWithInfos> getPartsTree(final @Valid @ParameterObject PartsTreeByVinRequest request) {
-        return ResponseEntity.of(queryService.getPartsTree(request));
+    public PartRelationshipsWithInfos getPartsTree(final @Valid @ParameterObject PartsTreeByVinRequest request) {
+        return queryByVinService.getPartsTree(request);
     }
 
     @Operation(operationId = "getPartsTreeByOneIdAndObjectId", summary = "Get a PartsTree for a part")
     @ApiResponses(value = {
-        @ApiResponse(responseCode = "200", description = "Found the PartsTree",
+        @ApiResponse(responseCode = "200", description = "Parts tree for a part",
             content = {@Content(mediaType = APPLICATION_JSON_VALUE,
                     schema = @Schema(implementation = PartRelationshipsWithInfos.class))}),
-        @ApiResponse(responseCode = "404", description = "PartsTree not found",
-            content = {@Content(mediaType = APPLICATION_JSON_VALUE,
-                    schema = @Schema(implementation = ErrorResponse.class))})
+        @ApiResponse(responseCode = "400", description = "Bad request",
+                content = {@Content(mediaType = APPLICATION_JSON_VALUE,
+                        schema = @Schema(implementation = ErrorResponse.class))}),
     })
     @GetMapping("/parts/{oneIDManufacturer}/{objectIDManufacturer}/partsTree")
-    public ResponseEntity<PartRelationshipsWithInfos> getPartsTree(final @Valid @ParameterObject PartsTreeByObjectIdRequest request) {
-        return ResponseEntity.of(queryService.getPartsTree(request));
+    public PartRelationshipsWithInfos getPartsTree(final @Valid @ParameterObject PartsTreeByObjectIdRequest request) {
+        return queryService.getPartsTree(request);
     }
 }
