@@ -66,7 +66,9 @@ jobs:
         echo ${{ secrets.AZURE_REGISTRY_PASSWORD }} | helm registry login  ${{ env.ACR_NAME }} --username ${{ secrets.AZURE_REGISTRY_USERNAME }} --password-stdin 
     - name: save helm chart to local registry
       run: |
+
         helm chart save tractusx/daps/helm-chart ${{ env.ACR_NAME }}/helm/daps:${{ env.version }}
+
     - name: publish chart to acr
       run: |
        helm chart push ${{ env.ACR_NAME }}/helm/daps:${{ env.version }}
