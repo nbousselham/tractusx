@@ -6,9 +6,12 @@ import net.catenax.prs.testing.BaseDtoMother;
 import org.springframework.http.HttpStatus;
 
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
+
+import static java.util.Collections.emptyList;
 
 /**
  * Object Mother to generate data for integration tests.
@@ -291,6 +294,6 @@ public class PartsTreeMother {
     }
 
     private PartInfo partInfo(final PartId partId, final String partTypeName) {
-        return base.partInfo(partId, partTypeName, null);
+        return base.partInfo(partId, partTypeName, emptyList());
     }
 }
