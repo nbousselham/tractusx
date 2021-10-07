@@ -67,7 +67,7 @@ class PartRelationshipEntityListToDtoMapperTests {
                 // Case with missing type name and non-missing aspect
                 generateDto.partInfo(partIdsDto.get(0), null, aspectsDto.get(0)),
                 // Case with non-missing type name and missing aspect
-                generateDto.partInfo(partIdsDto.get(1), typeNames.get(0).getValue(), null),
+                generateDto.partInfo(partIdsDto.get(1), typeNames.get(0).getValue()),
                 // Case with non-missing type name and non-missing aspect
                 generateDto.partInfo(partIdsDto.get(2), typeNames.get(1).getValue(), aspectsDto.get(1))
         );

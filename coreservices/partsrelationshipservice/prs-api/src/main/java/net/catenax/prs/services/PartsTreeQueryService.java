@@ -91,7 +91,7 @@ public class PartsTreeQueryService {
         return allIds;
     }
 
-    private List<PartAspectEntity> getAspects(PartsTreeByObjectIdRequest request, Set<PartIdEntityPart> allIds) {
+    private List<PartAspectEntity> getAspects(final PartsTreeByObjectIdRequest request, final Set<PartIdEntityPart> allIds) {
         if (request.isAllAspects()) {
             // return all available aspects for the given ids
             return aspectRepository.findAllBy(allIds);

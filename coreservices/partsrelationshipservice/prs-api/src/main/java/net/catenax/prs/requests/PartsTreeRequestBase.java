@@ -33,7 +33,7 @@ abstract class PartsTreeRequestBase {
     /**
      * Value for "aspect" parameter to return all available aspects
      */
-    private final String ALL_ASPECTS = "ALL";
+    private static final String ALL_ASPECTS = "ALL";
 
     @NotNull(message = ApiErrorsConstants.PARTS_TREE_VIEW_NOT_NULL)
     @ValueOfEnum(enumClass = PartsTreeView.class, message = ApiErrorsConstants.PARTS_TREE_VIEW_MUST_MATCH_ENUM)
