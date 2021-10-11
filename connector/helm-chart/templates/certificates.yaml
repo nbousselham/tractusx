@@ -55,6 +55,20 @@ data:
         {{ $files.Get . | b64enc}}
   {{- end }}
   {{- end }}
+{{- end}}
+{{- if not .Values.certificate.truststore.secretName }}
+---
+apiVersion: v1
+kind: Secret
+type: Opaque
+metadata:
+  name: {{ include "dataspace-connector.fullname" . }}-truststore
+  labels:
+    {{- include "dataspace-connector.labels" . | nindent 4 }}
+  annotations:
+    "helm.sh/hook": "pre-install"
+    "helm.sh/hook-delete-policy": "before-hook-creation"
+data:
   {{- if index .Values "truststore.p12" }}
   truststore.p12: {{ index .Values "truststore.p12" | b64enc }}
   {{- else }}

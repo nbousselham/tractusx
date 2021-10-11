@@ -56,7 +56,7 @@ spec:
         {{- include "dataspace-connector.env-variables" . | nindent 8 }}
         - name: CONNECTOR_URI
           value: "{{- include "protocol" . }}://{{ .Values.certificate.dnsName }}{{ .Values.ingress.rootPath }}"  
-        {{- if .Values.certificate.truststore.secretName }}
+        {{- if .Values.certificate.truststore }}
         - name: EXTERNAL_TRUSTSTORE_PASS
           valueFrom:
             secretKeyRef:
@@ -85,8 +85,10 @@ spec:
             cp /app/certs/keystore.p12 /app/compiled-certs/${KEYSTORE_FILENAME}
             cp /app/certs/truststore.p12 /app/compiled-certs/${TRUSTSTORE_FILENAME}
           fi
-          if [ -f "/app/truststore/{{ .Values.certificate.truststore.secretKey }}" ]; then
+          if [ -f "/app/truststore/{{ .Values.certificate.truststore }}" ]; then
             cp /app/truststore/{{ .Values.certificate.truststore.secretKey }} /app/compiled-certs/${TRUSTSTORE_FILENAME}
+          else
+            cp /app/truststore/truststore.p12 /app/compiled-certs/${TRUSTSTORE_FILENAME}
           fi
           ls -lah /app/compiled-certs/
           cp /app/default-config/* /app/config/
@@ -128,11 +130,9 @@ spec:
         - name: config
           mountPath: /app/config/
           readOnly: false
-        {{- if .Values.certificate.truststore.secretName }}
         - name: truststore
           mountPath: /app/truststore/
           readOnly: true
-        {{- end }}
       securityContext:
         runAsUser: 1000
         fsGroup: 2000
@@ -228,4 +228,8 @@ spec:
       - name: truststore
         secret:
           secretName: "{{ .Values.certificate.truststore.secretName }}"
+      {{- else }}
+      - name: truststore
+        secret:
+          secretName: {{ include "dataspace-connector.fullname" . }}-truststore
       {{- end }}
