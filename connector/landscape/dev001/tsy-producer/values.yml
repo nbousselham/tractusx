@@ -1,0 +1,8 @@
+ingress:
+  rootPath: "/tsy/producer"
+certificate:
+  truststore:
+    secretName: null
+    secretKey: null
+    passwordSecretName: null
+    passwordSecretKey: null
