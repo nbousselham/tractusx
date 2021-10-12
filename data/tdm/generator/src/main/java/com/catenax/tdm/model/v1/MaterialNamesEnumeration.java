@@ -13,15 +13,35 @@ import com.fasterxml.jackson.annotation.JsonValue;
 public enum MaterialNamesEnumeration {
 
 	/** The aluminium. */
-	ALUMINIUM("aluminium"),
+	ALUMINIUM("Aluminium"),
 	/** The polyamide. */
-	POLYAMIDE("polyamide"),
+	POLYAMIDE("Polyamide"),
 	/** The lithium. */
-	LITHIUM("lithium"),
+	LITHIUM("Lithium"),
 	/** The iron. */
-	IRON("iron"),
+	IRON("Iron"),
+	/** The Eisen. */
+	EISEN("Eisen"),
+	/** The Nickel. */
+	NICKEL("Nickel"),
+	/** The Cobalt. */
+	COBALT("Cobalt"),
+	/** The Mangan. */
+	MANGAN("Mangan"),
+	/** The Kleber. */
+	KLEBER("Kleber"),
+	/** The PA6. */
+	PA6("PA6"),
+	/** The Carbon. */
+	CARBON("Carbon"),
+	/** The Copper. */
+	COPPER("Copper"),
+	/** The Gummi. */
+	GUMMI("Gummi"),
+	/** The Lubricant. */
+	LUBRICANT("Lubricant"),
 	/** The others. */
-	OTHERS("others");
+	OTHERS("Others");
 
 	/**
 	 * From value.
