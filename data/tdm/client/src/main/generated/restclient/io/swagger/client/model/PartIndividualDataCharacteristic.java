@@ -13,16 +13,18 @@
 
 package io.swagger.client.model;
 
+import java.time.OffsetDateTime;
 import java.util.Objects;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonValue;
 import io.swagger.v3.oas.annotations.media.Schema;
+import java.time.LocalDate;
 
 /**
  * PartIndividualDataCharacteristic
  */
-@javax.annotation.Generated(value = "io.swagger.codegen.languages.java.JavaClientCodegen", date = "2021-10-03T20:34:34.146648200+02:00[Europe/Berlin]")
+@javax.annotation.Generated(value = "io.swagger.codegen.languages.java.JavaClientCodegen", date = "2021-10-13T14:06:31.566694+02:00[Europe/Zurich]")
 public class PartIndividualDataCharacteristic {
 
   
@@ -31,7 +33,7 @@ public class PartIndividualDataCharacteristic {
   
   
   @JsonProperty("productionDateGMT")
-  private String productionDateGMT = null;
+  private OffsetDateTime productionDateGMT = null;
   
   public PartIndividualDataCharacteristic productionCountryCode(String productionCountryCode) {
     this.productionCountryCode = productionCountryCode;
@@ -53,23 +55,23 @@ public class PartIndividualDataCharacteristic {
     this.productionCountryCode = productionCountryCode;
   }
   
-  public PartIndividualDataCharacteristic productionDateGMT(String productionDateGMT) {
+  public PartIndividualDataCharacteristic productionDateGMT(OffsetDateTime productionDateGMT) {
     this.productionDateGMT = productionDateGMT;
     return this;
   }
 
   
   /**
-  * Instant at which the update was applied
+  * Get productionDateGMT
   * @return productionDateGMT
   **/
   
   
-  @Schema(required = true, description = "Instant at which the update was applied")
-  public String getProductionDateGMT() {
+  @Schema(required = true, description = "")
+  public OffsetDateTime getProductionDateGMT() {
     return productionDateGMT;
   }
-  public void setProductionDateGMT(String productionDateGMT) {
+  public void setProductionDateGMT(OffsetDateTime productionDateGMT) {
     this.productionDateGMT = productionDateGMT;
   }
   

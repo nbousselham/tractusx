@@ -23,7 +23,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 /**
  * FurtherInformation
  */
-@javax.annotation.Generated(value = "io.swagger.codegen.languages.java.JavaClientCodegen", date = "2021-10-03T20:34:34.146648200+02:00[Europe/Berlin]")
+@javax.annotation.Generated(value = "io.swagger.codegen.languages.java.JavaClientCodegen", date = "2021-10-13T14:06:31.566694+02:00[Europe/Zurich]")
 public class FurtherInformation {
 
   

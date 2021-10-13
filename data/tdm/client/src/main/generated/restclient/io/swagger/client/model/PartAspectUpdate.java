@@ -20,18 +20,19 @@ import com.fasterxml.jackson.annotation.JsonValue;
 import io.swagger.client.model.Aspect;
 import io.swagger.client.model.PartId;
 import io.swagger.v3.oas.annotations.media.Schema;
+import java.time.OffsetDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
 /**
  * Describes an update of a part aspect location.
  */@Schema(description = "Describes an update of a part aspect location.")
-@javax.annotation.Generated(value = "io.swagger.codegen.languages.java.JavaClientCodegen", date = "2021-10-03T20:34:34.146648200+02:00[Europe/Berlin]")
+@javax.annotation.Generated(value = "io.swagger.codegen.languages.java.JavaClientCodegen", date = "2021-10-13T14:06:31.566694+02:00[Europe/Zurich]")
 public class PartAspectUpdate {
 
   
   @JsonProperty("effectTime")
-  private String effectTime = null;
+  private OffsetDateTime effectTime = null;
   
   
   @JsonProperty("part")
@@ -45,7 +46,7 @@ public class PartAspectUpdate {
   @JsonProperty("remove")
   private Boolean remove = null;
   
-  public PartAspectUpdate effectTime(String effectTime) {
+  public PartAspectUpdate effectTime(OffsetDateTime effectTime) {
     this.effectTime = effectTime;
     return this;
   }
@@ -58,10 +59,10 @@ public class PartAspectUpdate {
   
   
   @Schema(required = true, description = "Instant at which the update was applied")
-  public String getEffectTime() {
+  public OffsetDateTime getEffectTime() {
     return effectTime;
   }
-  public void setEffectTime(String effectTime) {
+  public void setEffectTime(OffsetDateTime effectTime) {
     this.effectTime = effectTime;
   }
   

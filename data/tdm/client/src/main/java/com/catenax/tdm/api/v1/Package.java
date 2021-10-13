@@ -44,7 +44,7 @@ public class Package {
 		log.info("Starting test data generation... ");
 		log.info("... this may take a while, so grab a coffee, take a cookie, lean back and enjoy :)...");
 		
-		boolean purge = false;
+		boolean purge = true;
 
 		String bashPath = null;
 		String apiKey = null;
@@ -87,6 +87,7 @@ public class Package {
 		int vehicleCount = 1;
 
 		ObjectMapper om = new ObjectMapper();
+		om.findAndRegisterModules();
 		try {
 			List<VehicleConfiguration> vehicles = om.readValue(configuration,
 					new TypeReference<List<VehicleConfiguration>>() {
