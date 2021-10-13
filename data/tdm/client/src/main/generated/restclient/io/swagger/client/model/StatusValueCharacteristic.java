@@ -27,64 +27,25 @@ import io.swagger.v3.oas.annotations.media.Schema;
 @javax.annotation.Generated(value = "io.swagger.codegen.languages.java.JavaClientCodegen", date = "2021-10-13T14:06:31.566694+02:00[Europe/Zurich]")
 public class StatusValueCharacteristic {
 
-  /**
-   * Gets or Sets status
-   */
-  public enum StatusEnum {
-    
-    RELEASED("Released");
+  @JsonValue
+  private String status;
 
-    private String value;
-
-    StatusEnum(String value) {
-      this.value = value;
-    }
-    
-    @JsonValue
-    
-    public String getValue() {
-      return value;
-    }
-
-    @Override
-    public String toString() {
-      return String.valueOf(value);
-    }
-    
-    @JsonCreator
-    
-    public static StatusEnum fromValue(String text) {
-      for (StatusEnum b : StatusEnum.values()) {
-        if (String.valueOf(b.value).equals(text)) {
-          return b;
-        }
-      }
-      return null;
-    }
-    
+  public StatusValueCharacteristic() {
   }
-  
-  
-  @JsonProperty("status")
-  private StatusEnum status = null;
-  
-  public StatusValueCharacteristic status(StatusEnum status) {
+
+  public StatusValueCharacteristic(String status) {
     this.status = status;
-    return this;
   }
-
   
   /**
   * Get status
   * @return status
   **/
-  
-  
   @Schema(required = true, description = "")
-  public StatusEnum getStatus() {
+  public String getStatus() {
     return status;
   }
-  public void setStatus(StatusEnum status) {
+  public void setStatus(String status) {
     this.status = status;
   }
   

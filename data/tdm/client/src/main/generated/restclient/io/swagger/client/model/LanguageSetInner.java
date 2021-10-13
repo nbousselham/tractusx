@@ -25,13 +25,15 @@ import io.swagger.v3.oas.annotations.media.Schema;
 @javax.annotation.Generated(value = "io.swagger.codegen.languages.java.JavaClientCodegen", date = "2021-10-13T14:06:31.566694+02:00[Europe/Zurich]")
 public class LanguageSetInner {
 
-  
+  @JsonValue
   @JsonProperty("language")
   private String language = null;
-  
-  public LanguageSetInner language(String language) {
+
+  public LanguageSetInner() {
+  }
+
+  public LanguageSetInner(String language) {
     this.language = language;
-    return this;
   }
 
   

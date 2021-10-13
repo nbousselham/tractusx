@@ -13,16 +13,11 @@
 
 package io.swagger.client.model;
 
-import java.util.Objects;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.annotation.JsonCreator;
-import com.fasterxml.jackson.annotation.JsonValue;
-import io.swagger.client.model.DigitalFiles;
-import io.swagger.client.model.LanguageSet;
-import io.swagger.client.model.MultiLanguageProperty;
-import io.swagger.client.model.Role;
-import io.swagger.client.model.StatusValueCharacteristic;
 import io.swagger.v3.oas.annotations.media.Schema;
+
+import java.util.List;
+import java.util.Objects;
 
 /**
  * DocumentVersionsInner
@@ -30,82 +25,82 @@ import io.swagger.v3.oas.annotations.media.Schema;
 @javax.annotation.Generated(value = "io.swagger.codegen.languages.java.JavaClientCodegen", date = "2021-10-13T14:06:31.566694+02:00[Europe/Zurich]")
 public class DocumentVersionsInner {
 
-  
+
   @JsonProperty("languages")
-  private LanguageSet languages = null;
-  
-  
+  private List<LanguageSetInner> languages = null;
+
+
   @JsonProperty("documentVersionId")
   private String documentVersionId = null;
-  
-  
+
+
   @JsonProperty("title")
-  private MultiLanguageProperty title = null;
-  
-  
+  private List<MultiLanguageProperty> title = null;
+
+
   @JsonProperty("summary")
-  private MultiLanguageProperty summary = null;
-  
-  
+  private List<MultiLanguageProperty> summary = null;
+
+
   @JsonProperty("keyWords")
-  private MultiLanguageProperty keyWords = null;
-  
-  
+  private List<MultiLanguageProperty> keyWords = null;
+
+
   @JsonProperty("setDate")
   private String setDate = null;
-  
-  
+
+
   @JsonProperty("statusValue")
   private StatusValueCharacteristic statusValue = null;
-  
-  
+
+
   @JsonProperty("role")
   private Role role = null;
-  
-  
+
+
   @JsonProperty("organizationOfficialName")
   private String organizationOfficialName = null;
-  
-  
+
+
   @JsonProperty("organizationName")
   private String organizationName = null;
-  
-  
+
+
   @JsonProperty("digitalFiles")
   private DigitalFiles digitalFiles = null;
-  
+
   public DocumentVersionsInner languages(LanguageSet languages) {
     this.languages = languages;
     return this;
   }
 
-  
+
   /**
   * Get languages
   * @return languages
   **/
-  
-  
+
+
   @Schema(description = "")
-  public LanguageSet getLanguages() {
+  public List<LanguageSetInner> getLanguages() {
     return languages;
   }
-  public void setLanguages(LanguageSet languages) {
+  public void setLanguages(List<LanguageSetInner> languages) {
     this.languages = languages;
   }
-  
+
   public DocumentVersionsInner documentVersionId(String documentVersionId) {
     this.documentVersionId = documentVersionId;
     return this;
   }
 
-  
+
   /**
   * Get documentVersionId
   * @return documentVersionId
   **/
-  
-  
+
+
   @Schema(description = "")
   public String getDocumentVersionId() {
     return documentVersionId;
@@ -113,79 +108,79 @@ public class DocumentVersionsInner {
   public void setDocumentVersionId(String documentVersionId) {
     this.documentVersionId = documentVersionId;
   }
-  
-  public DocumentVersionsInner title(MultiLanguageProperty title) {
+
+  public DocumentVersionsInner title(List<MultiLanguageProperty> title) {
     this.title = title;
     return this;
   }
 
-  
+
   /**
   * Get title
   * @return title
   **/
-  
-  
+
+
   @Schema(description = "")
-  public MultiLanguageProperty getTitle() {
+  public List<MultiLanguageProperty> getTitle() {
     return title;
   }
-  public void setTitle(MultiLanguageProperty title) {
+  public void setTitle(List<MultiLanguageProperty> title) {
     this.title = title;
   }
-  
-  public DocumentVersionsInner summary(MultiLanguageProperty summary) {
+
+  public DocumentVersionsInner summary(List<MultiLanguageProperty> summary) {
     this.summary = summary;
     return this;
   }
 
-  
+
   /**
   * Get summary
   * @return summary
   **/
-  
-  
+
+
   @Schema(description = "")
-  public MultiLanguageProperty getSummary() {
+  public List<MultiLanguageProperty> getSummary() {
     return summary;
   }
-  public void setSummary(MultiLanguageProperty summary) {
+  public void setSummary(List<MultiLanguageProperty> summary) {
     this.summary = summary;
   }
-  
-  public DocumentVersionsInner keyWords(MultiLanguageProperty keyWords) {
+
+  public DocumentVersionsInner keyWords(List<MultiLanguageProperty> keyWords) {
     this.keyWords = keyWords;
     return this;
   }
 
-  
+
   /**
   * Get keyWords
   * @return keyWords
   **/
-  
-  
+
+
   @Schema(description = "")
-  public MultiLanguageProperty getKeyWords() {
+  public List<MultiLanguageProperty> getKeyWords() {
     return keyWords;
   }
-  public void setKeyWords(MultiLanguageProperty keyWords) {
+  public void setKeyWords(List<MultiLanguageProperty> keyWords) {
     this.keyWords = keyWords;
   }
-  
+
   public DocumentVersionsInner setDate(String setDate) {
     this.setDate = setDate;
     return this;
   }
 
-  
+
   /**
   * Get setDate
   * @return setDate
   **/
-  
-  
+
+
   @Schema(description = "")
   public String getSetDate() {
     return setDate;
@@ -193,19 +188,19 @@ public class DocumentVersionsInner {
   public void setSetDate(String setDate) {
     this.setDate = setDate;
   }
-  
+
   public DocumentVersionsInner statusValue(StatusValueCharacteristic statusValue) {
     this.statusValue = statusValue;
     return this;
   }
 
-  
+
   /**
   * Get statusValue
   * @return statusValue
   **/
-  
-  
+
+
   @Schema(description = "")
   public StatusValueCharacteristic getStatusValue() {
     return statusValue;
@@ -213,19 +208,19 @@ public class DocumentVersionsInner {
   public void setStatusValue(StatusValueCharacteristic statusValue) {
     this.statusValue = statusValue;
   }
-  
+
   public DocumentVersionsInner role(Role role) {
     this.role = role;
     return this;
   }
 
-  
+
   /**
   * Get role
   * @return role
   **/
-  
-  
+
+
   @Schema(description = "")
   public Role getRole() {
     return role;
@@ -233,19 +228,19 @@ public class DocumentVersionsInner {
   public void setRole(Role role) {
     this.role = role;
   }
-  
+
   public DocumentVersionsInner organizationOfficialName(String organizationOfficialName) {
     this.organizationOfficialName = organizationOfficialName;
     return this;
   }
 
-  
+
   /**
   * Get organizationOfficialName
   * @return organizationOfficialName
   **/
-  
-  
+
+
   @Schema(description = "")
   public String getOrganizationOfficialName() {
     return organizationOfficialName;
@@ -253,19 +248,19 @@ public class DocumentVersionsInner {
   public void setOrganizationOfficialName(String organizationOfficialName) {
     this.organizationOfficialName = organizationOfficialName;
   }
-  
+
   public DocumentVersionsInner organizationName(String organizationName) {
     this.organizationName = organizationName;
     return this;
   }
 
-  
+
   /**
   * Get organizationName
   * @return organizationName
   **/
-  
-  
+
+
   @Schema(description = "")
   public String getOrganizationName() {
     return organizationName;
@@ -273,19 +268,19 @@ public class DocumentVersionsInner {
   public void setOrganizationName(String organizationName) {
     this.organizationName = organizationName;
   }
-  
+
   public DocumentVersionsInner digitalFiles(DigitalFiles digitalFiles) {
     this.digitalFiles = digitalFiles;
     return this;
   }
 
-  
+
   /**
   * Get digitalFiles
   * @return digitalFiles
   **/
-  
-  
+
+
   @Schema(description = "")
   public DigitalFiles getDigitalFiles() {
     return digitalFiles;
@@ -293,7 +288,7 @@ public class DocumentVersionsInner {
   public void setDigitalFiles(DigitalFiles digitalFiles) {
     this.digitalFiles = digitalFiles;
   }
-  
+
   @Override
   public boolean equals(java.lang.Object o) {
     if (this == o) {
@@ -320,12 +315,12 @@ public class DocumentVersionsInner {
   public int hashCode() {
     return java.util.Objects.hash(languages, documentVersionId, title, summary, keyWords, setDate, statusValue, role, organizationOfficialName, organizationName, digitalFiles);
   }
-  
+
   @Override
   public String toString() {
     StringBuilder sb = new StringBuilder();
     sb.append("class DocumentVersionsInner {\n");
-    
+
     sb.append("    languages: ").append(toIndentedString(languages)).append("\n");
     sb.append("    documentVersionId: ").append(toIndentedString(documentVersionId)).append("\n");
     sb.append("    title: ").append(toIndentedString(title)).append("\n");
@@ -352,7 +347,7 @@ public class DocumentVersionsInner {
     return o.toString().replace("\n", "\n    ");
   }
 
-  
+
 }
 
 

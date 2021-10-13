@@ -13,14 +13,11 @@
 
 package io.swagger.client.model;
 
-import java.util.Objects;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.annotation.JsonCreator;
-import com.fasterxml.jackson.annotation.JsonValue;
-import io.swagger.client.model.Logo;
-import io.swagger.client.model.MultiLanguageProperty;
-import io.swagger.client.model.ProductImages;
 import io.swagger.v3.oas.annotations.media.Schema;
+
+import java.util.List;
+import java.util.Objects;
 
 /**
  * GeneralInformation
@@ -38,7 +35,7 @@ public class GeneralInformation {
   
   
   @JsonProperty("manufacturerProductDesignation")
-  private MultiLanguageProperty manufacturerProductDesignation = null;
+  private List<MultiLanguageProperty> manufacturerProductDesignation = null;
   
   
   @JsonProperty("manufacturerPartNumber")
@@ -92,7 +89,7 @@ public class GeneralInformation {
     this.manufacturerLogo = manufacturerLogo;
   }
   
-  public GeneralInformation manufacturerProductDesignation(MultiLanguageProperty manufacturerProductDesignation) {
+  public GeneralInformation manufacturerProductDesignation(List<MultiLanguageProperty> manufacturerProductDesignation) {
     this.manufacturerProductDesignation = manufacturerProductDesignation;
     return this;
   }
@@ -105,10 +102,10 @@ public class GeneralInformation {
   
   
   @Schema(required = true, description = "")
-  public MultiLanguageProperty getManufacturerProductDesignation() {
+  public List<MultiLanguageProperty> getManufacturerProductDesignation() {
     return manufacturerProductDesignation;
   }
-  public void setManufacturerProductDesignation(MultiLanguageProperty manufacturerProductDesignation) {
+  public void setManufacturerProductDesignation(List<MultiLanguageProperty> manufacturerProductDesignation) {
     this.manufacturerProductDesignation = manufacturerProductDesignation;
   }
   

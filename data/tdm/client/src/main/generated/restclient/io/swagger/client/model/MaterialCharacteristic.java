@@ -53,6 +53,10 @@ public class MaterialCharacteristic {
   
   @JsonProperty("chemicalCompositionFraction")
   private BigDecimal chemicalCompositionFraction = null;
+
+  /** The chemical composition fraction. */
+  @JsonProperty("idTag")
+  private BigDecimal idTag = null;
   
   public MaterialCharacteristic materialName(MaterialNamesEnumeration materialName) {
     this.materialName = materialName;
@@ -139,7 +143,17 @@ public class MaterialCharacteristic {
     return this;
   }
 
-  
+  /**
+   * Chemical composition fraction.
+   *
+   * @param idTag the chemical composition fraction
+   * @return the Id tag characteristic
+   */
+  public MaterialCharacteristic idTag(BigDecimal idTag) {
+    this.idTag = idTag;
+    return this;
+  }
+
   /**
   * Get weight
   * @return weight
@@ -188,7 +202,8 @@ public class MaterialCharacteristic {
         Objects.equals(this.aggregateState, materialCharacteristic.aggregateState) &&
         Objects.equals(this.chemicalComposition, materialCharacteristic.chemicalComposition) &&
         Objects.equals(this.weight, materialCharacteristic.weight) &&
-        Objects.equals(this.chemicalCompositionFraction, materialCharacteristic.chemicalCompositionFraction);
+        Objects.equals(this.chemicalCompositionFraction, materialCharacteristic.chemicalCompositionFraction)
+        && Objects.equals(this.idTag, materialCharacteristic.idTag);
   }
 
   @Override

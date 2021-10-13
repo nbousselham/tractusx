@@ -13,15 +13,28 @@
 
 package io.swagger.client.model;
 
-import java.util.Objects;
-import java.util.ArrayList;
-import java.util.List;
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonValue;
+
+import java.util.*;
 
 /**
  * MultiLanguageProperty
  */
 @javax.annotation.Generated(value = "io.swagger.codegen.languages.java.JavaClientCodegen", date = "2021-10-13T14:06:31.566694+02:00[Europe/Zurich]")
-public class MultiLanguageProperty extends ArrayList<Object> {
+public class MultiLanguageProperty {
+
+  @JsonValue
+  Map<String, String> entries = new HashMap<String, String>();
+
+
+  public MultiLanguageProperty() {
+  }
+
+  @JsonCreator
+  public MultiLanguageProperty(Map<String, String> entries) {
+    this.entries = entries;
+  }
 
   @Override
   public boolean equals(java.lang.Object o) {

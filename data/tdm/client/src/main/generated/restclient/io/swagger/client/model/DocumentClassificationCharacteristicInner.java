@@ -13,12 +13,11 @@
 
 package io.swagger.client.model;
 
-import java.util.Objects;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.annotation.JsonCreator;
-import com.fasterxml.jackson.annotation.JsonValue;
-import io.swagger.client.model.MultiLanguageProperty;
 import io.swagger.v3.oas.annotations.media.Schema;
+
+import java.util.List;
+import java.util.Objects;
 
 /**
  * DocumentClassificationCharacteristicInner
@@ -32,7 +31,7 @@ public class DocumentClassificationCharacteristicInner {
   
   
   @JsonProperty("className")
-  private MultiLanguageProperty className = null;
+  private String className = null;
   
   
   @JsonProperty("documentClassificationSystem")
@@ -58,7 +57,7 @@ public class DocumentClassificationCharacteristicInner {
     this.classId = classId;
   }
   
-  public DocumentClassificationCharacteristicInner className(MultiLanguageProperty className) {
+  public DocumentClassificationCharacteristicInner className(String className) {
     this.className = className;
     return this;
   }
@@ -71,10 +70,10 @@ public class DocumentClassificationCharacteristicInner {
   
   
   @Schema(description = "")
-  public MultiLanguageProperty getClassName() {
+  public String getClassName() {
     return className;
   }
-  public void setClassName(MultiLanguageProperty className) {
+  public void setClassName(String className) {
     this.className = className;
   }
   
