@@ -21,7 +21,6 @@ public enum PartType {
 	HVB_CELL("hvb cell"),
 	/** The sump. */
 	SUMP("sump"),
-
 	/** The adhesive. */
 	ADHESIVE("adhesive"),
 	/** The material. */
