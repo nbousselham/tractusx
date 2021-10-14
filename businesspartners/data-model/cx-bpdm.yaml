@@ -1,0 +1,852 @@
+openapi: 3.0.0
+info:
+  description: >
+    This specification provides the Reference Domain Object Model 
+    (RDOM) for the Business Partner domain in Catena-X (CX)
+  title: Catena-X RDOM Business Partner
+  version: "1.0"
+
+paths: {}
+
+components:
+  schemas:
+    BusinessPartner:
+      type: object
+      properties:
+        names:
+          type: array
+          items:
+            $ref: '#/components/schemas/Name'
+        legalForm:
+          $ref: '#/components/schemas/LegalForm'
+        identifiers:
+          type: array
+          items:
+            $ref: '#/components/schemas/Identifier'
+        status:
+          $ref: '#/components/schemas/BusinessPartnerStatus'
+        addresses:
+          type: array
+          items:
+            $ref: '#/components/schemas/Address'
+        externalId:
+          $ref: '#/components/schemas/BusinessPartnerExternalId'
+        profile:
+          $ref: '#/components/schemas/BusinessPartnerProfile'
+        relations:
+          type: array
+          items:
+            $ref: '#/components/schemas/BusinessPartnerRelation'
+        types:
+          type: array
+          items:
+            $ref: '#/components/schemas/BusinessPartnerType'
+        bankAccounts:
+          type: array
+          items:
+            $ref: '#/components/schemas/BankAccount'
+    BusinessPartnerType:
+      type: object
+      properties:
+        url:
+          $ref: '#/components/schemas/BusinessPartnerTypeUrl'
+        name:
+          $ref: '#/components/schemas/BusinessPartnerTypeName'
+        technicalKey:
+          $ref: '#/components/schemas/BusinessPartnerTypeTechnicalKey'
+    BusinessPartnerTypeUrl:
+      type: string
+    BusinessPartnerTypeName:
+      type: string
+    BusinessPartnerTypeTechnicalKey:
+      type: string
+    BusinessPartnerProfile:
+      description: Additional documentation can be found [here](https://meta.cdq.ch/Partner_profile).
+      type: object
+      properties:
+        minorityIndicator:
+          $ref: '#/components/schemas/MinorityIndicator'
+        classifications:
+          type: array
+          items:
+            $ref: '#/components/schemas/BusinessPartnerClassification'
+        phoneNumbers:
+          type: array
+          items:
+            $ref: '#/components/schemas/PhoneNumber'
+        websites:
+          type: array
+          items:
+            $ref: '#/components/schemas/Website'
+        contactEmails:
+          type: array
+          items:
+            $ref: '#/components/schemas/ContactEmail'
+    ContactEmail:
+      type: object
+      properties:
+        value:
+          $ref: '#/components/schemas/ContactEmailValue'
+    ContactEmailValue:
+      type: string
+    Website:
+      type: object
+      properties:
+        url:
+          $ref: '#/components/schemas/WebsiteUrl'
+        type:
+          $ref: '#/components/schemas/WebsiteType'
+    WebsiteType:
+      type: object
+      properties:
+        url:
+          $ref: '#/components/schemas/WebsiteTypeUrl'
+        name:
+          $ref:  '#/components/schemas/WebsiteTypeName'
+        technicalKey:
+          $ref: '#/components/schemas/WebsiteTypeTechnicalKey'
+    WebsiteTypeUrl:
+      type: string
+    WebsiteTypeName:
+      type: string
+    WebsiteTypeTechnicalKey:
+      type: string
+    WebsiteUrl:
+      type: string
+    PhoneNumber:
+      type: object
+      properties:
+        countryPrefix:
+          $ref: '#/components/schemas/PhoneNumberCountryPrefix'
+        number:
+          $ref: '#/components/schemas/PhoneNumberNumber'
+        type:
+          $ref: "#/components/schemas/PhoneNumberType"
+        value:
+          $ref: '#/components/schemas/PhoneNumberValue'
+    PhoneNumberCountryPrefix:
+      type: string
+      description: The country prefix of a phone number
+    PhoneNumberNumber:
+      type: string
+      description: The complete phone number without any country prefixes.
+    PhoneNumberValue:
+      type: string
+      description: The actual complete phone number incl. country prefix
+    PhoneNumberType:
+      type: object
+      description: Allowed types are documented [here](https://meta.cdq.com/Business_partner/partner_profile/phone_number/type).
+      properties:
+        name:
+          $ref: '#/components/schemas/PhoneNumberTypeName'
+        url:
+          $ref: '#/components/schemas/PhoneNumberTypeUrl'
+    PhoneNumberTypeName:
+      type: string
+    PhoneNumberTypeUrl:
+      type: string
+    MinorityIndicator:
+      description: >
+        The minority indicator determines the minority group to which a vendor 
+        belongs. Usually, the minority indicator is only relevant in the 
+        United States and it is used for reporting purposes only. There is a 
+        corresponding SAP field in the vendor master for maintaining the 
+        minority indicator.
+        This feature is as of today dependent on data provided by a US based 
+        company: SupplierGateway.
+        Additional documentation can be found 
+        [here](https://meta.cdq.ch/Partner_profile/minority_indicator).
+      type: object
+      properties:
+        value:
+          $ref: '#/components/schemas/MinorityIndicatorValue'
+    MinorityIndicatorValue:
+      type: string
+    BusinessPartnerExternalId:
+      type: string
+      description: "ID the record has in the external system where the record originates from."
+    AddressExternalId:
+      type: string
+      description: "ID the address has in the external system where the record originates from."
+    AddressVersion:
+      type: object
+      properties:
+        characterSet:
+          $ref: '#/components/schemas/CharacterSet'
+        language:
+          $ref: '#/components/schemas/Language'
+    CharacterSet:
+      type: object
+      description: Character set
+      properties:
+        name:
+          $ref: '#/components/schemas/CharacterSetName'
+        technicalKey:
+          $ref: '#/components/schemas/CharacterSetTechnicalKey'
+    CharacterSetName:
+      type: string
+      description: Name of character set. Supported character sets can be found [here](https://meta.cdq.com/Address/version/character_set).
+      example: International
+    CharacterSetTechnicalKey:
+      type: string
+      description: Technical key of character set. Supported character sets can be found [here](https://meta.cdq.com/Address/version/character_set).
+      example: "INTERNATIONAL"
+    Address:
+      type: object
+      properties:
+        version:
+          $ref: '#/components/schemas/AddressVersion'
+        externalId:
+          $ref: '#/components/schemas/AddressExternalId'
+        careOf:
+          $ref: '#/components/schemas/CareOf'
+        contexts:
+          type: array
+          items:
+            $ref: '#/components/schemas/AddressContext'
+        country:
+          $ref: '#/components/schemas/Country'
+        administrativeAreas:
+          type: array
+          items:
+            $ref: '#/components/schemas/AdministrativeArea'
+        postCodes:
+          type: array
+          items:
+            $ref: '#/components/schemas/PostCode'
+        localities:
+          type: array
+          items:
+            $ref: '#/components/schemas/Locality'
+        thoroughfares:
+          type: array
+          items:
+            $ref: '#/components/schemas/Thoroughfare'
+        premises:
+          type: array
+          items:
+            $ref: '#/components/schemas/Premise'
+        postalDeliveryPoints:
+          type: array
+          items:
+            $ref: '#/components/schemas/PostalDeliveryPoint'
+        geographicCoordinates:
+          $ref: '#/components/schemas/GeographicCoordinates'
+        types:
+          type: array
+          items:
+            $ref: '#/components/schemas/AddressType'
+    PostalDeliveryPoint:
+      type: object
+      properties:
+        type:
+          $ref: '#/components/schemas/PostalDeliveryPointType'
+        shortName:
+          $ref: '#/components/schemas/PostalDeliveryPointShortName'
+        number:
+          $ref: '#/components/schemas/PostalDeliveryPointNumber'
+        value:
+          $ref: '#/components/schemas/PostalDeliveryPointValue'
+        language:
+          $ref: '#/components/schemas/Language'
+    PostalDeliveryPointShortName:
+      type: string
+    PostalDeliveryPointNumber:
+      type: string
+    PostalDeliveryPointValue:
+      type: string
+    AddressContext:
+      type: object
+      properties:
+        value:
+          $ref: '#/components/schemas/AddressContextValue'
+    AddressContextValue:
+      type: string
+    Name:
+      type: object
+      properties:
+        shortName:
+          $ref: '#/components/schemas/NameShortName'
+        type:
+          $ref: '#/components/schemas/NameType'
+        value:
+          $ref: '#/components/schemas/NameValue'
+        language:
+          $ref: '#/components/schemas/Language'
+    NameType:
+      type: object
+      properties:
+        url:
+          $ref: '#/components/schemas/NameTypeUrl'
+        name:
+          $ref: '#/components/schemas/NameTypeName'
+        technicalKey:
+          $ref: '#/components/schemas/NameTypeTechnicalKey'
+    NameTypeUrl:
+      type: string
+    NameTypeName:
+      type: string
+    NameTypeTechnicalKey:
+      type: string
+    NameValue:
+      type: string
+    NameShortName:
+      type: string
+    LegalForm:
+      type: object
+      properties:
+        name:
+          $ref: '#/components/schemas/LegalFormName'
+        url:
+          $ref: '#/components/schemas/LegalFormUrl'
+        language:
+          $ref: '#/components/schemas/Language'
+        mainAbbreviation:
+          $ref: '#/components/schemas/LegalFormMainAbbreviation'
+        cdlElfCode:
+          $ref: '#/components/schemas/LegalFormCdlElfCode'
+        categories:
+          type: array
+          items:
+            $ref: '#/components/schemas/LegalFormCategory'
+        technicalKey:
+          $ref : '#/components/schemas/LegalFormTechnicalKey'
+    LegalFormTechnicalKey:
+      description: Technical Key of a Legal Form
+      type: string
+      example: DE_9866
+    Provenance:
+      type: object
+      properties:
+        name:
+          $ref: '#/components/schemas/ProvenanceName'
+        url:
+          $ref: '#/components/schemas/ProvenanceUrl'
+        technicalKey:
+          $ref: '#/components/schemas/ProvenanceTechnicalKey'
+        cxId:
+          $ref: '#/components/schemas/ProvenanceCxId'
+    ProvenanceName:
+      type: string
+    ProvenanceUrl:
+      type: string
+    ProvenanceTechnicalKey:
+      type: string
+    ProvenanceCxId:
+      type: string
+    LegalFormCdlElfCode:
+      deprecated: true
+      type: string
+      description: An unique identifier for CDL managed legal forms
+    LegalFormCategory:
+      type: object
+      properties:
+        name:
+          $ref: '#/components/schemas/LegalFormCategoryName'
+        url:
+          $ref: '#/components/schemas/LegalFormCategoryUrl'
+    LegalFormCategoryName:
+      type: string
+    LegalFormCategoryUrl:
+      type: string
+    LegalFormMainAbbreviation:
+      type: string
+    LegalFormName:
+      type: string
+    LegalFormUrl:
+      type: string
+      example: https://meta.cdq.com/Business_partner/legal_form/technical_key/DE_9866
+    Identifier:
+      type: object
+      properties:
+        type:
+          $ref: '#/components/schemas/IdentifierType'
+        value:
+          $ref: '#/components/schemas/IdentifierValue'
+        issuingBody:
+          $ref: '#/components/schemas/IssuingBody'
+        status:
+          $ref: '#/components/schemas/IdentifierStatus'
+    IdentifierValue:
+      type: string
+    IdentifierStatus:
+      type: object
+      properties:
+        name:
+          $ref: '#/components/schemas/IdentifierStatusName'
+        technicalKey:
+          $ref: '#/components/schemas/IdentifierStatusTechnicalKey'
+    IdentifierStatusName:
+      type: string
+    IdentifierStatusTechnicalKey:
+      type: string
+    IssuingBody:
+      type: object
+      properties:
+        name:
+          $ref: '#/components/schemas/IssuingBodyName'
+        url:
+          $ref: '#/components/schemas/IssuingBodyUrl'
+        technicalKey:
+          $ref: '#/components/schemas/IssuingBodyTechnicalKey'
+    IssuingBodyName:
+      type: string
+    IssuingBodyUrl:
+      type: string
+    IssuingBodyTechnicalKey:
+      type: string
+    IdentifierType:
+      type: object
+      properties:
+        url:
+          $ref: '#/components/schemas/IdentifierTypeUrl'
+        name:
+          $ref:  '#/components/schemas/IdentifierTypeName'
+        technicalKey:
+          $ref: '#/components/schemas/IdentifierTypeTechnicalKey'
+    IdentifierTypeUrl:
+      type: string
+    IdentifierTypeName:
+      type: string
+    IdentifierTypeTechnicalKey:
+      type: string
+    BusinessPartnerClassification:
+      type: object
+      properties:
+        value:
+          $ref: '#/components/schemas/ClassificationValue'
+        code:
+          $ref: '#/components/schemas/ClassificationCode'
+        type:
+          $ref: '#/components/schemas/ClassificationType'
+    ClassificationValue:
+      type: string
+    ClassificationCode:
+      type: string
+    ClassificationType:
+      type: object
+      properties:
+        name:
+          $ref: '#/components/schemas/ClassificationTypeName'
+        url:
+          $ref: '#/components/schemas/ClassificationTypeUrl'
+    ClassificationTypeName:
+      type: string
+    ClassificationTypeUrl:
+      type: string
+    BusinessPartnerStatus:
+      type: object
+      properties:
+        officialDenotation:
+          $ref: '#/components/schemas/BusinessPartnerStatusOfficialDenotation'
+        validFrom:
+          $ref: '#/components/schemas/BusinessPartnerStatusValidFrom'
+        validUntil:
+          $ref: '#/components/schemas/BusinessPartnerStatusValidUntil'
+        type:
+          $ref: '#/components/schemas/BusinessPartnerStatusType'
+    BusinessPartnerStatusOfficialDenotation:
+      type: string
+    BusinessPartnerStatusValidFrom:
+      type: string
+    BusinessPartnerStatusValidUntil:
+      type: string
+    BusinessPartnerStatusType:
+      type: object
+      properties:
+        name:
+          $ref: '#/components/schemas/BusinessPartnerStatusTypeName'
+        url:
+          $ref: '#/components/schemas/BusinessPartnerStatusTypeUrl'
+        technicalKey:
+          $ref: '#/components/schemas/BusinessPartnerStatusTypeTechnicalKey'
+    BusinessPartnerStatusTypeName:
+      type: string
+    BusinessPartnerStatusTypeUrl:
+      type: string
+    BusinessPartnerStatusTypeTechnicalKey:
+      type: string
+    CareOf:
+      type: object
+      properties:
+        value:
+          $ref: '#/components/schemas/CareOfValue'
+    CareOfValue:
+      type: string
+    Country:
+      description: "Country consisting of the country name and country code (ISO 3166-1 alpha-2)."
+      type: object
+      properties:
+        shortName:
+          $ref: '#/components/schemas/CountryShortName'
+        value:
+          $ref: '#/components/schemas/CountryValue'
+    CountryParam:
+      type: object
+      properties:
+        shortName:
+          $ref: '#/components/schemas/CountryShortName'
+    CountryShortName:
+      type: string
+      example: "CH"
+      description: "Country code (ISO 3166-1 alpha-2)."
+    CountryValue:
+      type: string
+      example: "Switzerland"
+      description: "Country name (ISO 3166-1 alpha-2)"
+    AdministrativeArea:
+      type: object
+      properties:
+        value:
+          $ref: '#/components/schemas/AdministrativeAreaValue'
+        shortName:
+          $ref: '#/components/schemas/AdministrativeAreaShortName'
+        fipsCode:
+          $ref: '#/components/schemas/AdministrativeAreaFipsCode'
+        type:
+          $ref: '#/components/schemas/AdministrativeAreaType'
+        language:
+          $ref: '#/components/schemas/Language'
+    AdministrativeAreaValue:
+      type: string
+    AdministrativeAreaShortName:
+      type: string
+    AdministrativeAreaFipsCode:
+      type: string
+    AdministrativeAreaType:
+      type: object
+      properties:
+        name:
+          $ref: '#/components/schemas/AdministrativeAreaTypeName'
+        url:
+          $ref: '#/components/schemas/AdministrativeAreaTypeUrl'
+        technicalKey:
+          $ref: '#/components/schemas/AdministrativeAreaTypeTechnicalKey'
+    AdministrativeAreaTypeName:
+      type: string
+    AdministrativeAreaTypeUrl:
+      type: string
+    AdministrativeAreaTypeTechnicalKey:
+      type: string
+    PostCode:
+      type: object
+      properties:
+        value:
+          $ref: '#/components/schemas/PostCodeValue'
+        type:
+          $ref: '#/components/schemas/PostCodeType'
+    PostCodeValue:
+      type: string
+    PostCodeType:
+      type: object
+      properties:
+        name:
+          $ref: '#/components/schemas/PostCodeTypeName'
+        url:
+          $ref: '#/components/schemas/PostCodeTypeUrl'
+        technicalKey:
+          $ref: '#/components/schemas/PostCodeTypeTechnicalKey'
+    PostCodeTypeName:
+      type: string
+    PostCodeTypeUrl:
+      type: string
+    PostCodeTypeTechnicalKey:
+      type: string
+    Locality:
+      type: object
+      properties:
+        type:
+          $ref: '#/components/schemas/LocalityType'
+        shortName:
+          $ref: '#/components/schemas/LocalityShortName'
+        value:
+          $ref: '#/components/schemas/LocalityValue'
+        language:
+          $ref: '#/components/schemas/Language'
+    LocalityShortName:
+      type: string
+    LocalityValue:
+      type: string
+    LocalityType:
+      type: object
+      properties:
+        name:
+          $ref: '#/components/schemas/LocalityTypeName'
+        url:
+          $ref: '#/components/schemas/LocalityTypeUrl'
+        technicalKey:
+          $ref: '#/components/schemas/LocalityTypeTechnicalKey'
+    LocalityTypeName:
+      type: string
+    LocalityTypeUrl:
+      type: string
+    LocalityTypeTechnicalKey:
+      type: string
+    Thoroughfare:
+      type: object
+      properties:
+        type:
+          $ref: '#/components/schemas/ThoroughfareType'
+        shortName:
+          $ref: '#/components/schemas/ThoroughfareShortName'
+        number:
+          $ref: '#/components/schemas/ThoroughfareNumber'
+        value:
+          $ref: '#/components/schemas/ThoroughfareValue'
+        name:
+          $ref: '#/components/schemas/ThoroughfareName'
+        direction:
+          $ref: '#/components/schemas/ThoroughfareDirection'
+        language:
+          $ref: '#/components/schemas/Language'
+    ThoroughfareShortName:
+      type: string
+    ThoroughfareNumber:
+      type: string
+    ThoroughfareDirection:
+      type: string
+    ThoroughfareValue:
+      type: string
+    ThoroughfareName:
+      type: string
+    ThoroughfareType:
+      type: object
+      properties:
+        name:
+          $ref: '#/components/schemas/ThoroughfareTypeName'
+        url:
+          $ref: '#/components/schemas/ThoroughfareTypeUrl'
+        technicalKey:
+          $ref: '#/components/schemas/ThoroughfareTypeTechnicalKey'
+    ThoroughfareTypeName:
+      type: string
+    ThoroughfareTypeUrl:
+      type: string
+    ThoroughfareTypeTechnicalKey:
+      type: string
+    Premise:
+      type: object
+      properties:
+        value:
+          $ref: '#/components/schemas/PremiseValue'
+        shortName:
+          $ref: '#/components/schemas/PremiseShortName'
+        number:
+          $ref: '#/components/schemas/PremiseNumber'
+        type:
+          $ref: '#/components/schemas/PremiseType'
+        language:
+          $ref: '#/components/schemas/Language'
+    PremiseValue:
+      type: string
+    PremiseShortName:
+      type: string
+    PremiseNumber:
+      type: string
+    PremiseType:
+      type: object
+      properties:
+        name:
+          $ref: '#/components/schemas/PremiseTypeName'
+        url:
+          $ref: '#/components/schemas/PremiseTypeUrl'
+        technicalKey:
+          $ref: '#/components/schemas/PremiseTypeTechnicalKey'
+    PremiseTypeName:
+      type: string
+    PremiseTypeUrl:
+      type: string
+    PremiseTypeTechnicalKey:
+      type: string
+    PostalDeliveryPointType:
+      type: object
+      properties:
+        name:
+          $ref: '#/components/schemas/PostalDeliveryPointTypeName'
+        url:
+          $ref: '#/components/schemas/PostalDeliveryPointTypeUrl'
+        technicalKey:
+          $ref: '#/components/schemas/PostalDeliveryPointTypeTechnicalKey'
+    PostalDeliveryPointTypeName:
+      type: string
+    PostalDeliveryPointTypeUrl:
+      type: string
+    PostalDeliveryPointTypeTechnicalKey:
+      type: string
+    GeographicCoordinates:
+      description: "Decimal geographic coordinates (WGS 84 - reference coordinate system)."
+      type: object
+      properties:
+        latitude:
+          $ref: '#/components/schemas/GeographicCoordinatesLatitude'
+        longitude:
+          $ref: '#/components/schemas/GeographicCoordinatesLongitude'
+        altitude:
+          $ref: '#/components/schemas/GeographicCoordinatesAltitude'
+    GeographicCoordinatesLatitude:
+      example: "47.424167"
+      type: number
+      format: double
+    GeographicCoordinatesLongitude:
+      example: "9.370833"
+      type: number
+      format: double
+    GeographicCoordinatesAltitude:
+      description: "The elevation of the location in meters."
+      example: "1234.56"
+      type: number
+      format: double
+    AddressType:
+      type: object
+      properties:
+        name:
+          $ref: '#/components/schemas/AddressTypeName'
+        url:
+          $ref: '#/components/schemas/AddressTypeUrl'
+        technicalKey:
+          $ref: '#/components/schemas/AddressTypeTechnicalKey'
+    AddressTypeName:
+      type: string
+    AddressTypeUrl:
+      type: string
+    AddressTypeTechnicalKey:
+      type: string
+    Language:
+      type: object
+      properties:
+        name:
+          $ref: '#/components/schemas/LanguageName'
+        technicalKey:
+          $ref: '#/components/schemas/LanguageTechnicalKey'
+    LanguageName:
+      type: string
+      description: ISO 639-1 name of language
+      example: German
+    LanguageTechnicalKey:
+      type: string
+      description: ISO 639-1 two-letter code of languages
+      example: "DE"
+    BusinessPartnerRelation:
+      type: object
+      description: Describes intra- or inter-company relations
+      properties:
+        startedAt:
+          $ref : '#/components/schemas/BusinessPartnerRelationStartedAt'
+        endedAt:
+          $ref : '#/components/schemas/BusinessPartnerRelationEndedAt'
+        type:
+          $ref : '#/components/schemas/BusinessPartnerRelationType'
+        class:
+          $ref: '#/components/schemas/BusinessPartnerRelationClass'
+        startNode:
+          $ref : '#/components/schemas/BusinessPartnerRelationStartNode'
+        endNode:
+          $ref : '#/components/schemas/BusinessPartnerRelationEndNode'
+    BusinessPartnerRelationStartedAt:
+       type: string
+       description: ISO 8601 representation of the timestamp when the relation was created
+       example: 2019-08-31T16:47+00:00
+    BusinessPartnerRelationEndedAt:
+      type: string
+      description: ISO 8601 representation of the timestamp when the relation ended
+      example: 2019-08-31T16:47+00:00
+    BusinessPartnerRelationStartNode:
+      type: string
+      description: CX ID of the starting node
+      example: "FR.RC:5664645"
+    BusinessPartnerRelationEndNode:
+      type: string
+      description: CX ID of the target node
+      example: "FR.RC:5664645"
+    BusinessPartnerRelationType:
+      type: object
+      properties:
+        technicalKey:
+          $ref : '#/components/schemas/BusinessPartnerRelationTypeTechnicalKey'
+        name:
+          $ref : '#/components/schemas/BusinessPartnerRelationTypeName'
+    BusinessPartnerRelationTypeTechnicalKey:
+      type: string
+      example: "BRANCH"
+    BusinessPartnerRelationTypeName:
+      type: string
+      example: "Organizational Unit"
+    BusinessPartnerRelationClass:
+      type: object
+      properties:
+        technicalKey:
+          $ref: '#/components/schemas/BusinessPartnerRelationClassTechnicalKey'
+        name:
+          $ref: '#/components/schemas/BusinessPartnerRelationClassName'
+    BusinessPartnerRelationClassTechnicalKey:
+      type: string
+      example: "BUSINESS_PARTNER_RELATION_CLASS_CX_HIERARCHY"
+    BusinessPartnerRelationClassName:
+      type: string
+      example: "CX Hierarchy"
+    BankAccount:
+      type: object
+      description: A bank account record holds information that universally describes a registered bank account
+      properties:
+        internationalBankAccountIdentifier:
+          $ref : "#/components/schemas/InternationalBankAccountIdentifier"
+        internationalBankIdentifier:
+          $ref : "#/components/schemas/InternationalBankIdentifier"
+        nationalBankAccountIdentifier:
+          $ref: "#/components/schemas/NationalBankAccountIdentifier"
+        nationalBankIdentifier:
+          $ref: "#/components/schemas/NationalBankIdentifier"
+        bank:
+          $ref: "#/components/schemas/Bank"
+    Bank:
+      type: object
+      description: The bank where a bank account is established
+      properties:
+        name:
+          $ref: "#/components/schemas/BankName"
+        branch:
+          $ref: "#/components/schemas/BankBranch"
+        address:
+          $ref: "#/components/schemas/BankAddress"
+    BankAddress:
+      type: object
+      description: The address where a bank resides
+      properties:
+        localities:
+          type: array
+          items:
+            $ref : '#/components/schemas/Locality'
+        country:
+          $ref : '#/components/schemas/Country'
+        administrativeAreas:
+          type: array
+          items:
+            $ref : '#/components/schemas/AdministrativeArea'
+        postCodes:
+          type: array
+          items:
+            $ref : '#/components/schemas/PostCode'
+        thoroughfares:
+          type: array
+          items:
+            $ref : '#/components/schemas/Thoroughfare'
+    InternationalBankAccountIdentifier:
+      description: The IBAN of a bank account.
+      type: string
+    InternationalBankIdentifier:
+      description: (BIC/SWIFT) Bank identifier which is globally unique.
+      type: string
+    NationalBankIdentifier:
+      description: Bank identifier which is unique in a national context, i.e. for a country.
+      type: string
+    NationalBankAccountIdentifier:
+      description: Identifier of a bank account in a national context, i.e. for a country.
+      type: string
+    BankName:
+      description: The name of a bank
+      type: string
+      example: Sparda Bank
+    BankBranch:
+      description: The branch of a bank
+      type: string
+      example: Filiale München
