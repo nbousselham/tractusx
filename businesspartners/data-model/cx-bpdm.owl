@@ -485,6 +485,7 @@
                     <rdf:Description rdf:about="http://catena-x.net/bpdm#GREEK"/>
                     <rdf:Description rdf:about="http://catena-x.net/bpdm#HANGUL_KOREAN"/>
                     <rdf:Description rdf:about="http://catena-x.net/bpdm#HEBREW"/>
+                    <rdf:Description rdf:about="http://catena-x.net/bpdm#HIRAGANA"/>
                     <rdf:Description rdf:about="http://catena-x.net/bpdm#KANJI"/>
                     <rdf:Description rdf:about="http://catena-x.net/bpdm#KATAKANA"/>
                     <rdf:Description rdf:about="http://catena-x.net/bpdm#LATIN"/>
@@ -1427,6 +1428,15 @@
     <owl:NamedIndividual rdf:about="http://catena-x.net/bpdm#HEBREW">
         <rdf:type rdf:resource="http://catena-x.net/bpdm#CharacterSet"/>
         <rdfs:comment>Hebrew characters, e.g., א‎, ב‎, ג‎, ד‎, ה.</rdfs:comment>
+    </owl:NamedIndividual>
+    
+
+
+    <!-- http://catena-x.net/bpdm#HIRAGANA -->
+
+    <owl:NamedIndividual rdf:about="http://catena-x.net/bpdm#HIRAGANA">
+        <rdf:type rdf:resource="http://catena-x.net/bpdm#CharacterSet"/>
+        <rdfs:comment>Japanese characters, e.g., あ, い, う, え, お.</rdfs:comment>
     </owl:NamedIndividual>
     
 
