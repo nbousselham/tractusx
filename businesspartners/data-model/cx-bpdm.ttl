@@ -161,15 +161,38 @@
 
 ###  http://catena-x.net/bpdm#AdministrativeArea
 :AdministrativeArea rdf:type owl:Class ;
-                    rdfs:subClassOf [ owl:intersectionOf ( :DataElement
+                    rdfs:subClassOf [ owl:intersectionOf ( [ rdf:type owl:Restriction ;
+                                                             owl:onProperty :hasElement ;
+                                                             owl:someValuesFrom :AdministrativeAreaCode
+                                                           ]
                                                            [ rdf:type owl:Restriction ;
                                                              owl:onProperty :hasElement ;
                                                              owl:qualifiedCardinality "1"^^xsd:nonNegativeInteger ;
                                                              owl:onClass :AdministrativeAreaType
                                                            ]
+                                                           [ rdf:type owl:Restriction ;
+                                                             owl:onProperty :hasValue ;
+                                                             owl:minCardinality "1"^^xsd:nonNegativeInteger
+                                                           ]
                                                          ) ;
                                       rdf:type owl:Class
                                     ] .
+
+
+###  http://catena-x.net/bpdm#AdministrativeAreaCode
+:AdministrativeAreaCode rdf:type owl:Class ;
+                        rdfs:subClassOf [ owl:intersectionOf ( [ rdf:type owl:Restriction ;
+                                                                 owl:onProperty :hasElement ;
+                                                                 owl:qualifiedCardinality "1"^^xsd:nonNegativeInteger ;
+                                                                 owl:onClass :GenericType
+                                                               ]
+                                                               [ rdf:type owl:Restriction ;
+                                                                 owl:onProperty :hasValue ;
+                                                                 owl:cardinality "1"^^xsd:nonNegativeInteger
+                                                               ]
+                                                             ) ;
+                                          rdf:type owl:Class
+                                        ] .
 
 
 ###  http://catena-x.net/bpdm#AdministrativeAreaType
@@ -1382,6 +1405,8 @@
   owl:members ( :Address
                 :AddressType
                 :AddressVersion
+                :AdministrativeArea
+                :AdministrativeAreaCode
                 :AdministrativeAreaType
                 :BankAccount
                 :BusinessPartner
@@ -1412,55 +1437,34 @@
 
 
 [ rdf:type owl:AllDisjointClasses ;
-  owl:members ( :AdministrativeArea
-                :BusinessPartnerClassification
-                :CareOf
-                :Country
-                :Identifier
-                :InternationalBankAccountIdentifier
-                :InternationalBankIdentifier
-                :IssuingAgency
-                :LegalForm
-                :Locality
-                :Name
-                :NationalBankAccountIdentifier
-                :NationalBankIdentifier
-                :PostCode
-                :PostalDeliveryPoint
-                :Premise
-                :Thoroughfare
-              )
-] .
-
-
-[ rdf:type owl:AllDisjointClasses ;
-  owl:members ( :AdministrativeArea
-                :CareOf
-                :Country
-                :Identifier
-                :IssuingAgency
-                :LegalForm
-                :Locality
-                :Name
-                :PostCode
-                :PostalDeliveryPoint
-                :Premise
-                :Thoroughfare
-              )
-] .
-
-
-[ rdf:type owl:AllDisjointClasses ;
-  owl:members ( :AdministrativeArea
-                :Country
-                :Identifier
-                :LegalForm
-                :Locality
-                :Name
-                :PostCode
-                :PostalDeliveryPoint
-                :Premise
-                :Thoroughfare
+  owl:members ( :Address
+                :AddressType
+                :AddressVersion
+                :AdministrativeAreaType
+                :BankAccount
+                :BusinessPartner
+                :BusinessPartnerProfile
+                :BusinessPartnerRelation
+                :BusinessPartnerStatus
+                :BusinessPartnerType
+                :CharacterSet
+                :ClassificationType
+                :Currency
+                :DataElement
+                :GenericType
+                :HardeningGrade
+                :LocalityType
+                :NameType
+                :PostCodeType
+                :PostalDeliveryPointType
+                :PremiseType
+                :Registration
+                :RegistrationStatus
+                :RelationClass
+                :RelationType
+                :Role
+                :ThoroughfareType
+                :TrustScore
               )
 ] .
 
