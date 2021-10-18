@@ -35,6 +35,11 @@
 #    Data properties
 #################################################################
 
+###  http://catena-x.net/bpdm#endedAt
+:endedAt rdf:type owl:DatatypeProperty ;
+         rdfs:range xsd:dateTimeStamp .
+
+
 ###  http://catena-x.net/bpdm#hasLanguage
 :hasLanguage rdf:type owl:DatatypeProperty ;
              rdfs:range xsd:language .
@@ -63,6 +68,11 @@
 ###  http://catena-x.net/bpdm#lastUpdate
 :lastUpdate rdf:type owl:DatatypeProperty ;
             rdfs:range xsd:dateTimeStamp .
+
+
+###  http://catena-x.net/bpdm#startedAt
+:startedAt rdf:type owl:DatatypeProperty ;
+           rdfs:range xsd:dateTimeStamp .
 
 
 #################################################################
@@ -257,6 +267,10 @@
                                                         ]
                                                         [ rdf:type owl:Restriction ;
                                                           owl:onProperty :hasElement ;
+                                                          owl:someValuesFrom :BusinessPartnerType
+                                                        ]
+                                                        [ rdf:type owl:Restriction ;
+                                                          owl:onProperty :hasElement ;
                                                           owl:someValuesFrom :LegalForm
                                                         ]
                                                         [ rdf:type owl:Restriction ;
@@ -271,11 +285,6 @@
                                                           owl:onProperty :hasElement ;
                                                           owl:minQualifiedCardinality "1"^^xsd:nonNegativeInteger ;
                                                           owl:onClass :Identifier
-                                                        ]
-                                                        [ rdf:type owl:Restriction ;
-                                                          owl:onProperty :hasElement ;
-                                                          owl:qualifiedCardinality "1"^^xsd:nonNegativeInteger ;
-                                                          owl:onClass :BusinessPartnerType
                                                         ]
                                                         [ rdf:type owl:Restriction ;
                                                           owl:onProperty :hasElement ;
@@ -334,6 +343,16 @@
                                                                   owl:onProperty :hasStartNode ;
                                                                   owl:qualifiedCardinality "1"^^xsd:nonNegativeInteger ;
                                                                   owl:onClass :BusinessPartner
+                                                                ]
+                                                                [ rdf:type owl:Restriction ;
+                                                                  owl:onProperty :endedAt ;
+                                                                  owl:maxQualifiedCardinality "1"^^xsd:nonNegativeInteger ;
+                                                                  owl:onDataRange xsd:dateTimeStamp
+                                                                ]
+                                                                [ rdf:type owl:Restriction ;
+                                                                  owl:onProperty :startedAt ;
+                                                                  owl:maxQualifiedCardinality "1"^^xsd:nonNegativeInteger ;
+                                                                  owl:onDataRange xsd:dateTimeStamp
                                                                 ]
                                                               ) ;
                                            rdf:type owl:Class
@@ -1474,6 +1493,19 @@
                 :hasEndNode
                 :hasRole
                 :hasStartNode
+              )
+] .
+
+
+[ rdf:type owl:AllDisjointProperties ;
+  owl:members ( :endedAt
+                :hasLanguage
+                :hasNumber
+                :hasShortName
+                :hasValue
+                :initialRegistration
+                :lastUpdate
+                :startedAt
               )
 ] .
 

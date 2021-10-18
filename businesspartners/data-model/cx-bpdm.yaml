@@ -1,8 +1,8 @@
 openapi: 3.0.0
 info:
   description: >
-    This specification provides the Reference Domain Object Model 
-    (RDOM) for the Business Partner domain in Catena-X (CX)
+    This specification provides the Reference Domain Object Model (RDOM) for 
+    the Business Partner domain in Catena-X (CX)
   title: Catena-X RDOM Business Partner
   version: "1.0"
 
@@ -29,8 +29,6 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/Address'
-        externalId:
-          $ref: '#/components/schemas/BusinessPartnerExternalId'
         profile:
           $ref: '#/components/schemas/BusinessPartnerProfile'
         relations:
@@ -45,6 +43,10 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/BankAccount'
+        roles:
+          type: array
+          items:
+            $ref: '#/components/schemas/Role'
     BusinessPartnerType:
       type: object
       properties:
@@ -61,113 +63,12 @@ components:
     BusinessPartnerTypeTechnicalKey:
       type: string
     BusinessPartnerProfile:
-      description: Additional documentation can be found [here](https://meta.cdq.ch/Partner_profile).
       type: object
       properties:
-        minorityIndicator:
-          $ref: '#/components/schemas/MinorityIndicator'
         classifications:
           type: array
           items:
             $ref: '#/components/schemas/BusinessPartnerClassification'
-        phoneNumbers:
-          type: array
-          items:
-            $ref: '#/components/schemas/PhoneNumber'
-        websites:
-          type: array
-          items:
-            $ref: '#/components/schemas/Website'
-        contactEmails:
-          type: array
-          items:
-            $ref: '#/components/schemas/ContactEmail'
-    ContactEmail:
-      type: object
-      properties:
-        value:
-          $ref: '#/components/schemas/ContactEmailValue'
-    ContactEmailValue:
-      type: string
-    Website:
-      type: object
-      properties:
-        url:
-          $ref: '#/components/schemas/WebsiteUrl'
-        type:
-          $ref: '#/components/schemas/WebsiteType'
-    WebsiteType:
-      type: object
-      properties:
-        url:
-          $ref: '#/components/schemas/WebsiteTypeUrl'
-        name:
-          $ref:  '#/components/schemas/WebsiteTypeName'
-        technicalKey:
-          $ref: '#/components/schemas/WebsiteTypeTechnicalKey'
-    WebsiteTypeUrl:
-      type: string
-    WebsiteTypeName:
-      type: string
-    WebsiteTypeTechnicalKey:
-      type: string
-    WebsiteUrl:
-      type: string
-    PhoneNumber:
-      type: object
-      properties:
-        countryPrefix:
-          $ref: '#/components/schemas/PhoneNumberCountryPrefix'
-        number:
-          $ref: '#/components/schemas/PhoneNumberNumber'
-        type:
-          $ref: "#/components/schemas/PhoneNumberType"
-        value:
-          $ref: '#/components/schemas/PhoneNumberValue'
-    PhoneNumberCountryPrefix:
-      type: string
-      description: The country prefix of a phone number
-    PhoneNumberNumber:
-      type: string
-      description: The complete phone number without any country prefixes.
-    PhoneNumberValue:
-      type: string
-      description: The actual complete phone number incl. country prefix
-    PhoneNumberType:
-      type: object
-      description: Allowed types are documented [here](https://meta.cdq.com/Business_partner/partner_profile/phone_number/type).
-      properties:
-        name:
-          $ref: '#/components/schemas/PhoneNumberTypeName'
-        url:
-          $ref: '#/components/schemas/PhoneNumberTypeUrl'
-    PhoneNumberTypeName:
-      type: string
-    PhoneNumberTypeUrl:
-      type: string
-    MinorityIndicator:
-      description: >
-        The minority indicator determines the minority group to which a vendor 
-        belongs. Usually, the minority indicator is only relevant in the 
-        United States and it is used for reporting purposes only. There is a 
-        corresponding SAP field in the vendor master for maintaining the 
-        minority indicator.
-        This feature is as of today dependent on data provided by a US based 
-        company: SupplierGateway.
-        Additional documentation can be found 
-        [here](https://meta.cdq.ch/Partner_profile/minority_indicator).
-      type: object
-      properties:
-        value:
-          $ref: '#/components/schemas/MinorityIndicatorValue'
-    MinorityIndicatorValue:
-      type: string
-    BusinessPartnerExternalId:
-      type: string
-      description: "ID the record has in the external system where the record originates from."
-    AddressExternalId:
-      type: string
-      description: "ID the address has in the external system where the record originates from."
     AddressVersion:
       type: object
       properties:
@@ -185,19 +86,21 @@ components:
           $ref: '#/components/schemas/CharacterSetTechnicalKey'
     CharacterSetName:
       type: string
-      description: Name of character set. Supported character sets can be found [here](https://meta.cdq.com/Address/version/character_set).
+      description: Name of character set.
       example: International
     CharacterSetTechnicalKey:
       type: string
-      description: Technical key of character set. Supported character sets can be found [here](https://meta.cdq.com/Address/version/character_set).
+      description: Technical key of character set.
       example: "INTERNATIONAL"
     Address:
       type: object
       properties:
+        identifiers:
+          type: array
+          items:
+            $ref: '#/components/schemas/Identifier'
         version:
           $ref: '#/components/schemas/AddressVersion'
-        externalId:
-          $ref: '#/components/schemas/AddressExternalId'
         careOf:
           $ref: '#/components/schemas/CareOf'
         contexts:
@@ -355,7 +258,6 @@ components:
       type: string
     LegalFormUrl:
       type: string
-      example: https://meta.cdq.com/Business_partner/legal_form/technical_key/DE_9866
     Identifier:
       type: object
       properties:
@@ -796,40 +698,12 @@ components:
           $ref: "#/components/schemas/NationalBankAccountIdentifier"
         nationalBankIdentifier:
           $ref: "#/components/schemas/NationalBankIdentifier"
-        bank:
-          $ref: "#/components/schemas/Bank"
-    Bank:
-      type: object
-      description: The bank where a bank account is established
-      properties:
-        name:
-          $ref: "#/components/schemas/BankName"
-        branch:
-          $ref: "#/components/schemas/BankBranch"
-        address:
-          $ref: "#/components/schemas/BankAddress"
-    BankAddress:
-      type: object
-      description: The address where a bank resides
-      properties:
-        localities:
+        currency:
+          $ref: "#/components/schemas/Currency"
+        trustScores:
           type: array
           items:
-            $ref : '#/components/schemas/Locality'
-        country:
-          $ref : '#/components/schemas/Country'
-        administrativeAreas:
-          type: array
-          items:
-            $ref : '#/components/schemas/AdministrativeArea'
-        postCodes:
-          type: array
-          items:
-            $ref : '#/components/schemas/PostCode'
-        thoroughfares:
-          type: array
-          items:
-            $ref : '#/components/schemas/Thoroughfare'
+            $ref: "#/components/schemas/TrustScore"
     InternationalBankAccountIdentifier:
       description: The IBAN of a bank account.
       type: string
@@ -842,11 +716,63 @@ components:
     NationalBankAccountIdentifier:
       description: Identifier of a bank account in a national context, i.e. for a country.
       type: string
-    BankName:
-      description: The name of a bank
+    Currency:
+      type: object
+      properties:
+        technicalKey:
+          $ref: '#/components/schemas/CurrencyTechnicalKey'
+        name:
+          $ref: '#/components/schemas/CurrencyName'
+    CurrencyTechnicalKey:
       type: string
-      example: Sparda Bank
-    BankBranch:
-      description: The branch of a bank
+    CurrencyName:
       type: string
-      example: Filiale München
+    Role:
+      type: object
+      properties:
+        technicalKey:
+          $ref: '#/components/schemas/RoleTechnicalKey'
+        name:
+          $ref: '#/components/schemas/RoleName'
+    RoleTechnicalKey:
+      type: string
+    RoleName:
+      type: string
+    Registration:
+      type: object
+      properties:
+        hardeningGrade:
+          $ref: '#/components/schemas/HardeningGrade'
+        issuingAgency:
+          $ref: '#/components/schemas/IssuingAgency'
+        initialRegistration:
+          type: string
+          example: 2019-08-31T16:47+00:00
+        lastUpdate:
+          type: string
+          example: 2019-08-31T16:47+00:00
+    HardeningGrade:
+      type: object
+      properties:
+        hardeningGradeTechnicalKey:
+          type: string
+          example: GOLD
+        hardeningGradeName:
+          type: string
+          example: Gold
+    IssuingAgency:
+      type: object
+      properties:
+        shortName:
+          $ref: '#/components/schemas/IssuingAgencyShortName'
+        value:
+          $ref: '#/components/schemas/IssuingAgencyName'
+    IssuingAgencyShortName:
+      type: string
+    IssuingAgencyName:
+      type: string
+    TrustScore:
+      type: object
+      properties:
+        score:
+          type: number
