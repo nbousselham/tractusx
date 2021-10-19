@@ -91,7 +91,7 @@ services:
         done
 
   kafka-ui:
-    image: provectuslabs/kafka-ui:latest
+    image: provectuslabs/kafka-ui:master
     container_name: kafka-ui
     depends_on:
       - kafka
