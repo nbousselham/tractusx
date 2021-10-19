@@ -872,7 +872,7 @@
 ###  http://catena-x.net/bpdm#CITY
 :CITY rdf:type owl:NamedIndividual ,
                :LocalityType ;
-      rdfs:comment "A large and permanent human settlement." .
+      rdfs:comment "A permanent human settlement." .
 
 
 ###  http://catena-x.net/bpdm#COMMERCIAL_ULTIMATE
@@ -946,7 +946,7 @@
 ###  http://catena-x.net/bpdm#DISTRICT
 :DISTRICT rdf:type owl:NamedIndividual ,
                    :LocalityType ;
-          rdfs:comment "Subdivision of larger cities, mostly providing administrative services to the district residents." .
+          rdfs:comment "Subdivision or own part of a city, or smaller settlements as part of a larger commune (Marktgemeinde, e.g., City: \"Hirschaid\", District: \"Ortsteil Friesen\"), mostly providing administrative services to the district residents." .
 
 
 ###  http://catena-x.net/bpdm#DNB_DOMESTIC_ULTIMATE
