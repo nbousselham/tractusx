@@ -1,0 +1,21 @@
+
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ include "clearinghouse.fullname" . }}
+  labels:
+    {{- include "clearinghouse.labels" . | nindent 4 }}
+data:
+  config.yml : |
+    database_url: localhost
+    database_port: 27017
+    init_db: true
+
+    document_api_url: http://localhost:8001
+    blockchain_api_url: http://172.31.6.49:8003
+    keyring_api_url: http://localhost:8002
+    daps_api_url: https://catenaxdev001akssrv.germanywestcentral.cloudapp.azure.com/daps
+    server_name: https://catenaxdev001akssrv.germanywestcentral.cloudapp.azure.com/tsy/ch/
+    server_model: 4.0.0
+    server_agent: https://catenaxdev001akssrv.germanywestcentral.cloudapp.azure.com/tsy/ch
+
