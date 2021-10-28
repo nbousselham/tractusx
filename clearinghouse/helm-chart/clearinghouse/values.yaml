@@ -44,13 +44,16 @@ service:
 ingress:
   enabled: true
   className: ""
-  annotations: {}
+  annotations:
+    nginx.ingress.kubernetes.io/x-forwarded-prefix: "/tsy/ch"
+    nginx.ingress.kubernetes.io/rewrite-target: /$2
+    nginx.ingress.kubernetes.io/use-regex: "true"
     # kubernetes.io/ingress.class: nginx
     # kubernetes.io/tls-acme: "true"
   hosts:
     - host: catenaxdev001akssrv.germanywestcentral.cloudapp.azure.com
       paths:
-        - path: /tsy/ch
+        - path: /tsy/ch(/|$)(.*)
           pathType: ImplementationSpecific
   tls:
    - secretName: daps-omejdn-server-tls
