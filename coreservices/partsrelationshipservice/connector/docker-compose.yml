@@ -8,6 +8,8 @@ services:
       target: provider
     ports:
       - 8181:8181
+    volumes:
+      - shared-volume:/tmp/copy
 
   consumer:
     build:
@@ -23,7 +25,14 @@ services:
              chmod +x wait-for-it.sh  &&
              ./wait-for-it.sh provider:8181 &&
              ./wait-for-it.sh consumer:9191 &&
-             curl -X POST 'http://consumer:9191/api/file/test-document?connectorAddress=http://provider:8181/&destination=/tmp/huhu' &&
+             mkdir -p /tmp/copy/source /tmp/copy/dest &&
+             echo value-in-test-document > /tmp/copy/source/test-document.txt &&
+             curl -X POST 'http://consumer:9191/api/file/test-document?connectorAddress=http://provider:8181/&destination=/tmp/copy/dest/new-document.txt' &&
              sleep 10 &&
-             cat /tmp/huhu"
+             cat /tmp/copy/dest/new-document.txt"
+    volumes:
+      - shared-volume:/tmp/copy
 
+
+volumes:
+  shared-volume:
