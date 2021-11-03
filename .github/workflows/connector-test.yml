@@ -1,0 +1,23 @@
+name: Connector sample CI
+
+on:
+  pull_request:
+    branches: [ main ]
+    paths:
+      - 'coreservices/partsrelationshipservice/connector/**'
+      - '.github/workflows/connector-test.yml'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: coreservices/partsrelationshipservice/connector
+
+    steps:
+      - uses: actions/checkout@v2
+      - name: Run sample test
+        run: |
+          set -euo pipefail
+          ./run-integration-test.sh
+
