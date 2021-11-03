@@ -22,6 +22,6 @@ jobs:
           set -euo pipefail
           ./run-integration-test.sh
         env:
-          PRS_EDC_PKG_USERNAME=${{ secrets.PRS_EDC_PKG_USERNAME }}
-          PRS_EDC_PKG_PASSWORD=${{ secrets.PRS_EDC_PKG_PASSWORD }}
+          PRS_EDC_PKG_USERNAME: ${{ secrets.PRS_EDC_PKG_USERNAME }}
+          PRS_EDC_PKG_PASSWORD: ${{ secrets.PRS_EDC_PKG_PASSWORD }}
 
