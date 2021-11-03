@@ -1,17 +1,16 @@
 FROM maven:3-jdk-11 AS maven
-
-RUN git clone https://github.com/eclipse-dataspaceconnector/DataSpaceConnector.git
-WORKDIR DataSpaceConnector
-RUN --mount=type=cache,target=/root/.gradle --mount=type=cache,target=/root/.m2 ./gradlew publishToMavenLocal -x test
+ARG GITHUB_PKG_USERNAME
+ARG GITHUB_PKG_PASSWORD
 
 WORKDIR /build
-COPY pom.xml pom.xml
+COPY pom.xml .
+COPY settings.xml .
 COPY prs-connector-consumer prs-connector-consumer
 COPY prs-connector-parent prs-connector-parent
 COPY prs-connector-provider prs-connector-provider
 
 # the --mount option requires BuildKit.
-RUN --mount=type=cache,target=/root/.m2 mvn -B clean package
+RUN --mount=type=cache,target=/root/.m2 mvn -B -s settings.xml clean package
 
 FROM adoptopenjdk:11-jre-hotspot AS runtime
 
