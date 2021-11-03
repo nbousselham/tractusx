@@ -10,10 +10,10 @@
     </parent>
 
   <groupId>net.catenax.prs</groupId>
-  <artifactId>prs-connector-provider</artifactId>
+  <artifactId>prs-connector-consumer</artifactId>
   <version>0.0.1-SNAPSHOT</version>
-  <name>PRS API</name>
-  <description>Part Relationship Service</description>
+  <name>PRS Connector Consumer</name>
+  <description>Part Relationship Service Connector Consumer</description>
   <dependencies>
     <dependency>
       <groupId>jakarta.ws.rs</groupId>
