@@ -13,10 +13,6 @@ Copy `settings.xml` into your `~/.m2/` folder (or merge it with a file already t
 <password>your_github_pat_token</password>
 ```
 
-
-
 ## Docker build
 
-```
-docker build  --build-arg GITHUB_PKG_USERNAME=your_github_username --build-arg GITHUB_PKG_PASSWORD=your_github_pat_token --progress=plain .
-```
+See `run-integration-test.sh` file.

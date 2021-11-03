@@ -1,4 +1,4 @@
-name: Connector sample CI
+name: PRS Connector sample CI
 
 on:
   pull_request:
@@ -21,4 +21,7 @@ jobs:
         run: |
           set -euo pipefail
           ./run-integration-test.sh
+        env:
+          PRS_EDC_PKG_USERNAME=${{ secrets.PRS_EDC_PKG_USERNAME }}
+          PRS_EDC_PKG_PASSWORD=${{ secrets.PRS_EDC_PKG_PASSWORD }}
 
