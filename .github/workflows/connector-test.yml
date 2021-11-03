@@ -15,6 +15,7 @@ jobs:
         working-directory: coreservices/partsrelationshipservice/connector
 
     steps:
+      - timeout-minutes: 5
       - uses: actions/checkout@v2
       - name: Run sample test
         run: |
