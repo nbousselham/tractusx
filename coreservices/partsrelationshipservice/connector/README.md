@@ -16,3 +16,11 @@ Copy `settings.xml` into your `~/.m2/` folder (or merge it with a file already t
 ## Docker build
 
 See `run-integration-test.sh` file.
+
+## Running tests
+
+```
+export PRS_EDC_PKG_USERNAME=your_github_username
+export PRS_EDC_PKG_PASSWORD=your_github_pat_token
+./run-integration-test.sh
+```
