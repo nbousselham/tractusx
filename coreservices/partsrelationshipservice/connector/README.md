@@ -4,6 +4,10 @@ Create a token in GitHub, limited to **read:packages** scope.
 
 ![token](token.png)
 
+Configure the following GitHub *repository secrets*:
+- PRS_EDC_PKG_USERNAME (your_github_username)
+- PRS_EDC_PKG_PASSWORD (your_github_pat_token)
+
 ## Local build
 
 Copy `settings.xml` into your `~/.m2/` folder (or merge it with a file already there), and replace the environment variable references with the following:
