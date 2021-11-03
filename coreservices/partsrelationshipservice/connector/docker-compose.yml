@@ -23,13 +23,14 @@ services:
     command: >
       sh -c "curl -O https://raw.githubusercontent.com/vishnubob/wait-for-it/master/wait-for-it.sh &&
              chmod +x wait-for-it.sh  &&
-             ./wait-for-it.sh provider:8181 &&
-             ./wait-for-it.sh consumer:9191 &&
+             curl -O https://raw.githubusercontent.com/kadwanev/retry/master/retry &&
+             chmod +x retry  &&
+             ./wait-for-it.sh -t 60 provider:8181 &&
+             ./wait-for-it.sh -t 60 consumer:9191 &&
              mkdir -p /tmp/copy/source /tmp/copy/dest &&
              echo value-in-test-document > /tmp/copy/source/test-document.txt &&
              curl -X POST 'http://consumer:9191/api/file/test-document?connectorAddress=http://provider:8181/&destination=/tmp/copy/dest/new-document.txt' &&
-             sleep 10 &&
-             cat /tmp/copy/dest/new-document.txt"
+             ./retry -t 15 'cat /tmp/copy/dest/new-document.txt'"
     volumes:
       - shared-volume:/tmp/copy
 
