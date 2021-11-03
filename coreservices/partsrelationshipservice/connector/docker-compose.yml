@@ -8,8 +8,6 @@ services:
       target: provider
     ports:
       - 8181:8181
-    healthcheck:
-        test: ["CMD", "curl", "-f", "http://localhost:8181"]
 
   consumer:
     build:
@@ -17,16 +15,14 @@ services:
       target: consumer
     ports:
       - 9191:9191
-    healthcheck:
-        test: ["CMD", "curl", "-f", "http://localhost:9191"]
 
   integration-test:
     image: adoptopenjdk:11-jre-hotspot
-    depends_on:
-      - provider
-      - consumer
     command: >
-      sh -c "sleep 10 &&
+      sh -c "curl -O https://raw.githubusercontent.com/vishnubob/wait-for-it/master/wait-for-it.sh &&
+             chmod +x wait-for-it.sh  &&
+             ./wait-for-it.sh provider:8181 &&
+             ./wait-for-it.sh consumer:9191 &&
              curl -X POST 'http://consumer:9191/api/file/test-document?connectorAddress=http://provider:8181/&destination=/tmp/huhu' &&
              sleep 10 &&
              cat /tmp/huhu"
