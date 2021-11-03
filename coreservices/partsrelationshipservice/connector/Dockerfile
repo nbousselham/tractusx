@@ -21,6 +21,7 @@ ENTRYPOINT ["java", "-jar", "app.jar"]
 FROM runtime AS provider
 COPY --from=maven /build/prs-connector-provider/target/prs-connector-*.jar app.jar
 COPY --from=maven /build/prs-connector-provider/dataspaceconnector-configuration.properties .
+RUN echo value-in-test-document > /tmp/test-document.txt
 
 FROM runtime AS consumer
 COPY --from=maven /build/prs-connector-consumer/target/prs-connector-*.jar app.jar
