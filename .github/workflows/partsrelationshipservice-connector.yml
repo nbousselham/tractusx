@@ -18,9 +18,7 @@ jobs:
       - uses: actions/checkout@v2
       - name: Run sample test
         timeout-minutes: 5
-        run: |
-          set -euo pipefail
-          ./run-integration-test.sh
+        run: ./run-integration-test.sh
         env:
           PRS_EDC_PKG_USERNAME: ${{ secrets.PRS_EDC_PKG_USERNAME }}
           PRS_EDC_PKG_PASSWORD: ${{ secrets.PRS_EDC_PKG_PASSWORD }}
