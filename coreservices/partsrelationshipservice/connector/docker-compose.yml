@@ -30,7 +30,7 @@ services:
              mkdir -p /tmp/copy/source /tmp/copy/dest &&
              echo value-in-test-document > /tmp/copy/source/test-document.txt &&
              curl -X POST 'http://consumer:9191/api/file/test-document?connectorAddress=http://provider:8181/&destination=/tmp/copy/dest/new-document.txt' &&
-             ./retry -t 15 'cat /tmp/copy/dest/new-document.txt'"
+             ./retry -t 15 'cat /tmp/copy/dest/new-document1.txt'"
     volumes:
       - shared-volume:/tmp/copy
 
