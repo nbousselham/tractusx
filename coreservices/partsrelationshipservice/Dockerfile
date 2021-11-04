@@ -1,6 +1,7 @@
 # Dependencies
 FROM maven:3-jdk-11 AS maven
-
+ARG PRS_EDC_PKG_USERNAME
+ARG PRS_EDC_PKG_PASSWORD
 WORKDIR /build
 
 COPY ci ci
