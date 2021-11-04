@@ -3,11 +3,11 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>com.catenax.prs</groupId>
-    <artifactId>parts-relationship-service-root</artifactId>
+    <artifactId>connector-root</artifactId>
     <version>0.0.1-SNAPSHOT</version>
     <packaging>pom</packaging>
 
-    <name>PRS Root</name>
+    <name>Connector Root</name>
     <description>Root module containing other modules.</description>
 
     <modules>
