@@ -27,6 +27,7 @@ services:
              chmod +x retry  &&
              ./wait-for-it.sh -t 60 provider:8181 &&
              ./wait-for-it.sh -t 60 consumer:9191 &&
+             mkdir -p /tmp/copy/dest
              curl -X GET 'http://consumer:9191/api/vins/YS3DD78N4X7055320/partsTree?view=AS_BUILT&connectorAddress=http://provider:8181&destination=/tmp/copy/dest/' &&
              ./retry -t 15 'cat /tmp/copy/dest/*_by_vin.json'"
     volumes:
