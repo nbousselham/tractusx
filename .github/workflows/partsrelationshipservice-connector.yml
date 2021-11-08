@@ -4,7 +4,6 @@ on:
   push:
     branches:
       - main
-      - tmp/5
     paths:
       - coreservices/partsrelationshipservice/connector/*
       - .github/workflows/partsrelationshipservice-connector.yml
