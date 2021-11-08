@@ -13,6 +13,10 @@ jobs:
     defaults:
       run:
         working-directory: coreservices/partsrelationshipservice
+    env:
+      PRS_EDC_PKG_USERNAME: ${{ secrets.PRS_EDC_PKG_USERNAME }}
+      PRS_EDC_PKG_PASSWORD: ${{ secrets.PRS_EDC_PKG_PASSWORD }}
+
 
     steps:
       - uses: actions/checkout@v2
@@ -46,9 +50,7 @@ jobs:
     defaults:
       run:
         working-directory: coreservices/partsrelationshipservice
-    env:
-      PRS_EDC_PKG_USERNAME: ${{ secrets.PRS_EDC_PKG_USERNAME }}
-      PRS_EDC_PKG_PASSWORD: ${{ secrets.PRS_EDC_PKG_PASSWORD }}
+
     steps:
       - uses: actions/checkout@v2
 
