@@ -44,8 +44,7 @@ public class ConsumerApiController {
 
     @POST
     @Path("file/{filename}")
-    public Response initiateTransfer(@PathParam("filename") String filename, @QueryParam("connectorAddress") String connectorAddress,
-                                     @QueryParam("destination") String destinationPath) {
+    public Response initiateTransfer(@PathParam("filename") String filename, @QueryParam("connectorAddress") String connectorAddress) {
 
         monitor.info(format("Received request for file %s against provider %s", filename, connectorAddress));
 
@@ -62,10 +61,9 @@ public class ConsumerApiController {
                         .policyId("use-eu")
                         .build())
                 .dataDestination(DataAddress.Builder.newInstance()
-                        .type("File") //the provider uses this to select the correct DataFlowController
-                        .property("path", destinationPath) //where we want the file to be stored
+                        .type("AzureStorage") //the provider uses this to select the correct DataFlowController
                         .build())
-                .managedResources(false) //we do not need any provisioning
+                .managedResources(true) //we do not need any provisioning
                 .build();
 
         var response = processManager.initiateConsumerRequest(dataRequest);
