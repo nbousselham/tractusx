@@ -13,7 +13,10 @@ public class ApiEndpointExtension implements ServiceExtension {
 
     @Override
     public Set<String> requires() {
-        return Set.of("edc:webservice", "dataspaceconnector:transferprocessstore");
+        return Set.of(
+                "edc:webservice",
+                "dataspaceconnector:transferprocessstore"
+        );
     }
 
     @Override

@@ -27,7 +27,7 @@ public class FileStatusChecker implements StatusChecker {
 
         boolean exists = destinationPath.toFile().exists();
 
-        monitor.info("File status checker: " + exists);
+        monitor.info("File status checker: " + destinationPath + " :" + exists);
 
         return exists;
     }
