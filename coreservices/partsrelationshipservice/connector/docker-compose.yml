@@ -27,7 +27,7 @@ services:
     command: >
       sh -c "curl -O https://raw.githubusercontent.com/vishnubob/wait-for-it/master/wait-for-it.sh &&
              chmod +x wait-for-it.sh  &&
-             curl -O https://raw.githubusercontent.com//kadwanev/retry/master/retry &&
+             curl -O https://raw.githubusercontent.com/kadwanev/retry/master/retry &&
              chmod +x retry  &&
              ./wait-for-it.sh -t 60 provider:8181 &&
              ./wait-for-it.sh -t 60 consumer:9191 &&
