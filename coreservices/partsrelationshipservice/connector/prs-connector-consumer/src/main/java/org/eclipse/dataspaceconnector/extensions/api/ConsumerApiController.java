@@ -29,10 +29,12 @@ public class ConsumerApiController {
 
     private final Monitor monitor;
     private final TransferProcessManager processManager;
+    private final String storageAccountName;
 
-    public ConsumerApiController(Monitor monitor, TransferProcessManager processManager) {
+    public ConsumerApiController(Monitor monitor, TransferProcessManager processManager, String storageAccountName) {
         this.monitor = monitor;
         this.processManager = processManager;
+        this.storageAccountName = storageAccountName;
     }
 
     @GET
@@ -57,11 +59,12 @@ public class ConsumerApiController {
                 .protocol("ids-rest") //must be ids-rest
                 .connectorId("consumer")
                 .dataEntry(DataEntry.Builder.newInstance() //the data entry is the source asset
-                        .id(filename)
+                        .id(filename) // this is an id of an entry from artifact catalog, only test-document available
                         .policyId("use-eu")
                         .build())
                 .dataDestination(DataAddress.Builder.newInstance()
                         .type("AzureStorage") //the provider uses this to select the correct DataFlowController
+                        .property("account", storageAccountName)
                         .build())
                 .managedResources(true) //we do not need any provisioning
                 .build();

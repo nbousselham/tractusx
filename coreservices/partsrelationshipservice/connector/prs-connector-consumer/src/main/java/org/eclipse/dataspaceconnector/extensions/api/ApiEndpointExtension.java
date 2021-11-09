@@ -18,6 +18,7 @@ public class ApiEndpointExtension implements ServiceExtension {
     public void initialize(ServiceExtensionContext context) {
         var webService = context.getService(WebService.class);
         var processManager = context.getService(TransferProcessManager.class);
-        webService.registerController(new ConsumerApiController(context.getMonitor(), processManager));
+        webService.registerController(new ConsumerApiController(context.getMonitor(), processManager, context.getSetting("edc.storage.account.name",
+                "prsspikestorage")));
     }
 }

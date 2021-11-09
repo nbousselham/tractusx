@@ -13,7 +13,3 @@ output "vault-name" {
 output "storage-account-name"{
   value = azurerm_storage_account.main-blobstore.name
 }
-
-output "storage-container-name" {
-  value = azurerm_storage_container.main-blob-container.name
-}

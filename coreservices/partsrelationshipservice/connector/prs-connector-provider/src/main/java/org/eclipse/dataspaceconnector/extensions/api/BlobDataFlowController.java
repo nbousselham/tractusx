@@ -1,5 +1,7 @@
 package org.eclipse.dataspaceconnector.extensions.api;
 
+import org.eclipse.dataspaceconnector.common.azure.BlobStoreApi;
+import org.eclipse.dataspaceconnector.schema.azure.AzureBlobStoreSchema;
 import org.eclipse.dataspaceconnector.spi.monitor.Monitor;
 import org.eclipse.dataspaceconnector.spi.security.Vault;
 import org.eclipse.dataspaceconnector.spi.transfer.flow.DataFlowController;
@@ -20,12 +22,14 @@ public class BlobDataFlowController implements DataFlowController {
     private final Vault vault;
     private final Monitor monitor;
     private final TypeManager typeManager;
+    private final BlobStoreApi blobApi;
 
-    public BlobDataFlowController(Vault vault, Monitor monitor, TypeManager typeManager) {
+    public BlobDataFlowController(Vault vault, Monitor monitor, TypeManager typeManager, BlobStoreApi blobApi) {
 
         this.vault = vault;
         this.monitor = monitor;
         this.typeManager = typeManager;
+        this.blobApi = blobApi;
     }
 
     @Override
@@ -48,6 +52,7 @@ public class BlobDataFlowController implements DataFlowController {
             monitor.severe(format("No credentials found for %s, will not copy!", destinationType));
             return new DataFlowInitiateResponse(ResponseStatus.ERROR_RETRY, "Did not find credentials for data destination.");
         }
+        // not needed if we use BlobStoreApi and account storage key
         var secret = vault.resolveSecret(destSecretName);
 
         monitor.info(format("Copying data from %s to %s", sourceType, destinationType));
@@ -70,7 +75,36 @@ public class BlobDataFlowController implements DataFlowController {
     }
 
     public void write(DataAddress destination, String name, byte[] data, String secretToken) {
-        throw new UnsupportedOperationException("this operation is not yet implemented!");
+
+        var containerName = destination.getProperty(AzureBlobStoreSchema.CONTAINER_NAME);
+        var accountName = destination.getProperty(AzureBlobStoreSchema.ACCOUNT_NAME);
+        var blobName = destination.getProperty(AzureBlobStoreSchema.BLOB_NAME) == null ? name : destination.getProperty(AzureBlobStoreSchema.BLOB_NAME);
+
+        blobApi.putBlob(accountName, containerName, blobName, data);
+
+        monitor.info("Data uploaded into container " + containerName);
+    }
+
+    public void writeWithSas(DataAddress destination, String name, byte[] data, String secretToken) {
+
+//        var containerName = destination.getProperty(AzureBlobStoreSchema.CONTAINER_NAME);
+//        var accountName = destination.getProperty(AzureBlobStoreSchema.ACCOUNT_NAME);
+//        var blobName = destination.getProperty(AzureBlobStoreSchema.BLOB_NAME) == null ? name : destination.getProperty(AzureBlobStoreSchema.BLOB_NAME);
+//        var sasToken = typeManager.readValue(secretToken, AzureSasToken.class);
+//
+//        BlobClient blobClient = new BlobClientBuilder()
+//                .endpoint("https://"+accountName+".blob.core.windows.net")
+//                .containerName(containerName)
+//                .blobName(blobName)
+//                .buildClient();
+//
+//        try (ByteArrayInputStream dataStream = new ByteArrayInputStream(data)) {
+//            blobClient.upload(dataStream, data.length);
+//            monitor.info("File uploaded to Azure storage");
+//        } catch (IOException e) {
+//            monitor.severe("Data transfer to Azure Blob Storage failed", e);
+//        }
+
     }
 
 }
