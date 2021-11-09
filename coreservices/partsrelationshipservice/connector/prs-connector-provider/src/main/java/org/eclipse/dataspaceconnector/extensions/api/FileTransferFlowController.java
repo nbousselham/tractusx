@@ -55,8 +55,9 @@ public class FileTransferFlowController implements DataFlowController {
         }
 
         try {
+            Thread.sleep(2000); // introduce delay to simulate data transfer work
             Files.copy(sourcePath, destinationPath, StandardCopyOption.REPLACE_EXISTING, StandardCopyOption.COPY_ATTRIBUTES);
-        } catch (IOException e) {
+        } catch (IOException | InterruptedException e) {
             String message = "Error copying file " + e.getMessage();
             monitor.severe(message);
             return new DataFlowInitiateResponse(ResponseStatus.FATAL_ERROR, message);
