@@ -29,8 +29,12 @@ public class Job {
         return transferProcessIds;
     }
 
-    public void transitionInitial() {
-        transition(JobState.INITIAL, JobState.UNSAVED);
+    public long getStateTimestamp() {
+        return stateTimestamp;
+    }
+
+    public void transitionInProgress() {
+        transition(JobState.IN_PROGRESS, JobState.UNSAVED);
     }
 
     private void transition(JobState end, JobState... starts) {

@@ -4,7 +4,7 @@ import java.util.Arrays;
 
 public enum JobState {
     UNSAVED(100),
-    INITIAL(100),
+    //INITIAL(100),
     IN_PROGRESS(600),
     COMPLETED(800),
     ERROR(-1);
