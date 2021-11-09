@@ -41,10 +41,12 @@ public class FileTransferFlowController implements DataFlowController {
 
         // verify destination path
         var destinationPath = Path.of(destination.getProperty("path"));
-        if (!destinationPath.toFile().exists()) { //interpret as directory
-            monitor.info("Destination path " + destinationPath + " does not exist, will attempt to create");
+        var destinationParentDirPath = destinationPath.getParent();
+
+        if (!destinationParentDirPath.toFile().exists()) {
+            monitor.info("Destination directory " + destinationParentDirPath + " does not exist, will attempt to create");
             try {
-                Files.createDirectory(destinationPath);
+                Files.createDirectory(destinationParentDirPath);
             } catch (IOException e) {
                 String message = "Error creating directory: " + e.getMessage();
                 monitor.severe(message);
