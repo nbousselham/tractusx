@@ -60,3 +60,23 @@ Create the name of the service account to use
 {{- default "default" .Values.serviceAccount.name }}
 {{- end }}
 {{- end }}
+
+
+{{/*
+Generate private key
+*/}}
+{{- define "gen.secret" -}}
+{{- $secret := lookup "v1" "Secret" .Release.Namespace (include "clearinghouse.fullname" .) -}}
+{{- if $secret -}}
+{{/*
+   Reusing existing secret data
+*/}}
+tls.key: {{ $secret.data.key }}
+{{- else -}}
+{{/*
+    Generate new data
+*/}}
+{{- $key := genPrivateKey "rsa" }}
+tls.key: {{ $key | b64enc }}
+{{- end -}}
+{{- end -}} 

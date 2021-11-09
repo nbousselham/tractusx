@@ -27,6 +27,56 @@ spec:
       serviceAccountName: {{ include "clearinghouse.serviceAccountName" . }}
       securityContext:
         {{- toYaml .Values.podSecurityContext | nindent 8 }}
+      initContainers:
+      - name: download-processor-files
+        image: busybox
+        command:
+          - "sh"
+          - "-c"
+        args:
+        - |
+            cd /tmp
+            wget {{ .Values.ids.processor.jar.link }} -O {{ .Values.ids.processor.jar.filename }}
+            wget {{ .Values.ids.processor.xml.link }} -O {{ .Values.ids.processor.xml.filename }}
+        volumeMounts:
+          - name: processor
+            mountPath: /tmp
+      - name: create-cert
+        env:
+
+        image: mintel/docker-alpine-bash-curl-jq
+        command: 
+        - "sh"
+        - "-c"
+        args:
+        - |          
+          if [ ! -f "/app/certs/tls.crt" ] && [ -f "/app/certs/tls.key" ]; then
+            echo "No cert file but key exists. Generating self-signed cert..."
+            openssl req -x509 -new -key /app/certs/tls.key -days 10000 -out /app/compiled-certs/tls.crt -subj "/CN={{ (index .Values.ingress.hosts 0).host }}"
+            openssl pkcs12 -export -in /app/compiled-certs/tls.crt -inkey /app/certs/tls.key -out /app/compiled-certs/keystore.p12 -name 1 -password pass:password
+            openssl pkcs12 -export -nokeys -in /app/compiled-certs/tls.crt -out /app/compiled-certs/truststore.p12 -password pass:password
+          fi
+          ls -lah /app/compiled-certs/
+          PUBKEY_B64=$(openssl x509 -pubkey -in /app/compiled-certs/tls.crt -noout | sed '1,1d;$ d' | tr -d "\n\r")
+          export SKI=$(openssl x509 -in /app/compiled-certs/tls.crt -ext "subjectKeyIdentifier" -noout | sed -n 2p | xargs)
+          export AKI=$(openssl x509 -in /app/compiled-certs/tls.crt -ext "authorityKeyIdentifier" -noout | sed -n 2p | xargs)
+          echo ClientID:
+          echo $SKI:$AKI
+          echo
+          echo Certificate file:
+          openssl x509 -in /app/compiled-certs/tls.crt
+
+          openssl x509 -in /server/certs/daps.crt -out /app/compiled-certs/daps.der -outform DER 
+        volumeMounts:
+        - name: certificates
+          mountPath: /app/certs
+          readOnly: false
+        - name: processor
+          mountPath: /app/compiled-certs/
+          readOnly: false
+        - name: dapscert
+          mountPath: /server/certs/daps.crt
+          subPath: tls.crt
       containers:
         - name: clearing-house-mongo
           image: mongo
@@ -35,7 +85,8 @@ spec:
             - name: mongo
               containerPort: 27017
               protocol: TCP
-        - name: {{ .Chart.Name }}
+        
+        - name: clearing-house-api
           env:
           - name: ROCKET_ENV
             value: "production"
@@ -45,16 +96,57 @@ spec:
             value: "Debug"
           securityContext:
             {{- toYaml .Values.securityContext | nindent 12 }}
-          image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
-          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          image: "{{ .Values.ids.api.image.repository }}:{{ .Values.ids.api.image.tag | default .Chart.AppVersion }}"
+          imagePullPolicy: {{ .Values.ids.api.image.pullPolicy }}
           ports:
-            - name: http
+            - name: api
               containerPort: 8000
               protocol: TCP
           volumeMounts:
           - name: config
             mountPath: /server/config.yml
             subPath: config.yml
+          - name: processor
+            mountPath: /server/certs/daps.der
+            subPath: daps.der
+        
+        - name: {{ .Chart.Name }}
+          securityContext:
+            {{- toYaml .Values.securityContext | nindent 12 }}
+          image: "{{ .Values.ids.connector.image.repository }}:{{ .Values.ids.connector.image.tag | default .Chart.AppVersion }}"
+          imagePullPolicy: {{ .Values.ids.connector.image.pullPolicy }}
+          env:
+            - name: "JAVA_OPTS"
+              value: "-Dlog4j.logLevel=INFO"
+            - name: LOGGING_LEVEL_DE_FHG_AISEC
+              value: DEBUG
+          ports:
+            - name: connector
+              containerPort: 9999
+              protocol: TCP
+              
+            - name: connectorapi
+              containerPort: 8080
+              protocol: TCP
+          volumeMounts:
+          # - name: processor
+          #   mountPath: /root/jars/{{ .Values.ids.processor.jar.filename }}
+          #   subPath: {{ .Values.ids.processor.jar.filename }}
+          - name: certificates
+            mountPath: /root/jars/clearing-house-processors-1.1-SNAPSHOT.jar
+            subPath: clearing-house-processors-1.1-SNAPSHOT.jar
+          - name: processor
+            mountPath: /root/etc/keystore.p12
+            subPath: keystore.p12
+          - name: truststore
+            mountPath: /root/etc/truststore.p12
+            subPath: truststore.p12
+          - name: config
+            mountPath: "/root/deploy/clearing-house-routes.xml"
+            subPath: clearing-house-routes.xml
+          - name: config
+            mountPath: /root/deploy/allow-all-flows.pl
+            subPath: allow-all-flows.pl
           resources:
             {{- toYaml .Values.resources | nindent 12 }}
       {{- with .Values.nodeSelector }}
@@ -73,3 +165,18 @@ spec:
       - name: config
         configMap:
           name: {{ include "clearinghouse.fullname" . }}
+      - name: test
+        configMap:
+          name: test
+      - name: processor
+        emptyDir: {}
+      - name: certificates
+        secret:
+          secretName: {{ include "clearinghouse.fullname" . }}-certs
+      - name: truststore
+        secret:
+          secretName: "le-prod-truststore"
+      - name: dapscert
+        secret:
+          secretName: "daps-omejdn-server-tls"
+      
