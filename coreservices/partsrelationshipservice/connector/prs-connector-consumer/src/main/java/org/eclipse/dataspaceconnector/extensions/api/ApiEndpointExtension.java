@@ -1,5 +1,7 @@
 package org.eclipse.dataspaceconnector.extensions.api;
 
+import org.eclipse.dataspaceconnector.extensions.job.InMemoryJobStore;
+import org.eclipse.dataspaceconnector.extensions.job.JobOrchestrator;
 import org.eclipse.dataspaceconnector.spi.protocol.web.WebService;
 import org.eclipse.dataspaceconnector.spi.system.ServiceExtension;
 import org.eclipse.dataspaceconnector.spi.system.ServiceExtensionContext;
@@ -26,7 +28,10 @@ public class ApiEndpointExtension implements ServiceExtension {
         var webService = context.getService(WebService.class);
         var processManager = context.getService(TransferProcessManager.class);
         var processStore = context.getService(TransferProcessStore.class);
-        webService.registerController(new ConsumerApiController(context.getMonitor(), processManager, processStore));
+
+        var orchestrator = new JobOrchestrator(processManager, new InMemoryJobStore());
+
+        webService.registerController(new ConsumerApiController(context.getMonitor(), processManager, processStore, orchestrator));
 
         var statusCheckerReg = context.getService(StatusCheckerRegistry.class);
         statusCheckerReg.register("File", new FileStatusChecker(monitor));
