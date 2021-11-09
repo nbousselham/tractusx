@@ -17,9 +17,11 @@ public class FileStatusChecker implements StatusChecker {
 
     @Override
     public boolean isComplete(TransferProcess transferProcess, List<ProvisionedResource> list) {
-        File destinationFile = getDestinationFile(transferProcess);
-        monitor.info("File status checker: " + destinationFile.getAbsolutePath() + " :" + destinationFile.exists());
-        return destinationFile.exists();
+        boolean exists = getDestinationFile(transferProcess).exists();
+        if (exists) {
+            monitor.info("FileStatusChecker detected completed transfer process");
+        }
+        return exists;
     }
 
     private File getDestinationFile(TransferProcess transferProcess) {
