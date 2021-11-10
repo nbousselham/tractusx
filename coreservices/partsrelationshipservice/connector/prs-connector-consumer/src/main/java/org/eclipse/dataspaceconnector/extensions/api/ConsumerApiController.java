@@ -1,3 +1,12 @@
+//
+// Copyright (c) 2021 Copyright Holder (Catena-X Consortium)
+//
+// See the AUTHORS file(s) distributed with this work for additional
+// information regarding authorship.
+//
+// See the LICENSE file(s) distributed with this work for
+// additional information regarding license terms.
+//
 package org.eclipse.dataspaceconnector.extensions.api;
 
 
@@ -22,6 +31,9 @@ import java.util.UUID;
 
 import static java.lang.String.format;
 
+/**
+ * Connector REST controller.
+ */
 @Consumes({MediaType.APPLICATION_JSON})
 @Produces({MediaType.APPLICATION_JSON})
 @Path("/")
@@ -30,11 +42,20 @@ public class ConsumerApiController {
     private final Monitor monitor;
     private final TransferProcessManager processManager;
 
+    /**
+     * Creates new instance of {@link ConsumerApiController}
+     * @param monitor see {@link Monitor}
+     * @param processManager see {@link TransferProcessManager}
+     */
     public ConsumerApiController(Monitor monitor, TransferProcessManager processManager) {
         this.monitor = monitor;
         this.processManager = processManager;
     }
 
+    /**
+     * Health check endpoint.
+     * @return Health okay response.
+     */
     @GET
     @Path("health")
     public String checkHealth() {
@@ -42,6 +63,8 @@ public class ConsumerApiController {
         return "I'm alive!";
     }
 
+
+    @SuppressWarnings({"checkstyle:MagicNumber", "checkstyle:MissingJavadocMethod"})
     @POST
     @Path("file/{filename}")
     public Response initiateTransfer(@PathParam("filename") String filename, @QueryParam("connectorAddress") String connectorAddress,
