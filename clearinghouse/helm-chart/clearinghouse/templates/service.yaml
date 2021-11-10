@@ -11,5 +11,13 @@ spec:
       targetPort: connector
       protocol: TCP
       name: http
+    - port: 8001
+      targetPort: docapi
+      protocol: TCP
+      name: docapi
+    - port: 8002
+      targetPort: keyring
+      protocol: TCP
+      name: keyring
   selector:
     {{- include "clearinghouse.selectorLabels" . | nindent 4 }}

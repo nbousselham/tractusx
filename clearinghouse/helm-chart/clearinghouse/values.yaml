@@ -14,13 +14,21 @@ ids:
     image:
       repository: fraunhoferaisec/trusted-connector-core
       pullPolicy: Always
-      # Overrides the image tag whose default is the chart appVersion.
       tag: latest
   api:
     image:
       repository: catenaxdev001acr.azurecr.io/ids-clearing-house-api
       pullPolicy: Always
-      # Overrides the image tag whose default is the chart appVersion.
+      tag: latest
+  keyring_api:
+    image:
+      repository: catenaxdev001acr.azurecr.io/ids-clearing-house-keyring-api
+      pullPolicy: Always
+      tag: latest
+  document_api:
+    image:
+      repository: catenaxdev001acr.azurecr.io/ids-clearing-house-document-api
+      pullPolicy: Always
       tag: latest
     
   processor:
@@ -30,6 +38,18 @@ ids:
     xml:
       link: https://github.com/Fraunhofer-AISEC/ids-clearing-house-service/raw/v0.7.0/clearing-house-processors/src/routes/clearing-house-routes.xml
       filename: clearing-house-routes.xml
+
+clearinghouse-keyring-mongo:
+  auth:
+    enabled: false 
+
+clearinghouse-api-mongo:
+  auth:
+    enabled: false
+
+clearinghouse-documents-mongo:
+  auth:
+    enabled: false 
 
 serviceAccount:
   # Specifies whether a service account should be created

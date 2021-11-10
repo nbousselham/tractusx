@@ -22,3 +22,17 @@ version: 0.0.1
 # follow Semantic Versioning. They should reflect the version the application is using.
 # It is recommended to use it with quotes.
 appVersion: "latest"
+
+dependencies: # A list of the chart requirements (optional)
+  - name: mongodb
+    version: 10.29.0
+    repository: https://charts.bitnami.com/bitnami
+    alias: clearinghouse-api-mongo
+  - name: mongodb
+    version: 10.29.0
+    repository: https://charts.bitnami.com/bitnami
+    alias: clearinghouse-keyring-mongo
+  - name: mongodb
+    version: 10.29.0
+    repository: https://charts.bitnami.com/bitnami
+    alias: clearinghouse-documents-mongo

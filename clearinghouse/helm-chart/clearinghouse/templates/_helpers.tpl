@@ -63,7 +63,7 @@ Create the name of the service account to use
 
 
 {{/*
-Generate private key
+Generate private key for connector
 */}}
 {{- define "gen.secret" -}}
 {{- $secret := lookup "v1" "Secret" .Release.Namespace (include "clearinghouse.fullname" .) -}}

@@ -7,7 +7,7 @@ metadata:
     {{- include "clearinghouse.labels" . | nindent 4 }}
 data:
   config.yml : |
-    database_url: localhost
+    database_url: {{ .Release.Name }}-clearinghouse-api-mongo
     database_port: 27017
     init_db: true
 
@@ -118,4 +118,46 @@ data:
             </route>
         </camelContext>
     </beans>
-
+  default_doc_type.json: |
+    {
+      "id": "IDS_MESSAGE",
+      "pid": "default",
+      "parts": [
+        {
+          "name": "model_version"
+        },
+        {
+          "name": "correlation_message"
+        },
+        {
+          "name": "transfer_contract"
+        },
+        {
+          "name": "issued"
+        },
+        {
+          "name": "issuer_connector"
+        },
+        {
+          "name": "content_version"
+        },
+        {
+          "name": "recipient_connector"
+        },
+        {
+          "name": "sender_agent"
+        },
+        {
+          "name": "recipient_agent"
+        },
+        {
+          "name": "payload"
+        },
+        {
+          "name": "payload_type"
+        },
+        {
+          "name": "message_id"
+        }
+      ]
+    }
