@@ -1,3 +1,12 @@
+//
+// Copyright (c) 2021 Copyright Holder (Catena-X Consortium)
+//
+// See the AUTHORS file(s) distributed with this work for additional
+// information regarding authorship.
+//
+// See the LICENSE file(s) distributed with this work for
+// additional information regarding license terms.
+//
 package org.eclipse.dataspaceconnector.extensions.api;
 
 import org.eclipse.dataspaceconnector.spi.monitor.Monitor;
@@ -13,10 +22,18 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
 
+/**
+ * File transfer data flow controller.
+ */
 public class FileTransferFlowController implements DataFlowController {
     private final Monitor monitor;
     private final TypeManager typeManager;
 
+    /**
+     * Creates new instance of {@link FileTransferFlowController}
+     * @param monitor see {@link Monitor}
+     * @param typeManager see {@link TypeManager}
+     */
     public FileTransferFlowController(Monitor monitor, TypeManager typeManager) {
         this.monitor = monitor;
         this.typeManager = typeManager;

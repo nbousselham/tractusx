@@ -14,6 +14,7 @@
     <javaVersion>11</javaVersion>
     <rsApi>3.0.0</rsApi>
     <edcVersion>0.0.1-SNAPSHOT.Agera.1416420822</edcVersion>
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
   </properties>
   <repositories>
     <repository>

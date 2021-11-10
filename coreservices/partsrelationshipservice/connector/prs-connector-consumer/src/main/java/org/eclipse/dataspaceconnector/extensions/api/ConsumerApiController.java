@@ -1,3 +1,12 @@
+//
+// Copyright (c) 2021 Copyright Holder (Catena-X Consortium)
+//
+// See the AUTHORS file(s) distributed with this work for additional
+// information regarding authorship.
+//
+// See the LICENSE file(s) distributed with this work for
+// additional information regarding license terms.
+//
 package org.eclipse.dataspaceconnector.extensions.api;
 
 
@@ -24,6 +33,9 @@ import java.util.UUID;
 
 import static java.lang.String.format;
 
+/**
+ * Connector REST controller.
+ */
 @Consumes({MediaType.APPLICATION_JSON})
 @Produces({MediaType.APPLICATION_JSON})
 @Path("/")
@@ -33,12 +45,22 @@ public class ConsumerApiController {
     private final TransferProcessManager processManager;
     private final TransferProcessStore processStore;
 
+    /**
+     * Creates new instance of {@link ConsumerApiController}
+     * @param monitor see {@link Monitor}
+     * @param processManager see {@link TransferProcessManager}
+     * @param processStore see {@link TransferProcessStore}
+     */
     public ConsumerApiController(Monitor monitor, TransferProcessManager processManager, TransferProcessStore processStore) {
         this.monitor = monitor;
         this.processManager = processManager;
         this.processStore = processStore;
     }
 
+    /**
+     * Health check endpoint.
+     * @return Health okay response.
+     */
     @GET
     @Path("health")
     public String checkHealth() {
@@ -46,6 +68,8 @@ public class ConsumerApiController {
         return "I'm alive!";
     }
 
+
+    @SuppressWarnings({"checkstyle:MagicNumber", "checkstyle:MissingJavadocMethod"})
     @POST
     @Path("file/{filename}")
     public Response initiateTransfer(@PathParam("filename") String filename, @QueryParam("connectorAddress") String connectorAddress,
@@ -76,6 +100,7 @@ public class ConsumerApiController {
         return response.getStatus() != ResponseStatus.OK ? Response.status(400).build() : Response.ok(response.getId()).build();
     }
 
+    @SuppressWarnings({"checkstyle:MagicNumber", "checkstyle:MissingJavadocMethod"})
     @GET
     @Path("datarequest/{id}/state")
     public Response getStatus(@PathParam("id") String requestId) {
