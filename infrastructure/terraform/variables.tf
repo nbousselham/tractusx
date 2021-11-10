@@ -79,6 +79,7 @@ variable "workspace_to_stage_map" {
     dev006  = "dev"
     dev008  = "dev"
     dev009  = "dev"
+    dev     = "devext"
     int     = "int"    
     prod    = "prod"
   }
@@ -88,6 +89,7 @@ variable "stage_to_size_map" {
   type = map
   default = {
     dev     = "small"
+    devext  = "smallmedium"
     int     = "medium"
     prod    = "large"
   }
