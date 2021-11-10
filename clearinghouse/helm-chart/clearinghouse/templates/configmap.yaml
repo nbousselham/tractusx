@@ -14,6 +14,20 @@ data:
   {{- else }}
   ROCKET_DATABASE_URL: {{ index .Values "clearinghouse-api-mongo" "address" }}
   {{- end }}
+
+  {{- if index .Values "clearinghouse-documents-api" "deploy" }}
+  ROCKET_DOCUMENT_API_URL: "http://{{ .Release.Name }}-clearinghouse-documents-api:8001"
+  {{- else }}
+  ROCKET_DOCUMENT_API_URL: {{ index .Values "clearinghouse-documents-api" "address" }}
+  {{- end }}
+
+  {{- if index .Values "clearinghouse-keyring-api" "deploy" }}
+  ROCKET_KEYRING_API_URL: "http://{{ .Release.Name }}-clearinghouse-keyring-api:8002"
+  {{- else }}
+  ROCKET_KEYRING_API_URL: {{ index .Values "clearinghouse-keyring-api" "address" }}
+  {{- end }}
+
+
   config.yml : |
     database_url: {{ .Release.Name }}-clearinghouse-api-mongo
     database_port: 27017

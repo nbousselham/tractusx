@@ -41,19 +41,6 @@ spec:
         - "sh"
         - "-c"
         - 'until mongo "${ROCKET_DATABASE_URL}" --eval "print(\"waited for connection\")"; do echo waiting for database; sleep 5; done;'
-      - name: download-processor-files
-        image: busybox
-        command:
-          - "sh"
-          - "-c"
-        args:
-        - |
-            cd /tmp
-            wget {{ .Values.ids.processor.jar.link }} -O {{ .Values.ids.processor.jar.filename }}
-            wget {{ .Values.ids.processor.xml.link }} -O {{ .Values.ids.processor.xml.filename }}
-        volumeMounts:
-          - name: processor
-            mountPath: /tmp
       - name: create-cert
         image: mintel/docker-alpine-bash-curl-jq
         command: 
@@ -78,7 +65,6 @@ spec:
           openssl x509 -in /app/compiled-certs/tls.crt
 
           openssl rsa -in /app/certs/tls.key -out /app/compiled-certs/key.der -outform DER 
-          openssl x509 -in /server/certs/daps.crt -out /app/compiled-certs/daps.der -outform DER 
 
           echo "transportCertsSha256:" + $(openssl x509 -in app/compiled-certs/tls.crt -noout -sha256 -fingerprint | tr '[:upper:]' '[:lower:]' | tr -d : | sed 's/.*=//')
         volumeMounts:
@@ -88,9 +74,6 @@ spec:
         - name: processor
           mountPath: /app/compiled-certs/
           readOnly: false
-        - name: dapscert
-          mountPath: /server/certs/daps.crt
-          subPath: tls.crt
       containers:
         - name: clearinghouse
           env:
@@ -99,13 +82,23 @@ spec:
             valueFrom:
               configMapKeyRef:
                 name: {{ $fullName }}
-                key: {{ $key }}          
-          {{- end}} 
+                key: {{ $key }}
+          {{- end }}
           - name: ROCKET_DATABASE_URL
             valueFrom:
               configMapKeyRef:
                 name: {{ $fullName }}
                 key: ROCKET_DATABASE_URL
+          - name: ROCKET_DOCUMENT_API_URL
+            valueFrom:
+              configMapKeyRef:
+                name: {{ $fullName }}
+                key: ROCKET_DOCUMENT_API_URL
+          - name: ROCKET_KEYRING_API_URL
+            valueFrom:
+              configMapKeyRef:
+                name: {{ $fullName }}
+                key: ROCKET_KEYRING_API_URL
           securityContext:
             {{- toYaml .Values.securityContext | nindent 12 }}
           image: "{{ .Values.ids.api.image.repository }}:{{ .Values.ids.api.image.tag | default .Chart.AppVersion }}"
@@ -118,9 +111,6 @@ spec:
           - name: config
             mountPath: /server/config.yml
             subPath: config.yml
-          - name: processor
-            mountPath: /server/certs/daps.der
-            subPath: daps.der
           - name: processor
             mountPath: /server/keys/private_key.der
             subPath: key.der
@@ -135,28 +125,27 @@ spec:
             - name: LOGGING_LEVEL_DE_FHG_AISEC
               value: DEBUG
           ports:
-            - name: connector
+            - name: clearinghouse
               containerPort: 9999
-              protocol: TCP
-              
-            - name: connectorapi
+              protocol: TCP              
+            - name: connector
               containerPort: 8080
               protocol: TCP
           volumeMounts:
           - name: certificates
-            mountPath: /root/jars/clearing-house-processors-1.1-SNAPSHOT.jar
+            mountPath: "/root/jars/clearing-house-processors-1.1-SNAPSHOT.jar"
             subPath: clearing-house-processors-1.1-SNAPSHOT.jar
           - name: processor
-            mountPath: /root/etc/keystore.p12
+            mountPath: "/root/etc/keystore.p12"
             subPath: keystore.p12
           - name: truststore
-            mountPath: /root/etc/truststore.p12
-            subPath: truststore.p12
+            mountPath: "/root/etc/truststore.p12"
+            subPath: {{ .Values.truststore.secretKey }}
           - name: config
             mountPath: "/root/deploy/clearing-house-routes.xml"
             subPath: clearing-house-routes.xml
           - name: config
-            mountPath: /root/deploy/allow-all-flows.pl
+            mountPath: "/root/deploy/allow-all-flows.pl"
             subPath: allow-all-flows.pl
           resources:
             {{- toYaml .Values.resources | nindent 12 }}
@@ -176,9 +165,6 @@ spec:
       - name: config
         configMap:
           name: {{ include "clearinghouse.fullname" . }}
-      - name: test
-        configMap:
-          name: test
       - name: processor
         emptyDir: {}
       - name: certificates
@@ -186,8 +172,5 @@ spec:
           secretName: {{ include "clearinghouse.fullname" . }}-certs
       - name: truststore
         secret:
-          secretName: "le-prod-truststore"
-      - name: dapscert
-        secret:
-          secretName: "daps-omejdn-server-tls"
+          secretName: {{ .Values.truststore.secretName }}
       

@@ -29,15 +29,17 @@ ids:
       link: https://github.com/Fraunhofer-AISEC/ids-clearing-house-service/raw/v0.7.0/clearing-house-processors/src/routes/clearing-house-routes.xml
       filename: clearing-house-routes.xml
 
+truststore:
+  secretName: le-prod-truststore
+  secretKey: truststore.p12
+
 clearinghouse-documents-api:
-  keyring_api:
-    deploy: true
-    address: "documents:8002"
+  deploy: true
+  address: "documents:8002"
 
 clearinghouse-keyring-api:
-  keyring_api:
-    deploy: true
-    address: "keyring:8002"
+  deploy: true
+  address: "keyring:8002"
 
 clearinghouse-api-mongo:
   deploy: true
@@ -50,9 +52,7 @@ env:
     RUST_BACKTRACE: "1"
     API_LOG_LEVEL: "Debug"
     ROCKET_CLEAR_DB: "true"
-    ROCKET_DAPS_API_URL: "https://catenaxdev001akssrv.germanywestcentral.cloudapp.azure.com/daps"          
-    ROCKET_KEYRING_API_URL: "http://test-clearinghouse-keyring-api:8002"
-    ROCKET_DOCUMENT_API_URL: "http://test-clearinghouse-documents-api:8001"
+    ROCKET_DAPS_API_URL: "https://catenaxdev001akssrv.germanywestcentral.cloudapp.azure.com/daps"
     ROCKET_DATABASE_URL: "mongodb://{{ .Release.Name }}-clearinghouse-api-mongo:27017"
 
 serviceAccount:
@@ -96,9 +96,9 @@ ingress:
         - path: /{{ .Release.Namespace }}/{{ .Release.Name }}(/|$)(.*)
           pathType: ImplementationSpecific
   tls:
-   - secretName: daps-omejdn-server-tls
-     hosts:
-       - catenaxdev001akssrv.germanywestcentral.cloudapp.azure.com
+    - secretName: daps-omejdn-server-tls
+      hosts:
+        - catenaxdev001akssrv.germanywestcentral.cloudapp.azure.com
 
 resources: {}
   # We usually recommend not to specify default resources and to leave this as a conscious
