@@ -61,6 +61,8 @@ public class ConsumerApiController {
     /**
      * Health check endpoint.
      * @return Health okay response.
+     *
+     * Open API spec should be available at http://localhost:9191/api/openapi.json
      */
     @ApiResponse(responseCode = "200", description = "Parts tree for a vehicle")
     @GET
