@@ -5,6 +5,7 @@ import org.eclipse.dataspaceconnector.extensions.parser.TransferProcessResult;
 import org.eclipse.dataspaceconnector.extensions.parser.TransferProcessResultParser;
 import org.eclipse.dataspaceconnector.spi.monitor.Monitor;
 import org.eclipse.dataspaceconnector.spi.transfer.TransferInitiateResponse;
+import org.eclipse.dataspaceconnector.spi.transfer.TransferProcessListener;
 import org.eclipse.dataspaceconnector.spi.transfer.TransferProcessManager;
 import org.eclipse.dataspaceconnector.spi.transfer.response.ResponseStatus;
 import org.eclipse.dataspaceconnector.spi.types.domain.metadata.DataEntry;
@@ -17,7 +18,7 @@ import java.util.UUID;
 
 import static java.util.UUID.randomUUID;
 
-public class JobOrchestrator {
+public class JobOrchestrator implements TransferProcessListener {
 
     private final TransferProcessManager processManager;
     private final JobStore jobStore;
@@ -74,6 +75,12 @@ public class JobOrchestrator {
         for (TransferProcessInput process : transferProcesses) {
             startTransferProcess(job, process.getFilename(), process.getConnectorUrl());
         }
+    }
+
+    @Override
+    public void completed(TransferProcess process) {
+        Job job = jobStore.findByProcessId(process.getId());
+        handleTransferProcessCompleted(job, process);
     }
 
     public Job findJob(String jobId) {

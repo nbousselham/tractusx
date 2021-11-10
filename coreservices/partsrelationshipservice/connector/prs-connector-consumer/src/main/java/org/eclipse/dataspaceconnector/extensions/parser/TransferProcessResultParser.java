@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import org.eclipse.dataspaceconnector.spi.monitor.Monitor;
 import org.eclipse.dataspaceconnector.spi.types.domain.transfer.TransferProcess;
 
+import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.util.Collections;
@@ -19,8 +20,7 @@ public class TransferProcessResultParser {
     }
 
     public TransferProcessResult parse(TransferProcess process) {
-        var destination = process.getDataRequest().getDataDestination();
-        var destinationPath = Path.of(destination.getProperty("path"));
+        Path destinationPath = getDestinationPath(process);
 
         ObjectMapper mapper = new ObjectMapper();
         try {
@@ -30,5 +30,19 @@ public class TransferProcessResultParser {
         }
 
         return new TransferProcessResult("error", emptyList());
+    }
+
+    private Path getDestinationPath(TransferProcess process) {
+        var destination = process.getDataRequest().getDataDestination();
+        var destinationPath = Path.of(destination.getProperty("path"));
+
+        File file = destinationPath.toFile();
+        if (file.exists() && file.isDirectory()) {
+            var source = process.getDataRequest().getDataEntry().getCatalogEntry().getAddress();
+            var sourceFileName = source.getProperty("filename");
+            destinationPath = Path.of(destinationPath.toString(), sourceFileName);
+        }
+
+        return destinationPath;
     }
 }

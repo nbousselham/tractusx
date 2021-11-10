@@ -1,19 +1,20 @@
 package org.eclipse.dataspaceconnector.extensions.api;
 
-import org.eclipse.dataspaceconnector.extensions.job.*;
+import org.eclipse.dataspaceconnector.extensions.job.InMemoryJobStore;
+import org.eclipse.dataspaceconnector.extensions.job.JobOrchestrator;
+import org.eclipse.dataspaceconnector.extensions.job.JobStore;
 import org.eclipse.dataspaceconnector.spi.protocol.web.WebService;
 import org.eclipse.dataspaceconnector.spi.system.ServiceExtension;
 import org.eclipse.dataspaceconnector.spi.system.ServiceExtensionContext;
 import org.eclipse.dataspaceconnector.spi.transfer.TransferProcessManager;
+import org.eclipse.dataspaceconnector.spi.transfer.TransferProcessObservable;
 import org.eclipse.dataspaceconnector.spi.transfer.store.TransferProcessStore;
-import org.eclipse.dataspaceconnector.spi.types.domain.transfer.StatusCheckerRegistry;
 
 import java.util.Set;
 
 public class ApiEndpointExtension implements ServiceExtension {
 
     private ServiceExtensionContext context;
-    private JobManager jobManager;
 
     @Override
     public Set<String> requires() {
@@ -37,30 +38,12 @@ public class ApiEndpointExtension implements ServiceExtension {
 
         // job extension
         var jobOrchestrator = new JobOrchestrator(processManager, jobStore, monitor);
-        jobManager = JobManagerImpl.Builder.newInstance()
-                .jobOrchestrator(jobOrchestrator)
-                .monitor(monitor)
-                .build();
-        context.registerService(JobManager.class, jobManager);
-
-        // file status checker extension
-        var statusCheckerReg = context.getService(StatusCheckerRegistry.class);
-        statusCheckerReg.register("File", new FileStatusChecker(monitor));
+        TransferProcessObservable transferProcessObservable = context.getService(TransferProcessObservable.class);
+        transferProcessObservable.registerListener(jobOrchestrator);
 
         // web service extension
         var webService = context.getService(WebService.class);
         webService.registerController(new ConsumerApiController(context.getMonitor(), processManager, processStore, jobOrchestrator));
     }
 
-    @Override
-    public void start() {
-        var monitor = context.getMonitor();
-
-        // job extension
-        var jobStore = context.getService(JobStore.class);
-        var processStore = context.getService(TransferProcessStore.class);
-        jobManager.start(jobStore, processStore);
-
-        monitor.info("Started Job Manager");
-    }
 }
