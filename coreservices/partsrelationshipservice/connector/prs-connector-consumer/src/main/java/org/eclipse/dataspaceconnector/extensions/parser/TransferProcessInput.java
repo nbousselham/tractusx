@@ -4,6 +4,9 @@ public class TransferProcessInput {
     private String filename;
     private String connectorUrl;
 
+    public TransferProcessInput() {
+    }
+
     public TransferProcessInput(String filename, String connectorUrl) {
         this.filename = filename;
         this.connectorUrl = connectorUrl;

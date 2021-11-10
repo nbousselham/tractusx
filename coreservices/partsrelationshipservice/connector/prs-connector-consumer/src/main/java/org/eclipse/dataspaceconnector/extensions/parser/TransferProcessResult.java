@@ -7,6 +7,9 @@ public class TransferProcessResult {
     private String value;
     private Collection<TransferProcessInput> transferProcesses;
 
+    public TransferProcessResult() {
+    }
+
     public TransferProcessResult(String value, Collection<TransferProcessInput> transferProcesses) {
         this.value = value;
         this.transferProcesses = transferProcesses;

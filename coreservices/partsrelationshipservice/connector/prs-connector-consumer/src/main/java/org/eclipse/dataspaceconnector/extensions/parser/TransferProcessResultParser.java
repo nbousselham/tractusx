@@ -38,9 +38,7 @@ public class TransferProcessResultParser {
 
         File file = destinationPath.toFile();
         if (file.exists() && file.isDirectory()) {
-            var source = process.getDataRequest().getDataEntry().getCatalogEntry().getAddress();
-            var sourceFileName = source.getProperty("filename");
-            destinationPath = Path.of(destinationPath.toString(), sourceFileName);
+            destinationPath = Path.of(destinationPath.toString(), process.getDataRequest().getDataEntry().getId());
         }
 
         return destinationPath;

@@ -49,7 +49,7 @@ public class Job {
     }
 
     public void transitionInProgress() {
-        transition(JobState.IN_PROGRESS, JobState.INITIAL);
+        transition(JobState.IN_PROGRESS, JobState.INITIAL, JobState.IN_PROGRESS);
     }
 
     public void addTransferProcess(String transferProcessId) {
