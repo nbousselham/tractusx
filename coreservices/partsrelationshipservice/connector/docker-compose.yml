@@ -22,6 +22,7 @@ services:
     ports:
       - 9191:9191
 
+# TODO: Fix integration tests to work with this spike - check the sas url returned in the response
   integration-test:
     image: adoptopenjdk:11-jre-hotspot
     command: >
@@ -33,7 +34,7 @@ services:
              ./wait-for-it.sh -t 60 consumer:9191 &&
              mkdir -p /tmp/copy/source /tmp/copy/dest &&
              echo value-in-test-document > /tmp/copy/source/test-document.txt &&
-             curl -X POST 'http://consumer:9191/api/file/test-document?connectorAddress=http://provider:8181/&destination=/tmp/copy/dest/new-document.txt' &&
+             curl -X POST 'http://consumer:9191/api/file/test-document?connectorAddress=http://provider:8181' &&
              ./retry -s 1 -t 120 'cat /tmp/copy/dest/new-document.txt'"
     volumes:
       - shared-volume:/tmp/copy
