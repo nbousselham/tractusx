@@ -1,6 +1,8 @@
 package org.eclipse.dataspaceconnector.extensions.api;
 
-import org.eclipse.dataspaceconnector.common.azure.BlobStoreApi;
+import com.azure.storage.blob.BlobClient;
+import com.azure.storage.blob.BlobClientBuilder;
+import org.eclipse.dataspaceconnector.provision.azure.AzureSasToken;
 import org.eclipse.dataspaceconnector.schema.azure.AzureBlobStoreSchema;
 import org.eclipse.dataspaceconnector.spi.monitor.Monitor;
 import org.eclipse.dataspaceconnector.spi.security.Vault;
@@ -12,6 +14,7 @@ import org.eclipse.dataspaceconnector.spi.types.domain.transfer.DataAddress;
 import org.eclipse.dataspaceconnector.spi.types.domain.transfer.DataRequest;
 import org.jetbrains.annotations.NotNull;
 
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -22,14 +25,12 @@ public class BlobDataFlowController implements DataFlowController {
     private final Vault vault;
     private final Monitor monitor;
     private final TypeManager typeManager;
-    private final BlobStoreApi blobApi;
 
-    public BlobDataFlowController(Vault vault, Monitor monitor, TypeManager typeManager, BlobStoreApi blobApi) {
+    public BlobDataFlowController(Vault vault, Monitor monitor, TypeManager typeManager) {
 
         this.vault = vault;
         this.monitor = monitor;
         this.typeManager = typeManager;
-        this.blobApi = blobApi;
     }
 
     @Override
@@ -79,31 +80,21 @@ public class BlobDataFlowController implements DataFlowController {
         var containerName = destination.getProperty(AzureBlobStoreSchema.CONTAINER_NAME);
         var accountName = destination.getProperty(AzureBlobStoreSchema.ACCOUNT_NAME);
         var blobName = destination.getProperty(AzureBlobStoreSchema.BLOB_NAME) == null ? name : destination.getProperty(AzureBlobStoreSchema.BLOB_NAME);
+        var sasToken = typeManager.readValue(secretToken, AzureSasToken.class);
 
-        blobApi.putBlob(accountName, containerName, blobName, data);
+        BlobClient blobClient = new BlobClientBuilder()
+                .endpoint("https://"+accountName+".blob.core.windows.net")
+                .sasToken(sasToken.getSas())
+                .containerName(containerName)
+                .blobName(blobName + ".complete") // needed because the way ObjectContainerStatusChecker checks if process is complete
+                .buildClient();
 
-        monitor.info("Data uploaded into container " + containerName);
-    }
-
-    public void writeWithSas(DataAddress destination, String name, byte[] data, String secretToken) {
-
-//        var containerName = destination.getProperty(AzureBlobStoreSchema.CONTAINER_NAME);
-//        var accountName = destination.getProperty(AzureBlobStoreSchema.ACCOUNT_NAME);
-//        var blobName = destination.getProperty(AzureBlobStoreSchema.BLOB_NAME) == null ? name : destination.getProperty(AzureBlobStoreSchema.BLOB_NAME);
-//        var sasToken = typeManager.readValue(secretToken, AzureSasToken.class);
-//
-//        BlobClient blobClient = new BlobClientBuilder()
-//                .endpoint("https://"+accountName+".blob.core.windows.net")
-//                .containerName(containerName)
-//                .blobName(blobName)
-//                .buildClient();
-//
-//        try (ByteArrayInputStream dataStream = new ByteArrayInputStream(data)) {
-//            blobClient.upload(dataStream, data.length);
-//            monitor.info("File uploaded to Azure storage");
-//        } catch (IOException e) {
-//            monitor.severe("Data transfer to Azure Blob Storage failed", e);
-//        }
+        try (ByteArrayInputStream dataStream = new ByteArrayInputStream(data)) {
+            blobClient.upload(dataStream, data.length);
+            monitor.info("File uploaded to Azure storage");
+        } catch (IOException e) {
+            monitor.severe("Data transfer to Azure Blob Storage failed", e);
+        }
 
     }
 

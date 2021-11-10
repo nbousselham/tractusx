@@ -32,11 +32,8 @@ public class FileTransferExtension implements ServiceExtension {
     @Override
     public void initialize(ServiceExtensionContext context) {
 
-        context.registerService(BlobStoreApi.class, new BlobStoreApiImpl(context.getService(Vault.class)));
-
         var dataFlowMgr = context.getService(DataFlowManager.class);
-        var flowController = new BlobDataFlowController(context.getService(Vault.class), context.getMonitor(), context.getTypeManager(),
-                context.getService(BlobStoreApi.class));
+        var flowController = new BlobDataFlowController(context.getService(Vault.class), context.getMonitor(), context.getTypeManager());
         dataFlowMgr.register(flowController);
 
 
