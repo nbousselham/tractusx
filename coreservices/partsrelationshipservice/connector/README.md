@@ -16,10 +16,6 @@ Set up the run configuration in Intellij for both Consumer and Provider with fol
 - Main class: org.eclipse.dataspaceconnector.system.runtime.BaseRuntime
 - VM parameters: -Dedc.fs.config=<path to dataspaceconnector-configuration.properties file>
 
-### Run from debug-compose
-
-See `run-integration-test.sh` file.
-
 ### Provision the infrastructure
 
 If you want to run the set up on you own subscription then:
