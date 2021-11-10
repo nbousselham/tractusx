@@ -9,14 +9,6 @@ imagePullSecrets:
 nameOverride: ""
 fullnameOverride: ""
 
-# global:
-#   keyring_api:
-#     deploy: true
-#     address: ""
-#   documents_api:
-#     deploy: true
-#     address: ""
-
 ids:
   connector:
     image:
@@ -40,7 +32,7 @@ ids:
 clearinghouse-documents-api:
   keyring_api:
     deploy: true
-    address: "keyring:8002"
+    address: "documents:8002"
 
 clearinghouse-keyring-api:
   keyring_api:
