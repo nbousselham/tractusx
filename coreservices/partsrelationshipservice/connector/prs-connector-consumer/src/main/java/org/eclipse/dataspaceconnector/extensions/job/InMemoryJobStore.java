@@ -1,7 +1,6 @@
 package org.eclipse.dataspaceconnector.extensions.job;
 
 import org.eclipse.dataspaceconnector.spi.EdcException;
-import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
 import java.util.concurrent.TimeUnit;
@@ -26,7 +25,7 @@ public class InMemoryJobStore implements JobStore {
     @Override
     public void create(Job job) {
         writeLock(() -> {
-            job.transitionInProgress();
+            job.transitionInitial();
             delete(job.getId());
             jobsById.put(job.getId(), job);
             stateCache.computeIfAbsent(job.getState(), k -> new ArrayList<>()).add(job);
@@ -35,7 +34,7 @@ public class InMemoryJobStore implements JobStore {
     }
 
     @Override
-    public @NotNull List<Job> nextForState(JobState state, int max) {
+    public List<Job> nextForState(JobState state, int max) {
         return readLock(() -> {
             var set = stateCache.get(state);
             return set == null ? Collections.emptyList() : set.stream()
@@ -58,6 +57,17 @@ public class InMemoryJobStore implements JobStore {
                 stateCache.clear();
                 stateCache.putAll(tempCache);
             }
+            return null;
+        });
+    }
+
+    @Override
+    public void update(Job job) {
+        writeLock(() -> {
+            job.updateStateTimestamp();
+            delete(job.getId());
+            jobsById.put(job.getId(), job);
+            stateCache.computeIfAbsent(job.getState(), k -> new ArrayList<>()).add(job);
             return null;
         });
     }

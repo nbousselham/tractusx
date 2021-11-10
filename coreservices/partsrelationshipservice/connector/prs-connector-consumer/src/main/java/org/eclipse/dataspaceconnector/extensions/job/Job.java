@@ -2,6 +2,7 @@ package org.eclipse.dataspaceconnector.extensions.job;
 
 import java.time.Instant;
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
 
@@ -10,6 +11,8 @@ import static java.lang.String.format;
 public class Job {
 
     private String id;
+    private String filename;
+    private String destinationPath;
     private JobState state;
     private long stateTimestamp;
     private Set<String> transferProcessIds;
@@ -33,8 +36,28 @@ public class Job {
         return stateTimestamp;
     }
 
+    public String getFilename() {
+        return filename;
+    }
+
+    public String getDestinationPath() {
+        return destinationPath;
+    }
+
+    public void transitionInitial() {
+        transition(JobState.INITIAL, JobState.UNSAVED);
+    }
+
     public void transitionInProgress() {
-        transition(JobState.IN_PROGRESS, JobState.UNSAVED);
+        transition(JobState.IN_PROGRESS, JobState.INITIAL);
+    }
+
+    public void addTransferProcess(String transferProcessId) {
+        transferProcessIds.add(transferProcessId);
+    }
+
+    public void updateStateTimestamp() {
+        stateTimestamp = Instant.now().toEpochMilli();
     }
 
     private void transition(JobState end, JobState... starts) {
@@ -43,10 +66,6 @@ public class Job {
         }
         state = end;
         updateStateTimestamp();
-    }
-
-    public void updateStateTimestamp() {
-        stateTimestamp = Instant.now().toEpochMilli();
     }
 
     public static class Builder {
@@ -75,6 +94,16 @@ public class Job {
             return this;
         }
 
+        public Job.Builder filename(String filename) {
+            job.filename = filename;
+            return this;
+        }
+
+        public Job.Builder destinationPath(String destinationPath) {
+            job.destinationPath = destinationPath;
+            return this;
+        }
+
         public Job.Builder stateTimestamp(long value) {
             job.stateTimestamp = value;
             return this;
@@ -84,6 +113,9 @@ public class Job {
             Objects.requireNonNull(job.id, "id");
             if (job.state == JobState.UNSAVED && job.stateTimestamp == 0) {
                 job.stateTimestamp = Instant.now().toEpochMilli();
+            }
+            if (job.transferProcessIds == null) {
+                job.transferProcessIds = new HashSet<>();
             }
             return job;
         }

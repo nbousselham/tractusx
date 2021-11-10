@@ -1,0 +1,13 @@
+{
+  "value": "Provider 1",
+  "transferProcesses": [
+    {
+      "filename": "test-document-2.json",
+      "connectorUrl": "provider2"
+    },
+    {
+      "filename": "test-document-3.json",
+      "connectorUrl": "provider3"
+    }
+  ]
+}

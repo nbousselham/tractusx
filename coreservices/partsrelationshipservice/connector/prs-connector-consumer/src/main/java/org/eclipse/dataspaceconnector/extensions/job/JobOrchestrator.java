@@ -1,27 +1,49 @@
 package org.eclipse.dataspaceconnector.extensions.job;
 
+import org.eclipse.dataspaceconnector.extensions.parser.TransferProcessInput;
+import org.eclipse.dataspaceconnector.extensions.parser.TransferProcessResult;
+import org.eclipse.dataspaceconnector.extensions.parser.TransferProcessResultParser;
+import org.eclipse.dataspaceconnector.spi.monitor.Monitor;
+import org.eclipse.dataspaceconnector.spi.transfer.TransferInitiateResponse;
 import org.eclipse.dataspaceconnector.spi.transfer.TransferProcessManager;
 import org.eclipse.dataspaceconnector.spi.transfer.response.ResponseStatus;
 import org.eclipse.dataspaceconnector.spi.types.domain.metadata.DataEntry;
 import org.eclipse.dataspaceconnector.spi.types.domain.transfer.DataAddress;
 import org.eclipse.dataspaceconnector.spi.types.domain.transfer.DataRequest;
+import org.eclipse.dataspaceconnector.spi.types.domain.transfer.TransferProcess;
 
+import java.util.Collection;
 import java.util.UUID;
 
 import static java.util.UUID.randomUUID;
 
 public class JobOrchestrator {
 
-    private TransferProcessManager processManager;
-    private InMemoryJobStore jobStore;
+    private final TransferProcessManager processManager;
+    private final JobStore jobStore;
+    private final TransferProcessResultParser transferProcessResultParser;
 
-    public JobOrchestrator(TransferProcessManager processManager, InMemoryJobStore jobStore) {
+    public JobOrchestrator(TransferProcessManager processManager, JobStore jobStore, Monitor monitor) {
         this.processManager = processManager;
         this.jobStore = jobStore;
+        transferProcessResultParser = new TransferProcessResultParser(monitor);
     }
 
     public JobInitiateResponse startJob(String filename, String connectorAddress, String destinationPath) {
+        Job job = Job.Builder.newInstance()
+                .id(randomUUID().toString())
+                .filename(filename)
+                .destinationPath(destinationPath)
+                .state(JobState.UNSAVED)
+                .build();
+        jobStore.create(job);
 
+        startTransferProcess(job, filename, connectorAddress);
+
+        return JobInitiateResponse.Builder.newInstance().id(job.getId()).status(ResponseStatus.OK).build();
+    }
+
+    public void startTransferProcess(Job job, String filename, String connectorAddress) {
         var dataRequest = DataRequest.Builder.newInstance()
                 .id(UUID.randomUUID().toString()) //this is not relevant, thus can be random
                 .connectorAddress(connectorAddress) //the address of the provider connector
@@ -33,21 +55,25 @@ public class JobOrchestrator {
                         .build())
                 .dataDestination(DataAddress.Builder.newInstance()
                         .type("File") //the provider uses this to select the correct DataFlowController
-                        .property("path", destinationPath) //where we want the file to be stored
+                        .property("path", job.getDestinationPath()) //where we want the file to be stored
                         .build())
                 .managedResources(false) //we do not need any provisioning
                 .build();
 
-        var response = processManager.initiateConsumerRequest(dataRequest);
+        TransferInitiateResponse response = processManager.initiateConsumerRequest(dataRequest);
 
-        Job job = Job.Builder.newInstance()
-                .id(randomUUID().toString())
-                .transferProcessIds(response.getId())
-                .state(JobState.UNSAVED)
-                .build();
-        jobStore.create(job);
+        job.addTransferProcess(response.getId());
+        job.transitionInProgress();
+        jobStore.update(job);
+    }
 
-        return JobInitiateResponse.Builder.newInstance().id(job.getId()).status(ResponseStatus.OK).build();
+    public void handleTransferProcessCompleted(Job job, TransferProcess transferProcess) {
+        TransferProcessResult result = transferProcessResultParser.parse(transferProcess);
+        Collection<TransferProcessInput> transferProcesses = result.getTransferProcesses();
+
+        for (TransferProcessInput process : transferProcesses) {
+            startTransferProcess(job, process.getFilename(), process.getConnectorUrl());
+        }
     }
 
     public Job findJob(String jobId) {

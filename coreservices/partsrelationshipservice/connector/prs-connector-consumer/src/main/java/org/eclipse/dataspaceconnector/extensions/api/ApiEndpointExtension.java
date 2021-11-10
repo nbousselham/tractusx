@@ -7,7 +7,6 @@ import org.eclipse.dataspaceconnector.spi.system.ServiceExtensionContext;
 import org.eclipse.dataspaceconnector.spi.transfer.TransferProcessManager;
 import org.eclipse.dataspaceconnector.spi.transfer.store.TransferProcessStore;
 import org.eclipse.dataspaceconnector.spi.types.domain.transfer.StatusCheckerRegistry;
-import org.eclipse.dataspaceconnector.transfer.store.memory.InMemoryTransferProcessStore;
 
 import java.util.Set;
 
@@ -29,28 +28,35 @@ public class ApiEndpointExtension implements ServiceExtension {
         this.context = context;
         var monitor = context.getMonitor();
 
-        var webService = context.getService(WebService.class);
         var processManager = context.getService(TransferProcessManager.class);
         var processStore = context.getService(TransferProcessStore.class);
 
+        // in memory job store extension
         var jobStore = new InMemoryJobStore();
         context.registerService(JobStore.class, jobStore);
-        var jobOrchestrator = new JobOrchestrator(processManager, jobStore);
 
-        webService.registerController(new ConsumerApiController(context.getMonitor(), processManager, processStore, jobOrchestrator));
+        // job extension
+        var jobOrchestrator = new JobOrchestrator(processManager, jobStore, monitor);
+        jobManager = JobManagerImpl.Builder.newInstance()
+                .jobOrchestrator(jobOrchestrator)
+                .monitor(monitor)
+                .build();
+        context.registerService(JobManager.class, jobManager);
 
+        // file status checker extension
         var statusCheckerReg = context.getService(StatusCheckerRegistry.class);
         statusCheckerReg.register("File", new FileStatusChecker(monitor));
 
-        // job extension
-        jobManager = JobManagerImpl.Builder.newInstance().monitor(monitor).build();
-        context.registerService(JobManager.class, jobManager);
+        // web service extension
+        var webService = context.getService(WebService.class);
+        webService.registerController(new ConsumerApiController(context.getMonitor(), processManager, processStore, jobOrchestrator));
     }
 
     @Override
     public void start() {
         var monitor = context.getMonitor();
 
+        // job extension
         var jobStore = context.getService(JobStore.class);
         var processStore = context.getService(TransferProcessStore.class);
         jobManager.start(jobStore, processStore);
