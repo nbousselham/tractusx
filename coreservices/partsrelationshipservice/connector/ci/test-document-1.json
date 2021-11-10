@@ -2,12 +2,12 @@
   "value": "Provider 1",
   "transferProcesses": [
     {
-      "filename": "test-document-2.json",
-      "connectorUrl": "provider2"
+      "file": "test-document-2",
+      "connectorUrl": "http://provider2:8181/"
     },
     {
-      "filename": "test-document-3.json",
-      "connectorUrl": "provider3"
+      "file": "test-document-3",
+      "connectorUrl": "http://provider3:8181/"
     }
   ]
 }

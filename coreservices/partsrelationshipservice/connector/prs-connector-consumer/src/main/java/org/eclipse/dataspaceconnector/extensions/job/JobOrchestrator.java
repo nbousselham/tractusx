@@ -73,7 +73,7 @@ public class JobOrchestrator implements TransferProcessListener {
         Collection<TransferProcessInput> transferProcesses = result.getTransferProcesses();
 
         for (TransferProcessInput process : transferProcesses) {
-            startTransferProcess(job, process.getFilename(), process.getConnectorUrl());
+            startTransferProcess(job, process.getFile(), process.getConnectorUrl());
         }
     }
 

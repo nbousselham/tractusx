@@ -2,8 +2,8 @@
   "value": "Provider 3",
   "transferProcesses": [
     {
-      "filename": "test-document-4.json",
-      "connectorUrl": "provider4"
+      "file": "test-document-4",
+      "connectorUrl": "http://provider4:8181"
     }
   ]
 }

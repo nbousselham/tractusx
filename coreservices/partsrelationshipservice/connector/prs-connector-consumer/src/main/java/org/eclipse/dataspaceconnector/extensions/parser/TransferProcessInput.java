@@ -1,19 +1,19 @@
 package org.eclipse.dataspaceconnector.extensions.parser;
 
 public class TransferProcessInput {
-    private String filename;
+    private String file;
     private String connectorUrl;
 
     public TransferProcessInput() {
     }
 
-    public TransferProcessInput(String filename, String connectorUrl) {
-        this.filename = filename;
+    public TransferProcessInput(String file, String connectorUrl) {
+        this.file = file;
         this.connectorUrl = connectorUrl;
     }
 
-    public String getFilename() {
-        return filename;
+    public String getFile() {
+        return file;
     }
 
     public String getConnectorUrl() {

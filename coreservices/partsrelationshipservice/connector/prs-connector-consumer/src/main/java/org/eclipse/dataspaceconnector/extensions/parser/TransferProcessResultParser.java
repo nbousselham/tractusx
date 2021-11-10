@@ -26,7 +26,7 @@ public class TransferProcessResultParser {
         try {
             return mapper.readValue(destinationPath.toFile(), TransferProcessResult.class);
         } catch (IOException e) {
-            monitor.severe("Could not retrieve results for process " + process.getId());
+            monitor.severe("Could not retrieve results for process " + process.getId(), e);
         }
 
         return new TransferProcessResult("error", emptyList());
