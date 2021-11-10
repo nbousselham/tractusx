@@ -10,6 +10,7 @@
 package org.eclipse.dataspaceconnector.extensions.api;
 
 
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import jakarta.ws.rs.Consumes;
 import jakarta.ws.rs.GET;
 import jakarta.ws.rs.POST;
@@ -61,6 +62,7 @@ public class ConsumerApiController {
      * Health check endpoint.
      * @return Health okay response.
      */
+    @ApiResponse(responseCode = "200", description = "Parts tree for a vehicle")
     @GET
     @Path("health")
     public String checkHealth() {

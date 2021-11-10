@@ -20,6 +20,29 @@
       <artifactId>jakarta.ws.rs-api</artifactId>
       <version>${rsApi}</version>
     </dependency>
+    <!-- Swagger -->
+    <dependency>
+      <groupId>io.swagger.core.v3</groupId>
+      <artifactId>swagger-jaxrs2</artifactId>
+      <version>2.1.11</version>
+    </dependency>
+<!--    <dependency>-->
+<!--      <groupId>io.swagger.core.v3</groupId>-->
+<!--      <artifactId>swagger-jaxrs2-servlet-initializer-v2</artifactId>-->
+<!--      <version>2.1.11</version>-->
+<!--    </dependency>-->
+    <dependency>
+      <groupId>org.glassfish.jersey.containers</groupId>
+      <artifactId>jersey-container-servlet</artifactId>
+      <version>${rsApi}</version>
+    </dependency>
+    <!-- End Swagger -->
+<!--    <dependency>-->
+<!--      <groupId>io.swagger.core.v3</groupId>-->
+<!--      <artifactId>swagger-jaxrs2-jakarta</artifactId>-->
+<!--      <version>2.1.11</version>-->
+<!--      <scope>provided</scope>-->
+<!--    </dependency>-->
     <dependency>
       <groupId>org.eclipse.dataspaceconnector</groupId>
       <artifactId>core</artifactId>
