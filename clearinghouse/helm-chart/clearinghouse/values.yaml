@@ -9,6 +9,14 @@ imagePullSecrets:
 nameOverride: ""
 fullnameOverride: ""
 
+# global:
+#   keyring_api:
+#     deploy: true
+#     address: ""
+#   documents_api:
+#     deploy: true
+#     address: ""
+
 ids:
   connector:
     image:
@@ -20,16 +28,6 @@ ids:
       repository: catenaxdev001acr.azurecr.io/ids-clearing-house-api
       pullPolicy: Always
       tag: latest
-  keyring_api:
-    image:
-      repository: catenaxdev001acr.azurecr.io/ids-clearing-house-keyring-api
-      pullPolicy: Always
-      tag: latest
-  document_api:
-    image:
-      repository: catenaxdev001acr.azurecr.io/ids-clearing-house-document-api
-      pullPolicy: Always
-      tag: latest
     
   processor:
     jar:
@@ -39,17 +37,31 @@ ids:
       link: https://github.com/Fraunhofer-AISEC/ids-clearing-house-service/raw/v0.7.0/clearing-house-processors/src/routes/clearing-house-routes.xml
       filename: clearing-house-routes.xml
 
-clearinghouse-keyring-mongo:
-  auth:
-    enabled: false 
+clearinghouse-documents-api:
+  keyring_api:
+    deploy: true
+    address: "keyring:8002"
+
+clearinghouse-keyring-api:
+  keyring_api:
+    deploy: true
+    address: "keyring:8002"
 
 clearinghouse-api-mongo:
+  deploy: true
+  address: ""
   auth:
     enabled: false
 
-clearinghouse-documents-mongo:
-  auth:
-    enabled: false 
+env:
+  config:
+    RUST_BACKTRACE: "1"
+    API_LOG_LEVEL: "Debug"
+    ROCKET_CLEAR_DB: "true"
+    ROCKET_DAPS_API_URL: "https://catenaxdev001akssrv.germanywestcentral.cloudapp.azure.com/daps"          
+    ROCKET_KEYRING_API_URL: "http://test-clearinghouse-keyring-api:8002"
+    ROCKET_DOCUMENT_API_URL: "http://test-clearinghouse-documents-api:8001"
+    ROCKET_DATABASE_URL: "mongodb://{{ .Release.Name }}-clearinghouse-api-mongo:27017"
 
 serviceAccount:
   # Specifies whether a service account should be created
@@ -81,7 +93,7 @@ ingress:
   enabled: true
   className: ""
   annotations:
-    nginx.ingress.kubernetes.io/x-forwarded-prefix: "/tsy/ch"
+    nginx.ingress.kubernetes.io/x-forwarded-prefix: "/{{ .Release.Namespace }}/{{ .Release.Name }}"
     nginx.ingress.kubernetes.io/rewrite-target: /$2
     nginx.ingress.kubernetes.io/use-regex: "true"
     # kubernetes.io/ingress.class: nginx
@@ -89,7 +101,7 @@ ingress:
   hosts:
     - host: catenaxdev001akssrv.germanywestcentral.cloudapp.azure.com
       paths:
-        - path: /tsy/ch(/|$)(.*)
+        - path: /{{ .Release.Namespace }}/{{ .Release.Name }}(/|$)(.*)
           pathType: ImplementationSpecific
   tls:
    - secretName: daps-omejdn-server-tls

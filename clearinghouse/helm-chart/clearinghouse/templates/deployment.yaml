@@ -1,3 +1,4 @@
+{{- $fullName := include "clearinghouse.fullname" . -}}
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -28,6 +29,18 @@ spec:
       securityContext:
         {{- toYaml .Values.podSecurityContext | nindent 8 }}
       initContainers:
+      - name: check-db-ready
+        env:
+        - name: ROCKET_DATABASE_URL
+          valueFrom:
+            configMapKeyRef:
+              name: {{ $fullName }}
+              key: ROCKET_DATABASE_URL
+        image: docker.io/bitnami/mongodb:4.4.10-debian-10-r20
+        command:
+        - "sh"
+        - "-c"
+        - 'until mongo "${ROCKET_DATABASE_URL}" --eval "print(\"waited for connection\")"; do echo waiting for database; sleep 5; done;'
       - name: download-processor-files
         image: busybox
         command:
@@ -42,8 +55,6 @@ spec:
           - name: processor
             mountPath: /tmp
       - name: create-cert
-        env:
-
         image: mintel/docker-alpine-bash-curl-jq
         command: 
         - "sh"
@@ -68,6 +79,8 @@ spec:
 
           openssl rsa -in /app/certs/tls.key -out /app/compiled-certs/key.der -outform DER 
           openssl x509 -in /server/certs/daps.crt -out /app/compiled-certs/daps.der -outform DER 
+
+          echo "transportCertsSha256:" + $(openssl x509 -in app/compiled-certs/tls.crt -noout -sha256 -fingerprint | tr '[:upper:]' '[:lower:]' | tr -d : | sed 's/.*=//')
         volumeMounts:
         - name: certificates
           mountPath: /app/certs
@@ -79,95 +92,20 @@ spec:
           mountPath: /server/certs/daps.crt
           subPath: tls.crt
       containers:
-        - name: keyring
-          image: "{{ .Values.ids.keyring_api.image.repository }}:{{ .Values.ids.keyring_api.image.tag | default .Chart.AppVersion }}"
-          imagePullPolicy: {{ .Values.ids.keyring_api.image.pullPolicy }}
-          env:
-            - name: ROCKET_DAPS_API_URL
-              value: "https://catenaxdev001akssrv.germanywestcentral.cloudapp.azure.com/daps"
-            - name: ROCKET_ENV
-              value: "debug"
-            - name: ROCKET_ADDRESS
-              value: "0.0.0.0"
-            - name: ROCKET_PORT
-              value: "8002"
-            - name: ROCKET_LOG_LEVEL
-              value: "normal"
-            - name: ROCKET_LIMITS
-              value: "{ forms = 32768 }"
-            - name: ROCKET_DATABASE_URL
-              value: "mongodb://{{ .Release.Name }}-clearinghouse-keyring-mongo:27017"
-            - name: ROCKET_CLEAR_DB
-              value: "true"
-            - name: API_LOG_LEVEL
-              value: "Debug"
-            - name: RUST_BACKTRACE
-              value: "1"
-          ports:
-            - name: keyring
-              containerPort: 8002
-              protocol: TCP
-          volumeMounts:
-          - name: processor
-            mountPath: /server/certs/daps.der
-            subPath: daps.der
-          - name: config
-            mountPath: /server/init_db/default_doc_type.json
-            subPath: default_doc_type.json
-
-
-        - name: docapi
-          image: "{{ .Values.ids.document_api.image.repository }}:{{ .Values.ids.document_api.image.tag | default .Chart.AppVersion }}"
-          imagePullPolicy: {{ .Values.ids.document_api.image.pullPolicy }}
-          env:
-            - name: ROCKET_DAPS_API_URL
-              value: "https://catenaxdev001akssrv.germanywestcentral.cloudapp.azure.com/daps"
-            - name: ROCKET_ENV
-              value: "debug"
-            - name: ROCKET_ADDRESS
-              value: "0.0.0.0"
-            - name: ROCKET_PORT
-              value: "8001"
-            - name: ROCKET_LOG_LEVEL
-              value: "normal"
-            - name: ROCKET_LIMITS
-              value: "{ forms = 32768 }"
-            - name: ROCKET_DATABASE_URL
-              value: "mongodb://{{ .Release.Name }}-clearinghouse-api-mongo:27017"
-            - name: ROCKET_KEYRING_API_URL
-              value: "http://localhost:8002"
-            - name: ROCKET_CLEAR_DB
-              value: "true"
-            - name: API_LOG_LEVEL
-              value: "Debug"
-            - name: RUST_BACKTRACE
-              value: "1"
-          ports:
-            - name: docapi
-              containerPort: 8001
-              protocol: TCP
-          volumeMounts:
-          - name: processor
-            mountPath: /server/certs/daps.der
-            subPath: daps.der
-
         - name: clearinghouse
           env:
-          - name: RUST_BACKTRACE
-            value: "1"
-          - name: API_LOG_LEVEL
-            value: "Debug"
-          - name: ROCKET_CLEAR_DB
-            value: "true"
-          - name: ROCKET_DAPS_API_URL
-            value: "https://catenaxdev001akssrv.germanywestcentral.cloudapp.azure.com/daps"
-          
-          - name: ROCKET_KEYRING_API_URL
-            value: "http://localhost:8002"
-          - name: ROCKET_DOCUMENT_API_URL
-            value: "http://localhost:8001"
+          {{- range $key, $val := .Values.env.config }}
+          - name: {{ $key }}
+            valueFrom:
+              configMapKeyRef:
+                name: {{ $fullName }}
+                key: {{ $key }}          
+          {{- end}} 
           - name: ROCKET_DATABASE_URL
-            value: "mongodb://{{ .Release.Name }}-clearinghouse-api-mongo:27017"
+            valueFrom:
+              configMapKeyRef:
+                name: {{ $fullName }}
+                key: ROCKET_DATABASE_URL
           securityContext:
             {{- toYaml .Values.securityContext | nindent 12 }}
           image: "{{ .Values.ids.api.image.repository }}:{{ .Values.ids.api.image.tag | default .Chart.AppVersion }}"
