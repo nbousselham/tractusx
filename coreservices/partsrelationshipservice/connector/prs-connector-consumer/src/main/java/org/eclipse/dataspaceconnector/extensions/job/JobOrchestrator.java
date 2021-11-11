@@ -66,21 +66,17 @@ public class JobOrchestrator implements TransferProcessListener {
         jobStore.addTransferProcess(job.getId(), response.getId());
     }
 
-    public void handleTransferProcessCompleted(Job job, TransferProcess transferProcess) {
-        TransferProcessFile result = transferProcessFileHandler.parse(transferProcess);
-        Collection<SequentTransferProcess> nextTransferProcesses = result.getTransferProcesses();
-
-        for (SequentTransferProcess process : nextTransferProcesses) {
-            startTransferProcess(job, process.getFile(), process.getConnectorUrl());
-        }
-
-        jobStore.completeTransferProcess(job.getId(), transferProcess.getId());
-    }
-
     @Override
     public void completed(TransferProcess process) {
         Job job = jobStore.findByProcessId(process.getId());
-        handleTransferProcessCompleted(job, process);
+        TransferProcessFile result = transferProcessFileHandler.parse(process);
+        Collection<SequentTransferProcess> nextTransferProcesses = result.getTransferProcesses();
+
+        for (SequentTransferProcess process1 : nextTransferProcesses) {
+            startTransferProcess(job, process1.getFile(), process1.getConnectorUrl());
+        }
+
+        jobStore.completeTransferProcess(job.getId(), process.getId());
     }
 
     public Job findJob(String jobId) {
