@@ -5,12 +5,12 @@ import java.util.Collection;
 public class TransferProcessFile {
 
     private String value;
-    private Collection<SequentTransferProcess> transferProcesses;
+    private Collection<TransferProcessInput> transferProcesses;
 
     public TransferProcessFile() {
     }
 
-    public TransferProcessFile(String value, Collection<SequentTransferProcess> transferProcesses) {
+    public TransferProcessFile(String value, Collection<TransferProcessInput> transferProcesses) {
         this.value = value;
         this.transferProcesses = transferProcesses;
     }
@@ -19,7 +19,7 @@ public class TransferProcessFile {
         return value;
     }
 
-    public Collection<SequentTransferProcess> getTransferProcesses() {
+    public Collection<TransferProcessInput> getTransferProcesses() {
         return transferProcesses;
     }
 }

@@ -1,13 +1,13 @@
 package org.eclipse.dataspaceconnector.extensions.transferprocess;
 
-public class SequentTransferProcess {
+public class TransferProcessInput {
     private String file;
     private String connectorUrl;
 
-    public SequentTransferProcess() {
+    public TransferProcessInput() {
     }
 
-    public SequentTransferProcess(String file, String connectorUrl) {
+    public TransferProcessInput(String file, String connectorUrl) {
         this.file = file;
         this.connectorUrl = connectorUrl;
     }

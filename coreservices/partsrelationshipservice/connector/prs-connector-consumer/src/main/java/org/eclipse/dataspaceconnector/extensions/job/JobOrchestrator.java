@@ -1,6 +1,6 @@
 package org.eclipse.dataspaceconnector.extensions.job;
 
-import org.eclipse.dataspaceconnector.extensions.transferprocess.SequentTransferProcess;
+import org.eclipse.dataspaceconnector.extensions.transferprocess.TransferProcessInput;
 import org.eclipse.dataspaceconnector.extensions.transferprocess.TransferProcessFile;
 import org.eclipse.dataspaceconnector.extensions.transferprocess.TransferProcessFileHandler;
 import org.eclipse.dataspaceconnector.spi.transfer.TransferInitiateResponse;
@@ -70,10 +70,9 @@ public class JobOrchestrator implements TransferProcessListener {
     public void completed(TransferProcess process) {
         Job job = jobStore.findByProcessId(process.getId());
         TransferProcessFile result = transferProcessFileHandler.parse(process);
-        Collection<SequentTransferProcess> nextTransferProcesses = result.getTransferProcesses();
 
-        for (SequentTransferProcess process1 : nextTransferProcesses) {
-            startTransferProcess(job, process1.getFile(), process1.getConnectorUrl());
+        for (TransferProcessInput nextTransferProcess : result.getTransferProcesses()) {
+            startTransferProcess(job, nextTransferProcess.getFile(), nextTransferProcess.getConnectorUrl());
         }
 
         jobStore.completeTransferProcess(job.getId(), process.getId());
