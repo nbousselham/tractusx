@@ -1,8 +1,8 @@
 package org.eclipse.dataspaceconnector.extensions.job;
 
-import org.eclipse.dataspaceconnector.extensions.transferprocess.TransferProcessInput;
-import org.eclipse.dataspaceconnector.extensions.transferprocess.TransferProcessFile;
-import org.eclipse.dataspaceconnector.extensions.transferprocess.TransferProcessFileHandler;
+import org.eclipse.dataspaceconnector.extensions.file.TransferProcessInput;
+import org.eclipse.dataspaceconnector.extensions.file.TransferProcessFile;
+import org.eclipse.dataspaceconnector.extensions.file.TransferProcessFileHandler;
 import org.eclipse.dataspaceconnector.spi.transfer.TransferInitiateResponse;
 import org.eclipse.dataspaceconnector.spi.transfer.TransferProcessListener;
 import org.eclipse.dataspaceconnector.spi.transfer.TransferProcessManager;
@@ -12,7 +12,6 @@ import org.eclipse.dataspaceconnector.spi.types.domain.transfer.DataAddress;
 import org.eclipse.dataspaceconnector.spi.types.domain.transfer.DataRequest;
 import org.eclipse.dataspaceconnector.spi.types.domain.transfer.TransferProcess;
 
-import java.util.Collection;
 import java.util.UUID;
 
 import static java.util.UUID.randomUUID;

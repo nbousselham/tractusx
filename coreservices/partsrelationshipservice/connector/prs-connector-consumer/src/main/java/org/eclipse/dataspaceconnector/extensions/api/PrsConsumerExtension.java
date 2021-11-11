@@ -3,7 +3,7 @@ package org.eclipse.dataspaceconnector.extensions.api;
 import org.eclipse.dataspaceconnector.extensions.job.InMemoryJobStore;
 import org.eclipse.dataspaceconnector.extensions.job.JobOrchestrator;
 import org.eclipse.dataspaceconnector.extensions.job.JobStore;
-import org.eclipse.dataspaceconnector.extensions.transferprocess.TransferProcessFileHandler;
+import org.eclipse.dataspaceconnector.extensions.file.TransferProcessFileHandler;
 import org.eclipse.dataspaceconnector.spi.protocol.web.WebService;
 import org.eclipse.dataspaceconnector.spi.system.ServiceExtension;
 import org.eclipse.dataspaceconnector.spi.system.ServiceExtensionContext;

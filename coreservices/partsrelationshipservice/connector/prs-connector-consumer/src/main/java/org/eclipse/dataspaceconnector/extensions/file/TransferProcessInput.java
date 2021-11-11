@@ -1,4 +1,4 @@
-package org.eclipse.dataspaceconnector.extensions.transferprocess;
+package org.eclipse.dataspaceconnector.extensions.file;
 
 public class TransferProcessInput {
     private String file;
