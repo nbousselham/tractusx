@@ -14,7 +14,7 @@ import org.eclipse.dataspaceconnector.spi.types.domain.transfer.StatusCheckerReg
 
 import java.util.Set;
 
-public class ApiEndpointExtension implements ServiceExtension {
+public class PrsConsumerExtension implements ServiceExtension {
 
     @Override
     public Set<String> requires() {
@@ -26,27 +26,39 @@ public class ApiEndpointExtension implements ServiceExtension {
 
     @Override
     public void initialize(ServiceExtensionContext context) {
-        var monitor = context.getMonitor();
+        initializeJobStore(context);
+        initializeFileStatusChecker(context);
+        initializeJobOrchestrator(context);
+        initializeWebService(context);
+    }
 
-        var processManager = context.getService(TransferProcessManager.class);
-        var processStore = context.getService(TransferProcessStore.class);
-
-        // in memory job store extension
+    private void initializeJobStore(ServiceExtensionContext context) {
         var jobStore = new InMemoryJobStore();
         context.registerService(JobStore.class, jobStore);
+    }
 
-        // file status checker extension
-        TransferProcessFileHandler transferProcessFileHandler = new TransferProcessFileHandler(monitor);
+    private void initializeFileStatusChecker(ServiceExtensionContext context) {
+        var monitor = context.getMonitor();
+        var transferProcessFileHandler = new TransferProcessFileHandler(monitor);
         var statusCheckerReg = context.getService(StatusCheckerRegistry.class);
         statusCheckerReg.register("File", transferProcessFileHandler);
+    }
 
-        // job extension
+    private void initializeJobOrchestrator(ServiceExtensionContext context) {
+        var monitor = context.getMonitor();
+        var processManager = context.getService(TransferProcessManager.class);
+        var jobStore = context.getService(JobStore.class);
+        var transferProcessFileHandler = new TransferProcessFileHandler(monitor);
         var jobOrchestrator = new JobOrchestrator(processManager, jobStore, transferProcessFileHandler);
         TransferProcessObservable transferProcessObservable = context.getService(TransferProcessObservable.class);
         transferProcessObservable.registerListener(jobOrchestrator);
+        context.registerService(JobOrchestrator.class, jobOrchestrator);
+    }
 
-        // web service extension
+    private void initializeWebService(ServiceExtensionContext context) {
         var webService = context.getService(WebService.class);
+        var processStore = context.getService(TransferProcessStore.class);
+        var jobOrchestrator = context.getService(JobOrchestrator.class);
         webService.registerController(new ConsumerApiController(context.getMonitor(), processStore, jobOrchestrator));
     }
 
