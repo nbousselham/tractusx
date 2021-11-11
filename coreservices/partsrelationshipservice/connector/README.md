@@ -2,7 +2,7 @@
 
 ## Spike scenario
 
-The goal of this spike was to clarify how a consumer connector can coordinate multiple calls to provider connectors to retrieve a distributed parts tree. The spike will focus on the following points: 
+The goal of this spike is to clarify how a consumer connector can coordinate multiple calls to provider connectors to retrieve a distributed parts tree. The spike will focus on the following points: 
 
 * A consumer can start a long-running background process to orchestrate multiple provider jobs.
 * A consumer can issue requests to multiple providers.
@@ -11,7 +11,7 @@ The goal of this spike was to clarify how a consumer connector can coordinate mu
 
 # Running the spike code
 
-Use the `run-integration-test.sh` script to run the spike. This script starts 3 provider connectors that serve files and a consumer connector that starts a query against the first provider. At the end of the execution you should see the content of all test document files.
+Use the `run-integration-test.sh` script to run the spike. This script spins 3 provider connectors that serve files and a consumer connector that starts a query against the first provider. At the end of the execution you should see the content of all test document files.
 
 # Provider file structure
 
@@ -39,7 +39,16 @@ The `JobOrchestrator` class takes care of coordinating requests to multiple prov
 1- The `JobOrchestrator` registers itself as a `TransferProcessListener` in the `PrsConsumerExtension`, and thus its `complete` method gets called when the first request is finished.
 1- The `JobOrchestrator` parses the result and detects that `test-document-1` indicates that further partial files`test-document-2` and `test-document-3` need to be retrieved from `provider2` and `provider3` respectively.
 1- Requests are sent to `provider2` and `provider3`.
-1- The `complete` callback is triggered again when results are ready and the process of parsing the result and making further calls continues...
-1- ...until no further calls are required.
+1- The `complete` callback is triggered asynchronously when results are ready. In this case `test-document-3` indicates a further call to retrieve `test-document-4` from `provider2` is required.
+1- Another request is sent to `provider2`
+1- The `JobOrchestrator` identifies that no further requests are required and advances the job status to `COMPLETED`
+1- The client has been polling the consumer connector for the status of the job. Now this is `COMPLETED` so results are accessible in the destination folder.  
 
-Have a look in [Confluence](https://confluence.catena-x.net/display/ARTI/MTPDC+EDC+Orchestration) for more details on the orchestration logic.
+Please refer to [Confluence](https://confluence.catena-x.net/display/ARTI/MTPDC+EDC+Orchestration) for more details on the orchestration logic.
+
+# Next steps
+
+[WIP]
+
+* Metadata at TransferProcess level
+* Core Job EDC extension
