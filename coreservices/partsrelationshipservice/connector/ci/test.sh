@@ -15,6 +15,6 @@ chmod +x retry
 mkdir -p /tmp/copy/source /tmp/copy/dest
 cp /ci/test-document-*.json /tmp/copy/source/
 requestId=$(curl -f -X POST 'http://consumer:9191/api/file/test-document-1?connectorAddress=http://provider1:8181/&destination=/tmp/copy/dest')
-./retry -s 5 -t 120 "ls /tmp/copy/dest/ && test \$(curl -f http://consumer:9191/api/job/$requestId/state) == COMPLETED"
+./retry -s 5 -t 120 "ls /tmp/copy/dest/; test \$(curl -f http://consumer:9191/api/job/$requestId/state) == COMPLETED"
 echo
 cat /tmp/copy/dest/test-document-*
