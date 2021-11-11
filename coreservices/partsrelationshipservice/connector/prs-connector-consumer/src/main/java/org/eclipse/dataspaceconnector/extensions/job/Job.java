@@ -16,6 +16,7 @@ public class Job {
     private JobState state;
     private long stateTimestamp;
     private Set<String> transferProcessIds;
+    private Set<String> completedTransferProcessIds;
 
     private Job() {
     }
@@ -30,6 +31,10 @@ public class Job {
 
     public Set<String> getTransferProcessIds() {
         return transferProcessIds;
+    }
+
+    public Set<String> getCompletedTransferProcessIds() {
+        return completedTransferProcessIds;
     }
 
     public long getStateTimestamp() {
@@ -52,8 +57,17 @@ public class Job {
         transition(JobState.IN_PROGRESS, JobState.INITIAL, JobState.IN_PROGRESS);
     }
 
+    public void transitionComplete() {
+        transition(JobState.COMPLETED, JobState.IN_PROGRESS);
+    }
+
     public void addTransferProcess(String transferProcessId) {
         transferProcessIds.add(transferProcessId);
+    }
+
+    public void transferProcessCompleted(String id) {
+        transferProcessIds.remove(id);
+        completedTransferProcessIds.add(id);
     }
 
     public void updateStateTimestamp() {
@@ -84,11 +98,6 @@ public class Job {
             return this;
         }
 
-        public Job.Builder transferProcessIds(String... ids) {
-            job.transferProcessIds = Set.of(ids);
-            return this;
-        }
-
         public Job.Builder state(JobState state) {
             job.state = state;
             return this;
@@ -114,9 +123,8 @@ public class Job {
             if (job.state == JobState.UNSAVED && job.stateTimestamp == 0) {
                 job.stateTimestamp = Instant.now().toEpochMilli();
             }
-            if (job.transferProcessIds == null) {
-                job.transferProcessIds = new HashSet<>();
-            }
+            job.transferProcessIds = new HashSet<>();
+            job.completedTransferProcessIds = new HashSet<>();
             return job;
         }
     }

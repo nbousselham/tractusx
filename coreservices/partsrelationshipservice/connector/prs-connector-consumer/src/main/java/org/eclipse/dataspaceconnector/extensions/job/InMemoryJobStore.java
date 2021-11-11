@@ -2,20 +2,17 @@ package org.eclipse.dataspaceconnector.extensions.job;
 
 import org.eclipse.dataspaceconnector.spi.EdcException;
 
-import java.util.*;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 import java.util.function.Supplier;
-import java.util.stream.Collectors;
-
-import static java.util.stream.Collectors.toList;
 
 public class InMemoryJobStore implements JobStore {
 
     private static final int TIMEOUT = 1000;
     private final ReentrantReadWriteLock lock = new ReentrantReadWriteLock();
     private final Map<String, Job> jobsById = new HashMap<>();
-    private final Map<JobState, List<Job>> stateCache = new HashMap<>();
 
     @Override
     public Job find(String id) {
@@ -35,19 +32,7 @@ public class InMemoryJobStore implements JobStore {
             job.transitionInitial();
             delete(job.getId());
             jobsById.put(job.getId(), job);
-            stateCache.computeIfAbsent(job.getState(), k -> new ArrayList<>()).add(job);
             return null;
-        });
-    }
-
-    @Override
-    public List<Job> nextForState(JobState state, int max) {
-        return readLock(() -> {
-            var set = stateCache.get(state);
-            return set == null ? Collections.emptyList() : set.stream()
-                    .sorted(Comparator.comparingLong(Job::getStateTimestamp)) //order by state timestamp, oldest first
-                    .limit(max)
-                    .collect(toList());
         });
     }
 
@@ -55,26 +40,40 @@ public class InMemoryJobStore implements JobStore {
     public void delete(String processId) {
         writeLock(() -> {
             Job job = jobsById.remove(processId);
-            if (job != null) {
-                var tempCache = new HashMap<JobState, List<Job>>();
-                stateCache.forEach((key, value) -> {
-                    var list = value.stream().filter(p -> !p.getId().equals(processId)).collect(Collectors.toCollection(ArrayList::new));
-                    tempCache.put(key, list);
-                });
-                stateCache.clear();
-                stateCache.putAll(tempCache);
-            }
             return null;
         });
     }
 
     @Override
-    public void update(Job job) {
+    public void addTransferProcess(String jobId, String processId) {
         writeLock(() -> {
-            job.updateStateTimestamp();
-            delete(job.getId());
-            jobsById.put(job.getId(), job);
-            stateCache.computeIfAbsent(job.getState(), k -> new ArrayList<>()).add(job);
+            readLock(() -> {
+                Job job = jobsById.get(jobId);
+                job.addTransferProcess(processId);
+                job.transitionInProgress();
+                job.updateStateTimestamp();
+                delete(job.getId());
+                jobsById.put(job.getId(), job);
+                return null;
+            });
+            return null;
+        });
+    }
+
+    @Override
+    public void completeTransferProcess(String jobId, String processId) {
+        writeLock(() -> {
+            readLock(() -> {
+                Job job = jobsById.get(jobId);
+                job.transferProcessCompleted(processId);
+                if (job.getTransferProcessIds().isEmpty()) {
+                    job.transitionComplete();
+                }
+                job.updateStateTimestamp();
+                delete(job.getId());
+                jobsById.put(job.getId(), job);
+                return null;
+            });
             return null;
         });
     }

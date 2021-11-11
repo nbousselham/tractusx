@@ -29,13 +29,11 @@ import static java.lang.String.format;
 public class ConsumerApiController {
 
     private final Monitor monitor;
-    private final TransferProcessManager processManager;
     private final TransferProcessStore processStore;
     private final JobOrchestrator jobOrchestrator;
 
-    public ConsumerApiController(Monitor monitor, TransferProcessManager processManager, TransferProcessStore processStore, JobOrchestrator jobOrchestrator) {
+    public ConsumerApiController(Monitor monitor, TransferProcessStore processStore, JobOrchestrator jobOrchestrator) {
         this.monitor = monitor;
-        this.processManager = processManager;
         this.processStore = processStore;
         this.jobOrchestrator = jobOrchestrator;
     }

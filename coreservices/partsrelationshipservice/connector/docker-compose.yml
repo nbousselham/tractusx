@@ -38,18 +38,6 @@ services:
       - src-shared-volume:/tmp/copy/source
       - dst-shared-volume:/tmp/copy/dest
 
-  provider4:
-    build:
-      context: ..
-      target: prs-connector-provider
-      args:
-        BUILD_TARGET: prs-connector-provider
-    ports:
-      - 8184:8181
-    volumes:
-      - src-shared-volume:/tmp/copy/source
-      - dst-shared-volume:/tmp/copy/dest
-
   consumer:
     build:
       context: ..

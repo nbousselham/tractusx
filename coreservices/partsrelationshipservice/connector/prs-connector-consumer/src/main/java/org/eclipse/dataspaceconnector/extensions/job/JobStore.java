@@ -1,7 +1,5 @@
 package org.eclipse.dataspaceconnector.extensions.job;
 
-import java.util.Collection;
-
 public interface JobStore {
     Job find(String id);
 
@@ -9,10 +7,9 @@ public interface JobStore {
 
     void create(Job job);
 
-    Collection<Job> nextForState(JobState state, int max);
-
     void delete(String processId);
 
-    void update(Job job);
+    void addTransferProcess(String jobId, String processId);
 
+    void completeTransferProcess(String jobId, String processId);
 }

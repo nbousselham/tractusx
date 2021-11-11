@@ -3,7 +3,6 @@ package org.eclipse.dataspaceconnector.extensions.job;
 import org.eclipse.dataspaceconnector.extensions.transferprocess.SequentTransferProcess;
 import org.eclipse.dataspaceconnector.extensions.transferprocess.TransferProcessFile;
 import org.eclipse.dataspaceconnector.extensions.transferprocess.TransferProcessFileHandler;
-import org.eclipse.dataspaceconnector.spi.monitor.Monitor;
 import org.eclipse.dataspaceconnector.spi.transfer.TransferInitiateResponse;
 import org.eclipse.dataspaceconnector.spi.transfer.TransferProcessListener;
 import org.eclipse.dataspaceconnector.spi.transfer.TransferProcessManager;
@@ -37,6 +36,7 @@ public class JobOrchestrator implements TransferProcessListener {
                 .destinationPath(destinationPath)
                 .state(JobState.UNSAVED)
                 .build();
+
         jobStore.create(job);
 
         startTransferProcess(job, filename, connectorAddress);
@@ -63,18 +63,18 @@ public class JobOrchestrator implements TransferProcessListener {
 
         TransferInitiateResponse response = processManager.initiateConsumerRequest(dataRequest);
 
-        job.addTransferProcess(response.getId());
-        job.transitionInProgress();
-        jobStore.update(job);
+        jobStore.addTransferProcess(job.getId(), response.getId());
     }
 
     public void handleTransferProcessCompleted(Job job, TransferProcess transferProcess) {
         TransferProcessFile result = transferProcessFileHandler.parse(transferProcess);
-        Collection<SequentTransferProcess> transferProcesses = result.getTransferProcesses();
+        Collection<SequentTransferProcess> nextTransferProcesses = result.getTransferProcesses();
 
-        for (SequentTransferProcess process : transferProcesses) {
+        for (SequentTransferProcess process : nextTransferProcesses) {
             startTransferProcess(job, process.getFile(), process.getConnectorUrl());
         }
+
+        jobStore.completeTransferProcess(job.getId(), transferProcess.getId());
     }
 
     @Override

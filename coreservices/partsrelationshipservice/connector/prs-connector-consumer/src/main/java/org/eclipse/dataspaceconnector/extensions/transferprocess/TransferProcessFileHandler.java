@@ -23,7 +23,7 @@ public class TransferProcessFileHandler implements StatusChecker {
     public boolean isComplete(TransferProcess transferProcess, List<ProvisionedResource> list) {
         boolean exists = getDestinationPath(transferProcess).toFile().exists();
         if (exists) {
-            monitor.info("Transfer process " + transferProcess.getId() + " completed");
+            monitor.debug("File is ready for process " + transferProcess.getId());
         }
         return exists;
     }
@@ -35,7 +35,7 @@ public class TransferProcessFileHandler implements StatusChecker {
         try {
             return mapper.readValue(destinationPath.toFile(), TransferProcessFile.class);
         } catch (IOException e) {
-            monitor.severe("Could not retrieve results for process " + process.getId(), e);
+            monitor.severe("Could not parse file for process " + process.getId(), e);
         }
 
         return new TransferProcessFile("error", emptyList());

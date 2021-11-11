@@ -16,8 +16,6 @@ import java.util.Set;
 
 public class ApiEndpointExtension implements ServiceExtension {
 
-    private ServiceExtensionContext context;
-
     @Override
     public Set<String> requires() {
         return Set.of(
@@ -28,7 +26,6 @@ public class ApiEndpointExtension implements ServiceExtension {
 
     @Override
     public void initialize(ServiceExtensionContext context) {
-        this.context = context;
         var monitor = context.getMonitor();
 
         var processManager = context.getService(TransferProcessManager.class);
@@ -48,11 +45,9 @@ public class ApiEndpointExtension implements ServiceExtension {
         TransferProcessObservable transferProcessObservable = context.getService(TransferProcessObservable.class);
         transferProcessObservable.registerListener(jobOrchestrator);
 
-
         // web service extension
         var webService = context.getService(WebService.class);
-        webService.registerController(new ConsumerApiController(context.getMonitor(), processManager, processStore, jobOrchestrator));
-
+        webService.registerController(new ConsumerApiController(context.getMonitor(), processStore, jobOrchestrator));
     }
 
 }
