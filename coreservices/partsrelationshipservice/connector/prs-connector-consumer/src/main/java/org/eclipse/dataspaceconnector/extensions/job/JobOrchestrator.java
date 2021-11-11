@@ -1,8 +1,8 @@
 package org.eclipse.dataspaceconnector.extensions.job;
 
-import org.eclipse.dataspaceconnector.extensions.parser.TransferProcessInput;
-import org.eclipse.dataspaceconnector.extensions.parser.TransferProcessResult;
-import org.eclipse.dataspaceconnector.extensions.parser.TransferProcessResultParser;
+import org.eclipse.dataspaceconnector.extensions.transferprocess.SequentTransferProcess;
+import org.eclipse.dataspaceconnector.extensions.transferprocess.TransferProcessFile;
+import org.eclipse.dataspaceconnector.extensions.transferprocess.TransferProcessFileHandler;
 import org.eclipse.dataspaceconnector.spi.monitor.Monitor;
 import org.eclipse.dataspaceconnector.spi.transfer.TransferInitiateResponse;
 import org.eclipse.dataspaceconnector.spi.transfer.TransferProcessListener;
@@ -22,12 +22,12 @@ public class JobOrchestrator implements TransferProcessListener {
 
     private final TransferProcessManager processManager;
     private final JobStore jobStore;
-    private final TransferProcessResultParser transferProcessResultParser;
+    private final TransferProcessFileHandler transferProcessFileHandler;
 
-    public JobOrchestrator(TransferProcessManager processManager, JobStore jobStore, Monitor monitor) {
+    public JobOrchestrator(TransferProcessManager processManager, JobStore jobStore, TransferProcessFileHandler transferProcessFileHandler) {
         this.processManager = processManager;
         this.jobStore = jobStore;
-        transferProcessResultParser = new TransferProcessResultParser(monitor);
+        this.transferProcessFileHandler = transferProcessFileHandler;
     }
 
     public JobInitiateResponse startJob(String filename, String connectorAddress, String destinationPath) {
@@ -69,10 +69,10 @@ public class JobOrchestrator implements TransferProcessListener {
     }
 
     public void handleTransferProcessCompleted(Job job, TransferProcess transferProcess) {
-        TransferProcessResult result = transferProcessResultParser.parse(transferProcess);
-        Collection<TransferProcessInput> transferProcesses = result.getTransferProcesses();
+        TransferProcessFile result = transferProcessFileHandler.parse(transferProcess);
+        Collection<SequentTransferProcess> transferProcesses = result.getTransferProcesses();
 
-        for (TransferProcessInput process : transferProcesses) {
+        for (SequentTransferProcess process : transferProcesses) {
             startTransferProcess(job, process.getFile(), process.getConnectorUrl());
         }
     }
