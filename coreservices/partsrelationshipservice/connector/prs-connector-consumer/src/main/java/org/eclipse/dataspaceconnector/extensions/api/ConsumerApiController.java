@@ -26,7 +26,10 @@ import org.eclipse.dataspaceconnector.spi.transfer.TransferProcessManager;
 import org.eclipse.dataspaceconnector.spi.transfer.response.ResponseStatus;
 import org.eclipse.dataspaceconnector.spi.transfer.store.TransferProcessStore;
 import org.eclipse.dataspaceconnector.spi.types.domain.metadata.DataEntry;
-import org.eclipse.dataspaceconnector.spi.types.domain.transfer.*;
+import org.eclipse.dataspaceconnector.spi.types.domain.transfer.DataAddress;
+import org.eclipse.dataspaceconnector.spi.types.domain.transfer.DataRequest;
+import org.eclipse.dataspaceconnector.spi.types.domain.transfer.TransferProcess;
+import org.eclipse.dataspaceconnector.spi.types.domain.transfer.TransferProcessStates;
 import org.jetbrains.annotations.NotNull;
 
 import java.time.OffsetDateTime;
@@ -74,7 +77,6 @@ public class ConsumerApiController {
      * Endpoint to trigger a request, so that a file get copied into a specific destination.
      * @param filename Path of file source.
      * @param connectorAddress Provider connector address to send the message to.
-     * @param destinationPath Destination path where the file should be copied.
      * @return TransferInitiateResponse with process id.
      */
     @POST
@@ -120,7 +122,7 @@ public class ConsumerApiController {
             return Response.ok(createSasUrl(process)).build();
         }
 
-        return Response.ok(TransferProcessStates.from(process.getState()).toString()).build();
+        return Response.accepted(TransferProcessStates.from(process.getState()).toString()).build();
     }
 
     @NotNull
