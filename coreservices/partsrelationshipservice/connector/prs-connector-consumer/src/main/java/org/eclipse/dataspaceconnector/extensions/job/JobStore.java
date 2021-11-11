@@ -3,8 +3,6 @@ package org.eclipse.dataspaceconnector.extensions.job;
 public interface JobStore {
     Job find(String id);
 
-    Job findByProcessId(String id);
-
     void create(Job job);
 
     void delete(String processId);

@@ -55,6 +55,7 @@ public class JobOrchestrator implements TransferProcessListener {
                         .build())
                 .dataDestination(DataAddress.Builder.newInstance()
                         .type("File") //the provider uses this to select the correct DataFlowController
+                        .property("jobId", job.getId()) // store jobId for further retrieval
                         .property("path", job.getDestinationPath()) //where we want the file to be stored
                         .build())
                 .managedResources(false) //we do not need any provisioning
@@ -67,8 +68,9 @@ public class JobOrchestrator implements TransferProcessListener {
 
     @Override
     public void completed(TransferProcess process) {
-        Job job = jobStore.findByProcessId(process.getId());
-        TransferProcessFile result = transferProcessFileHandler.parse(process);
+        var jobId = process.getDataRequest().getDataDestination().getProperty("jobId");
+        var job = jobStore.find(jobId);
+        var result = transferProcessFileHandler.parse(process);
 
         for (TransferProcessInput nextTransferProcess : result.getTransferProcesses()) {
             startTransferProcess(job, nextTransferProcess.getFile(), nextTransferProcess.getConnectorUrl());

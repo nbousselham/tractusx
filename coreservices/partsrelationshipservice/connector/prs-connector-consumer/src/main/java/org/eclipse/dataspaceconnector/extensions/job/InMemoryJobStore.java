@@ -20,13 +20,6 @@ public class InMemoryJobStore implements JobStore {
     }
 
     @Override
-    public Job findByProcessId(String id) {
-        return readLock(() -> jobsById.values().stream()
-                .filter(j -> j.getTransferProcessIds().contains(id))
-                .findFirst().orElseThrow(() -> new EdcException("Unable to find job for process id " + id)));
-    }
-
-    @Override
     public void create(Job job) {
         writeLock(() -> {
             job.transitionInitial();
