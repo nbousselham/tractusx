@@ -61,6 +61,7 @@ public class InMemoryJobStore implements JobStore {
                 job.transferProcessCompleted(processId);
                 if (job.getTransferProcessIds().isEmpty()) {
                     job.transitionComplete();
+                    // TODO: enqueue a job that does the aggregation
                 }
                 job.updateStateTimestamp();
                 delete(job.getId());
