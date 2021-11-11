@@ -23,7 +23,7 @@ public class TransferProcessFileHandler implements StatusChecker {
     public boolean isComplete(TransferProcess transferProcess, List<ProvisionedResource> list) {
         boolean exists = getDestinationPath(transferProcess).toFile().exists();
         if (exists) {
-            monitor.info("Transfer process completed");
+            monitor.info("Transfer process " + transferProcess.getId() + " completed");
         }
         return exists;
     }
