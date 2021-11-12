@@ -32,7 +32,7 @@ public class InMemoryJobStore implements JobStore {
     @Override
     public void delete(String processId) {
         writeLock(() -> {
-            Job job = jobsById.remove(processId);
+            jobsById.remove(processId);
             return null;
         });
     }

@@ -8,7 +8,6 @@ import static java.lang.String.format;
 public class Job {
 
     private String id;
-    private String filename;
     private String destinationPath;
     private JobState state;
     private long stateTimestamp;
@@ -36,10 +35,6 @@ public class Job {
 
     public long getStateTimestamp() {
         return stateTimestamp;
-    }
-
-    public String getFilename() {
-        return filename;
     }
 
     public String getDestinationPath() {
@@ -101,11 +96,6 @@ public class Job {
 
         public Job.Builder state(JobState state) {
             job.state = state;
-            return this;
-        }
-
-        public Job.Builder filename(String filename) {
-            job.filename = filename;
             return this;
         }
 

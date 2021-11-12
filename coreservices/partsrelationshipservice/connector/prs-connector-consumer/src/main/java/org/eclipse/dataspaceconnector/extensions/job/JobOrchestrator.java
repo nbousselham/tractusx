@@ -35,7 +35,6 @@ public class JobOrchestrator implements TransferProcessListener {
     public JobInitiateResponse startJob(String filename, String connectorAddress, String destinationPath) {
         Job job = Job.Builder.newInstance()
                 .id(randomUUID().toString())
-                .filename(filename)
                 .destinationPath(destinationPath)
                 .state(JobState.UNSAVED)
                 .build();
