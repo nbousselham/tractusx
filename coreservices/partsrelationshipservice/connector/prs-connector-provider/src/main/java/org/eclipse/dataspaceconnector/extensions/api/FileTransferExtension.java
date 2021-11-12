@@ -20,7 +20,6 @@ import org.eclipse.dataspaceconnector.spi.system.ServiceExtension;
 import org.eclipse.dataspaceconnector.spi.system.ServiceExtensionContext;
 import org.eclipse.dataspaceconnector.spi.transfer.flow.DataFlowManager;
 import org.eclipse.dataspaceconnector.spi.types.domain.metadata.DataEntry;
-import org.eclipse.dataspaceconnector.spi.types.domain.metadata.GenericDataCatalogEntry;
 
 import java.util.Set;
 
@@ -64,14 +63,7 @@ public class FileTransferExtension implements ServiceExtension {
 
     private void registerDataEntries(final ServiceExtensionContext context) {
         final var metadataStore = context.getService(MetadataStore.class);
-
-        final GenericDataCatalogEntry file1 = GenericDataCatalogEntry.Builder.newInstance()
-                .property("type", "File")
-                .property("path", "/tmp/copy/source")
-                .property("filename", "test-document.txt")
-                .build();
-
-        final DataEntry entry1 = DataEntry.Builder.newInstance().id("test-document").policyId(USE_EU_POLICY).catalogEntry(file1).build();
+        final DataEntry entry1 = DataEntry.Builder.newInstance().id("prs-request").policyId(USE_EU_POLICY).build();
         metadataStore.save(entry1);
     }
 }

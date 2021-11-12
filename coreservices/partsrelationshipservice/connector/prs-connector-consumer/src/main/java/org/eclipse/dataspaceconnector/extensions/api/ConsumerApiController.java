@@ -29,7 +29,6 @@ import org.eclipse.dataspaceconnector.spi.types.domain.transfer.DataAddress;
 import org.eclipse.dataspaceconnector.spi.types.domain.transfer.DataRequest;
 import org.eclipse.dataspaceconnector.spi.types.domain.transfer.TransferProcessStates;
 
-import javax.swing.*;
 import java.util.Objects;
 import java.util.UUID;
 
@@ -86,11 +85,12 @@ public class ConsumerApiController {
 
         monitor.info(format("Received request against provider %s", request.getConnectorAddress()));
 
+        //TODO: Make it return bad request. For now it returns 500.
         Objects.requireNonNull(request.getConnectorAddress(), "connectorAddress");
         Objects.requireNonNull(request.getPartsTreeRequest(), "PartsTreeRequest cannot be null");
         // TODO: Validate content of PartsTreeRequest.
-        ObjectMapper mapper = new ObjectMapper();
-        String serializedRequest = mapper.writeValueAsString(request.getPartsTreeRequest());
+        final ObjectMapper mapper = new ObjectMapper();
+        final String serializedRequest = mapper.writeValueAsString(request.getPartsTreeRequest());
 
         final var dataRequest = DataRequest.Builder.newInstance()
                 .id(UUID.randomUUID().toString()) //this is not relevant, thus can be random

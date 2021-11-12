@@ -9,6 +9,9 @@
 //
 package org.eclipse.dataspaceconnector.extensions.api;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import net.catenax.prs.requests.PartsTreeByObjectIdRequest;
 import org.eclipse.dataspaceconnector.spi.monitor.Monitor;
 import org.eclipse.dataspaceconnector.spi.transfer.flow.DataFlowController;
 import org.eclipse.dataspaceconnector.spi.transfer.flow.DataFlowInitiateResponse;
@@ -19,26 +22,25 @@ import org.jetbrains.annotations.NotNull;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.StandardCopyOption;
 
 /**
  * Handles a data flow to transfer a file.
  */
-@SuppressWarnings({"PMD.CommentRequired", "PMD.GuardLogStatement"})
+// Removed BeanMembersShouldSerialize rule because Monitor is final,
+// so adding transient will not have any impact.
+@SuppressWarnings({"PMD.CommentRequired", "PMD.GuardLogStatement", "PMD.BeanMembersShouldSerialize"})
 public class FileTransferFlowController implements DataFlowController {
 
-    // Removed BeanMembersShouldSerialize rule because Monitor is final,
-    // so adding transient will not have any impact.
-    @SuppressWarnings({"PMD.BeanMembersShouldSerialize"})
     private final Monitor monitor;
-    // Delay used to simulate data transfer work.
-    private static final int DELAY = 2000;
+
+    private final ObjectMapper mapper;
 
     /**
      * @param monitor Logger
      */
     public FileTransferFlowController(final Monitor monitor) {
         this.monitor = monitor;
+        this.mapper = new ObjectMapper();
     }
 
     @Override
@@ -48,12 +50,17 @@ public class FileTransferFlowController implements DataFlowController {
 
     @Override
     public @NotNull DataFlowInitiateResponse initiateFlow(final DataRequest dataRequest) {
-        // verify source path
-        final var source = dataRequest.getDataEntry().getCatalogEntry().getAddress();
-        final String sourceFileName = source.getProperty("filename");
-        final var sourcePath = Path.of(source.getProperty("path"), sourceFileName);
-        if (!sourcePath.toFile().exists()) {
-            return new DataFlowInitiateResponse(ResponseStatus.FATAL_ERROR, "source file " + sourcePath + " does not exist!");
+        // verify request
+        final String serializedRequest = dataRequest.getDataDestination().getProperty("request");
+        PartsTreeByObjectIdRequest request;
+        monitor.info("Received request " + serializedRequest);
+        try {
+            request = mapper.readValue(serializedRequest, PartsTreeByObjectIdRequest.class);
+            monitor.info("request with " + request.getObjectIDManufacturer());
+        } catch (JsonProcessingException e) {
+            final String message = "Error deserializing PartsTreeByObjectIdRequest" + e.getMessage();
+            monitor.severe(message);
+            return new DataFlowInitiateResponse(ResponseStatus.FATAL_ERROR, message);
         }
 
         // verify destination path
@@ -71,17 +78,25 @@ public class FileTransferFlowController implements DataFlowController {
                 return new DataFlowInitiateResponse(ResponseStatus.FATAL_ERROR, message);
             }
         } else if (destinationPath.toFile().isDirectory()) {
-            destinationPath = Path.of(destinationPath.toString(), sourceFileName);
+            destinationPath = Path.of(destinationPath.toString());
         }
 
         try {
-            Thread.sleep(DELAY); // introduce delay to simulate data transfer work
-            Files.copy(sourcePath, destinationPath, StandardCopyOption.REPLACE_EXISTING, StandardCopyOption.COPY_ATTRIBUTES);
-        } catch (IOException | InterruptedException e) {
-            final String message = "Error copying file " + e.getMessage();
+            Files.createFile(destinationPath);
+        } catch (IOException e) {
+            final String message = "Error creating file at" + destinationPath + e.getMessage();
             monitor.severe(message);
             return new DataFlowInitiateResponse(ResponseStatus.FATAL_ERROR, message);
+        }
 
+
+        final byte[] content = ("tmp content:" + serializedRequest).getBytes();
+        try {
+            Files.write(destinationPath, content);
+        } catch (IOException e) {
+            final String message = "Error writing in file at" + destinationPath + e.getMessage();
+            monitor.severe(message);
+            return new DataFlowInitiateResponse(ResponseStatus.FATAL_ERROR, message);
         }
 
         return DataFlowInitiateResponse.OK;
