@@ -50,7 +50,9 @@ public class PrsConsumerExtension implements ServiceExtension {
         var jobStore = context.getService(JobStore.class);
         var processStore = context.getService(TransferProcessStore.class);
         var transferProcessFileHandler = new TransferProcessFileHandler(monitor);
-        var jobOrchestrator = new JobOrchestrator(processManager, jobStore, processStore, transferProcessFileHandler);
+        var threadPoolSize = Integer.valueOf(context.getSetting("edc.job.threadpoolsize", "10"));
+
+        var jobOrchestrator = new JobOrchestrator(processManager, jobStore, processStore, transferProcessFileHandler, threadPoolSize);
         TransferProcessObservable transferProcessObservable = context.getService(TransferProcessObservable.class);
         transferProcessObservable.registerListener(jobOrchestrator);
         context.registerService(JobOrchestrator.class, jobOrchestrator);

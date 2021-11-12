@@ -48,6 +48,7 @@ public class TransferProcessFileHandler implements StatusChecker {
     }
 
     public void aggregate(Job job, List<TransferProcess> processes) {
+        monitor.debug("Aggregating results of job " + job.getId());
         String aggregatedResult = processes.stream().map(p -> parse(p).getValue()).collect(Collectors.joining(" "));
         Path path = Path.of(job.getDestinationPath());
         try {

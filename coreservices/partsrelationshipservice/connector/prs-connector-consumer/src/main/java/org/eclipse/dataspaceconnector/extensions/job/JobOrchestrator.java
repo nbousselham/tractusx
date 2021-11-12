@@ -15,6 +15,8 @@ import org.eclipse.dataspaceconnector.spi.types.domain.transfer.TransferProcess;
 import java.nio.file.Path;
 import java.util.List;
 import java.util.UUID;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ThreadPoolExecutor;
 import java.util.stream.Collectors;
 
 import static java.util.UUID.randomUUID;
@@ -25,12 +27,14 @@ public class JobOrchestrator implements TransferProcessListener {
     private final JobStore jobStore;
     private final TransferProcessStore processStore;
     private final TransferProcessFileHandler transferProcessFileHandler;
+    private final ThreadPoolExecutor executor;
 
-    public JobOrchestrator(TransferProcessManager processManager, JobStore jobStore, TransferProcessStore processStore, TransferProcessFileHandler transferProcessFileHandler) {
+    public JobOrchestrator(TransferProcessManager processManager, JobStore jobStore, TransferProcessStore processStore, TransferProcessFileHandler transferProcessFileHandler, int threadPoolSize) {
         this.processManager = processManager;
         this.jobStore = jobStore;
         this.processStore = processStore;
         this.transferProcessFileHandler = transferProcessFileHandler;
+        this.executor = (ThreadPoolExecutor) Executors.newFixedThreadPool(threadPoolSize);
     }
 
     public JobInitiateResponse startJob(String filename, String connectorAddress, String destinationPath) {
@@ -73,21 +77,23 @@ public class JobOrchestrator implements TransferProcessListener {
 
     @Override
     public void completed(TransferProcess process) {
-        var jobId = process.getDataRequest().getDataDestination().getProperty("jobId");
-        var job = jobStore.find(jobId);
-        var result = transferProcessFileHandler.parse(process);
+        executor.execute(() -> {
+            var jobId = process.getDataRequest().getDataDestination().getProperty("jobId");
+            var job = jobStore.find(jobId);
+            var result = transferProcessFileHandler.parse(process);
 
-        for (TransferProcessInput nextTransferProcess : result.getTransferProcesses()) {
-            startTransferProcess(job, nextTransferProcess.getFile(), nextTransferProcess.getConnectorUrl());
-        }
+            for (TransferProcessInput nextTransferProcess : result.getTransferProcesses()) {
+                startTransferProcess(job, nextTransferProcess.getFile(), nextTransferProcess.getConnectorUrl());
+            }
 
-        jobStore.completeTransferProcess(job.getId(), process.getId());
+            jobStore.completeTransferProcess(job.getId(), process.getId());
 
-        if (job.getState() == JobState.TRANSFERS_FINISHED) {
-            List<TransferProcess> processes = job.getCompletedTransferProcessIds().stream().map(processStore::find).collect(Collectors.toList());
-            transferProcessFileHandler.aggregate(job, processes);
-            jobStore.completeJob(job.getId());
-        }
+            if (job.getState() == JobState.TRANSFERS_FINISHED) {
+                List<TransferProcess> processes = job.getCompletedTransferProcessIds().stream().map(processStore::find).collect(Collectors.toList());
+                transferProcessFileHandler.aggregate(job, processes);
+                jobStore.completeJob(job.getId());
+            }
+        });
     }
 
     public Job findJob(String jobId) {

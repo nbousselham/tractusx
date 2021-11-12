@@ -11,7 +11,8 @@ import org.jetbrains.annotations.NotNull;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.StandardCopyOption;
+
+import static java.nio.file.StandardCopyOption.*;
 
 public class FileTransferFlowController implements DataFlowController {
     private final Monitor monitor;
@@ -57,8 +58,10 @@ public class FileTransferFlowController implements DataFlowController {
         }
 
         try {
-            Thread.sleep(2000); // introduce delay to simulate data transfer work
-            Files.copy(sourcePath, destinationPath, StandardCopyOption.REPLACE_EXISTING, StandardCopyOption.COPY_ATTRIBUTES);
+            Thread.sleep(2000); // introduce delay simulating data transfer work
+            var tmpDestinationPath = Path.of(destinationPath.getParent().toString(), destinationPath.getFileName() + ".tmp");
+            Files.copy(sourcePath, tmpDestinationPath, REPLACE_EXISTING, COPY_ATTRIBUTES);
+            Files.move(tmpDestinationPath, destinationPath, REPLACE_EXISTING, ATOMIC_MOVE);
         } catch (IOException | InterruptedException e) {
             String message = "Error copying file " + e.getMessage();
             monitor.severe(message);
