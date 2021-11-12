@@ -8,14 +8,14 @@ replicaCount: 1
 image:
   # -- Image pull policy settings
   pullPolicy: IfNotPresent
-  # -- Apache Jena Fuseki image
-  brokerFusekiImage: idsacontainerregistry01.azurecr.io/broker-fuseki
-  # -- Apache Jena Fuseki image tag
-  brokerFusekiImageTag: latest
   # -- Metadata-broker image 
-  brokerCoreImage: idsacontainerregistry01.azurecr.io/broker-core
+  brokerCoreImage: catenaxdev001acr.azurecr.io/ids-metadata-broker
   # -- Metadata-broker image tag
-  brokerCoreImageTag: 4.0.2
+  brokerCoreImageTag: latest
+
+fuseki:
+  deploy: true
+  address: ""
 
 # -- Secret with docketconfig.json to access repository
 imagePullSecrets:
@@ -38,7 +38,6 @@ serviceAccount:
 env:
   # -- Environment variables that allow to configure application. Please check broker [repo](https://github.com/International-Data-Spaces-Association/metadata-broker-open-core)
   config:
-    SPARQL_URL: ""
     ELASTICSEARCH_HOSTNAME: ""
     ELASTICSEARCH_PORT: ""
     DAPS_URL: ""
@@ -95,17 +94,13 @@ ingress:
   # -- Define path prefix starting with /, e.g. /broker
   rootPath: ""
   # -- Allow to enable and disable ingress
-  enabled: false
+  enabled: true
   # -- Paths configuration
   paths:
   - path: /broker(/|$)(.*)
     pathType: Prefix
     serviceName: ""
     portNumber: 8080
-  - path: /fuseki
-    pathType: Prefix
-    serviceName: ""
-    portNumber: 3030
   # -- Ingress annotations
   annotations:
     kubernetes.io/ingress.class: nginx
@@ -113,7 +108,7 @@ ingress:
     nginx.ingress.kubernetes.io/use-regex: "true"
   # -- TLS settings
   tls:
-    enabled: false
+    enabled: true
     certMgr:
       # -- If enabled cert-manager will be used to issue ingress cert
       enabled: false

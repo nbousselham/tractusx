@@ -10,3 +10,8 @@ data:
     {{ $key }}: "{{ $val }}"
   {{- end }}
   {{- end}}
+  {{- if .Values.fuseki.deploy }}
+    SPARQL_URL: "http://{{ .Release.Name }}-broker-fuseki:3030/connectorData"
+  {{- else }}
+    SPARQL_URL: "{{ .Values.fuseki.address }}"
+  {{- end }}

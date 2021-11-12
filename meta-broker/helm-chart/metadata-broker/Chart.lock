@@ -1,0 +1,6 @@
+dependencies:
+- name: broker-fuseki
+  repository: file://../broker-fuseki
+  version: 0.1.0
+digest: sha256:0be6f0b09ff014a4a88dc4c4cbffe00901043058272a09f06cd871954a1c737d
+generated: "2021-11-12T13:16:19.5009833+03:00"
