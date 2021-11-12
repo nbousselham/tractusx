@@ -49,7 +49,7 @@ public class TransferProcessFileHandler implements StatusChecker {
 
     public void aggregate(Job job, List<TransferProcess> processes) {
         String aggregatedResult = processes.stream().map(p -> parse(p).getValue()).collect(Collectors.joining(" "));
-        Path path = Path.of(job.getDestinationPath(), job.getId());
+        Path path = Path.of(job.getDestinationPath());
         try {
             Files.writeString(path, aggregatedResult);
         } catch (IOException e) {
@@ -60,12 +60,6 @@ public class TransferProcessFileHandler implements StatusChecker {
     private Path getDestinationPath(TransferProcess process) {
         var destination = process.getDataRequest().getDataDestination();
         var destinationPath = Path.of(destination.getProperty("path"));
-
-        File file = destinationPath.toFile();
-        if (file.exists() && file.isDirectory()) {
-            destinationPath = Path.of(destinationPath.toString(), process.getDataRequest().getDataEntry().getId());
-        }
-
-        return destinationPath;
+        return Path.of(destinationPath.toString(), process.getDataRequest().getDataEntry().getId());
     }
 }

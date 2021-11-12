@@ -12,6 +12,7 @@ import org.eclipse.dataspaceconnector.spi.types.domain.transfer.DataAddress;
 import org.eclipse.dataspaceconnector.spi.types.domain.transfer.DataRequest;
 import org.eclipse.dataspaceconnector.spi.types.domain.transfer.TransferProcess;
 
+import java.nio.file.Path;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -47,6 +48,7 @@ public class JobOrchestrator implements TransferProcessListener {
     }
 
     public void startTransferProcess(Job job, String filename, String connectorAddress) {
+        String processDestinationPath = Path.of(job.getDestinationPath()).getParent().toString();
         var dataRequest = DataRequest.Builder.newInstance()
                 .id(UUID.randomUUID().toString()) //this is not relevant, thus can be random
                 .connectorAddress(connectorAddress) //the address of the provider connector
@@ -59,7 +61,7 @@ public class JobOrchestrator implements TransferProcessListener {
                 .dataDestination(DataAddress.Builder.newInstance()
                         .type("File") //the provider uses this to select the correct DataFlowController
                         .property("jobId", job.getId()) // store jobId for further retrieval
-                        .property("path", job.getDestinationPath()) //where we want the file to be stored
+                        .property("path", processDestinationPath) //where we want the file to be stored
                         .build())
                 .managedResources(false) //we do not need any provisioning
                 .build();
