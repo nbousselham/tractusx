@@ -2,7 +2,7 @@
 
 ## Spike scenario
 
-The goal of this spike is to clarify how a consumer connector can coordinate multiple calls to provider connectors to retrieve a distributed parts tree. The spike will focus on the following points: 
+The goal of this spike is to clarify how a consumer connector can coordinate multiple calls to provider connectors to retrieve a distributed parts tree focusing on the following points: 
 
 * A consumer can start a long-running background process to orchestrate multiple provider jobs.
 * A consumer can issue requests to multiple providers.
