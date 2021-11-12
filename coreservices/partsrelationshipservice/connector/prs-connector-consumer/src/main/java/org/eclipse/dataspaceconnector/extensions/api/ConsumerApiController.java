@@ -10,6 +10,8 @@
 package org.eclipse.dataspaceconnector.extensions.api;
 
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.ws.rs.Consumes;
 import jakarta.ws.rs.GET;
 import jakarta.ws.rs.POST;
@@ -27,6 +29,7 @@ import org.eclipse.dataspaceconnector.spi.types.domain.transfer.DataAddress;
 import org.eclipse.dataspaceconnector.spi.types.domain.transfer.DataRequest;
 import org.eclipse.dataspaceconnector.spi.types.domain.transfer.TransferProcessStates;
 
+import javax.swing.*;
 import java.util.Objects;
 import java.util.UUID;
 
@@ -79,7 +82,7 @@ public class ConsumerApiController {
     @Path("file")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.TEXT_PLAIN)
-    public Response initiateTransfer(final FileRequest request) {
+    public Response initiateTransfer(final FileRequest request) throws JsonProcessingException {
 
         monitor.info(format("Received request for file %s against provider %s", request.getFilename(), request.getConnectorAddress()));
 
@@ -87,6 +90,8 @@ public class ConsumerApiController {
         Objects.requireNonNull(request.getConnectorAddress(), "connectorAddress");
         Objects.requireNonNull(request.getPartsTreeRequest(), "PartsTreeRequest cannot be null");
         // TODO: Validate content of PartsTreeRequest.
+        ObjectMapper mapper = new ObjectMapper();
+        String serializedRequest = mapper.writeValueAsString(request);
 
         final var dataRequest = DataRequest.Builder.newInstance()
                 .id(UUID.randomUUID().toString()) //this is not relevant, thus can be random
@@ -99,7 +104,7 @@ public class ConsumerApiController {
                         .build())
                 .dataDestination(DataAddress.Builder.newInstance()
                         .type("File") //the provider uses this to select the correct DataFlowController
-                        .property("path", request.getDestinationPath()) //where we want the file to be stored
+                        .property("fileRequest", serializedRequest)
                         .build())
                 .managedResources(false) //we do not need any provisioning
                 .build();

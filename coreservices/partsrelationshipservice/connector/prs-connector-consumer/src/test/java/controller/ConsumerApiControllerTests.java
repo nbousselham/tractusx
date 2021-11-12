@@ -1,5 +1,7 @@
 package controller;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.javafaker.Faker;
 import jakarta.ws.rs.core.Response;
 import net.catenax.prs.requests.PartsTreeByObjectIdRequest;
@@ -81,7 +83,7 @@ public class ConsumerApiControllerTests {
     }
 
     @Test
-    public void initiateTransfer_WhenFileRequestValid_ReturnsProcessId() {
+    public void initiateTransfer_WhenFileRequestValid_ReturnsProcessId() throws JsonProcessingException {
         //Arrange
         FileRequest fileRequest = new FileRequest();
         fileRequest.setFilename(faker.file().fileName());
@@ -113,6 +115,7 @@ public class ConsumerApiControllerTests {
 
         when(transferProcessManager.initiateConsumerRequest(any(DataRequest.class)))
                 .thenReturn(TransferInitiateResponse.Builder.newInstance().id(UUID.randomUUID().toString()).status(ResponseStatus.OK).build());
+        ObjectMapper mapper = new ObjectMapper();
 
         //Act
         var response = controller.initiateTransfer(fileRequest);
@@ -120,7 +123,12 @@ public class ConsumerApiControllerTests {
         assertThat(response.getStatus()).isEqualTo(Response.Status.OK.getStatusCode());
         // Verify that initiateConsumerRequest got called with correct DataRequest input.
         verify(transferProcessManager).initiateConsumerRequest(dataRequestCaptor.capture());
-        assertThat(dataRequestCaptor.getValue()).usingRecursiveComparison().ignoringFields("id").isEqualTo(dataRequest);
+        assertThat(dataRequestCaptor.getValue()).usingRecursiveComparison()
+                .ignoringFields("id")
+                .ignoringFieldsMatchingRegexes("dataDestination.properties")
+                .isEqualTo(dataRequest);
         assertThat(dataRequestCaptor.getValue().getId()).isNotBlank();
+        var serializedFileRequest = dataRequestCaptor.getValue().getDataDestination().getProperties().get("fileRequest");
+        assertThat(mapper.readValue(serializedFileRequest, FileRequest.class)).isEqualTo(fileRequest);
     }
 }

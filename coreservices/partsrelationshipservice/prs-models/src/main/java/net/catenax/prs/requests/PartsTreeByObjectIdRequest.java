@@ -11,6 +11,7 @@ package net.catenax.prs.requests;
 
 import lombok.Builder;
 import lombok.Value;
+import lombok.extern.jackson.Jacksonized;
 
 /**
  * Parameter object for
@@ -18,6 +19,7 @@ import lombok.Value;
  * REST operation.
  */
 @Value
+@Jacksonized // Makes the class deserializable using lombok builder.
 @Builder(toBuilder = true)
 public class PartsTreeByObjectIdRequest {
 
