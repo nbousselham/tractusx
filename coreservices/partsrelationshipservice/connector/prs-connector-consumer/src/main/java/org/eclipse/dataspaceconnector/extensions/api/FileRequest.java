@@ -11,6 +11,7 @@ package org.eclipse.dataspaceconnector.extensions.api;
 
 
 import lombok.Data;
+import net.catenax.prs.requests.PartsTreeByObjectIdRequest;
 
 /**
  * JSON payload for file transfer request.
@@ -32,4 +33,9 @@ public class FileRequest {
      * Destination path where the file should be copied.
      */
     private String destinationPath;
+
+    /**
+     * Parts Tree Request.
+     */
+    private PartsTreeByObjectIdRequest request;
 }
