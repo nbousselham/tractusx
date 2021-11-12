@@ -11,7 +11,7 @@ package net.catenax.prs.systemtest;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import net.catenax.prs.client.composite.CompositePartsRelationshipClient;
-import net.catenax.prs.client.requests.PartsTreeByObjectIdRequest;
+import net.catenax.prs.requests.PartsTreeByObjectIdRequest;
 import net.catenax.prs.registryclient.StubRegistryClient;
 import net.catenax.prs.registryclient.config.PartitionDeploymentsConfig;
 import net.catenax.prs.registryclient.config.PartitionsConfig;

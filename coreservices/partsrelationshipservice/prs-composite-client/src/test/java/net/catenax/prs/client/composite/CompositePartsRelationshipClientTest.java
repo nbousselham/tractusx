@@ -11,7 +11,7 @@ import net.catenax.prs.client.model.PartId;
 import net.catenax.prs.client.model.PartInfo;
 import net.catenax.prs.client.model.PartRelationship;
 import net.catenax.prs.client.model.PartRelationshipsWithInfos;
-import net.catenax.prs.client.requests.PartsTreeByObjectIdRequest;
+import net.catenax.prs.requests.PartsTreeByObjectIdRequest;
 import net.catenax.prs.registryclient.StubRegistryClient;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

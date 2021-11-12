@@ -7,15 +7,14 @@
 // See the LICENSE file(s) distributed with this work for
 // additional information regarding license terms.
 //
-package net.catenax.prs.client.requests;
+package net.catenax.prs.requests;
 
 import lombok.Builder;
 import lombok.Value;
-import net.catenax.prs.client.composite.CompositePartsRelationshipClient;
 
 /**
  * Parameter object for
- * {@link CompositePartsRelationshipClient#getPartsTree(PartsTreeByObjectIdRequest)}
+ * getPartsTree
  * REST operation.
  */
 @Value
