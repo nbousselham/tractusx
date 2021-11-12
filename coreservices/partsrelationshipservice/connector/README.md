@@ -42,7 +42,7 @@ The `JobOrchestrator` class takes care of coordinating requests to multiple prov
 1. The `complete` callback is triggered asynchronously when results are ready. In this case `test-document-3` indicates a further call to retrieve `test-document-4` from `provider2` is required.
 1. Another request is sent to `provider2`
 1. The `JobOrchestrator` identifies that no further requests are required and advances the job status to `TRANSFERS_FINISHED`
-1. All partial results are aggregated by the `TransferProcessFileHandler` and stored in the destination folder. The job state advances to `COMPLETED`. 
-1. The client has been polling the consumer connector for the status of the job. Now this is `COMPLETED` so results are accessible in the destination folder.  
+1. All partial results are aggregated by the `TransferProcessFileHandler` and stored in the destination file. The job state advances to `COMPLETED`. 
+1. The client has been polling the consumer connector for the status of the job. Now this is `COMPLETED` so the aggregated result is ready for the consumer to be retrieved.  
 
 Please refer to [Confluence](https://confluence.catena-x.net/display/ARTI/MTPDC+EDC+Orchestration) for more details on the orchestration logic.
