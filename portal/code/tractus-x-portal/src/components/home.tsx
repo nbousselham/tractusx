@@ -35,9 +35,8 @@ import { NewSemanticModel } from './semantics/NewSemanticModel';
 import SemanticHub from './semantics/SemanticHub';
 import SemanticModelDetail from './semantics/SemanticModelDetail';
 import Aspect from './aspect';
-import DigitalTwins from './digitaltwins/digitaltwins';
-import Onboarding from './onboarding';
-import { DigitalTwinDetail } from './digitaltwins/digitaltwindetail';
+import DigitalTwins from './digitaltwins/DigitalTwins';
+import { DigitalTwinDetail } from './digitaltwins/DigitalTwinDetail';
 
 const navStyles: Partial<INavStyles> = {
   root: {
@@ -241,7 +240,6 @@ class Home extends React.Component<RouteComponentProps> {
               <Route path='/home/partners' component={(props) => <YellowPages {...props} />} />
               <Route path='/home/notification' component={(props) => <NotificationCenter {...props} />} />
               <Route path='/home/notimp' component={(props) => <NotImp {...props} />} />
-              <Route path='/home/onboarding' component={(props) => <Onboarding {...props} />} />
             </Switch>
           </div>
         </div>
