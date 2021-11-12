@@ -84,14 +84,13 @@ public class ConsumerApiController {
     @Produces(MediaType.TEXT_PLAIN)
     public Response initiateTransfer(final FileRequest request) throws JsonProcessingException {
 
-        monitor.info(format("Received request for file %s against provider %s", request.getFilename(), request.getConnectorAddress()));
+        monitor.info(format("Received request against provider %s", request.getConnectorAddress()));
 
-        Objects.requireNonNull(request.getFilename(), "filename");
         Objects.requireNonNull(request.getConnectorAddress(), "connectorAddress");
         Objects.requireNonNull(request.getPartsTreeRequest(), "PartsTreeRequest cannot be null");
         // TODO: Validate content of PartsTreeRequest.
         ObjectMapper mapper = new ObjectMapper();
-        String serializedRequest = mapper.writeValueAsString(request);
+        String serializedRequest = mapper.writeValueAsString(request.getPartsTreeRequest());
 
         final var dataRequest = DataRequest.Builder.newInstance()
                 .id(UUID.randomUUID().toString()) //this is not relevant, thus can be random
@@ -99,12 +98,13 @@ public class ConsumerApiController {
                 .protocol("ids-rest") //must be ids-rest
                 .connectorId("consumer")
                 .dataEntry(DataEntry.Builder.newInstance() //the data entry is the source asset
-                        .id(request.getFilename())
+                        .id("prs-request")
                         .policyId("use-eu")
                         .build())
                 .dataDestination(DataAddress.Builder.newInstance()
                         .type("File") //the provider uses this to select the correct DataFlowController
-                        .property("fileRequest", serializedRequest)
+                        .property("request", serializedRequest)
+                        .property("path", request.getDestinationPath())
                         .build())
                 .managedResources(false) //we do not need any provisioning
                 .build();

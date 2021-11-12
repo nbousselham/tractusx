@@ -18,12 +18,6 @@ import net.catenax.prs.requests.PartsTreeByObjectIdRequest;
  */
 @Data
 public class FileRequest {
-
-    /**
-     * Path of file source.
-     */
-    private String filename;
-
     /**
      * Provider connector address to send the message to.
      */

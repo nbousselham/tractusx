@@ -86,7 +86,6 @@ public class ConsumerApiControllerTests {
     public void initiateTransfer_WhenFileRequestValid_ReturnsProcessId() throws JsonProcessingException {
         //Arrange
         FileRequest fileRequest = new FileRequest();
-        fileRequest.setFilename(faker.file().fileName());
         fileRequest.setConnectorAddress(faker.internet().url());
         fileRequest.setDestinationPath(faker.file().fileName());
         PartsTreeByObjectIdRequest partsTreeByObjectIdRequest =
@@ -103,7 +102,7 @@ public class ConsumerApiControllerTests {
                 .protocol("ids-rest")
                 .connectorId("consumer")
                 .dataEntry(DataEntry.Builder.newInstance()
-                        .id(fileRequest.getFilename())
+                        .id("prs-request")
                         .policyId("use-eu")
                         .build())
                 .dataDestination(DataAddress.Builder.newInstance()
@@ -128,7 +127,9 @@ public class ConsumerApiControllerTests {
                 .ignoringFieldsMatchingRegexes("dataDestination.properties")
                 .isEqualTo(dataRequest);
         assertThat(dataRequestCaptor.getValue().getId()).isNotBlank();
-        var serializedFileRequest = dataRequestCaptor.getValue().getDataDestination().getProperties().get("fileRequest");
-        assertThat(mapper.readValue(serializedFileRequest, FileRequest.class)).isEqualTo(fileRequest);
+        var serializedRequest = dataRequestCaptor.getValue().getDataDestination().getProperties().get("request");
+        assertThat(mapper.readValue(serializedRequest, PartsTreeByObjectIdRequest.class)).isEqualTo(fileRequest.getPartsTreeRequest());
+        var destinationFile = dataRequestCaptor.getValue().getDataDestination().getProperties().get("path");
+        assertThat(destinationFile).isEqualTo(fileRequest.getDestinationPath());
     }
 }
