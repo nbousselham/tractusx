@@ -6,6 +6,7 @@ public enum JobState {
     UNSAVED(100),
     INITIAL(100),
     IN_PROGRESS(600),
+    TRANSFERS_FINISHED(700),
     COMPLETED(800),
     ERROR(-1);
 

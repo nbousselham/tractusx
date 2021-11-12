@@ -10,4 +10,6 @@ public interface JobStore {
     void addTransferProcess(String jobId, String processId);
 
     void completeTransferProcess(String jobId, String processId);
+
+    void completeJob(String jobId);
 }

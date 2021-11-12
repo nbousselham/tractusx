@@ -1,13 +1,19 @@
 package org.eclipse.dataspaceconnector.extensions.file;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.eclipse.dataspaceconnector.extensions.job.Job;
 import org.eclipse.dataspaceconnector.spi.monitor.Monitor;
+import org.eclipse.dataspaceconnector.spi.transfer.flow.DataFlowInitiateResponse;
+import org.eclipse.dataspaceconnector.spi.transfer.response.ResponseStatus;
 import org.eclipse.dataspaceconnector.spi.types.domain.transfer.*;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.StandardCopyOption;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import static java.util.Collections.emptyList;
 
@@ -39,6 +45,16 @@ public class TransferProcessFileHandler implements StatusChecker {
         }
 
         return new TransferProcessFile("error", emptyList());
+    }
+
+    public void aggregate(Job job, List<TransferProcess> processes) {
+        String aggregatedResult = processes.stream().map(p -> parse(p).getValue()).collect(Collectors.joining(" "));
+        Path path = Path.of(job.getDestinationPath(), job.getId());
+        try {
+            Files.writeString(path, aggregatedResult);
+        } catch (IOException e) {
+            monitor.severe("Error aggregating file", e);
+        }
     }
 
     private Path getDestinationPath(TransferProcess process) {

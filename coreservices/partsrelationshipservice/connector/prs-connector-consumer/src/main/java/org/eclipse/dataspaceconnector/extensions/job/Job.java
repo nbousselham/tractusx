@@ -1,10 +1,7 @@
 package org.eclipse.dataspaceconnector.extensions.job;
 
 import java.time.Instant;
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.Objects;
-import java.util.Set;
+import java.util.*;
 
 import static java.lang.String.format;
 
@@ -15,8 +12,8 @@ public class Job {
     private String destinationPath;
     private JobState state;
     private long stateTimestamp;
-    private Set<String> transferProcessIds;
-    private Set<String> completedTransferProcessIds;
+    private Collection<String> transferProcessIds;
+    private Collection<String> completedTransferProcessIds;
 
     private Job() {
     }
@@ -29,11 +26,11 @@ public class Job {
         return state;
     }
 
-    public Set<String> getTransferProcessIds() {
+    public Collection<String> getTransferProcessIds() {
         return transferProcessIds;
     }
 
-    public Set<String> getCompletedTransferProcessIds() {
+    public Collection<String> getCompletedTransferProcessIds() {
         return completedTransferProcessIds;
     }
 
@@ -57,8 +54,12 @@ public class Job {
         transition(JobState.IN_PROGRESS, JobState.INITIAL, JobState.IN_PROGRESS);
     }
 
+    public void transitionTransfersFinished() {
+        transition(JobState.TRANSFERS_FINISHED, JobState.IN_PROGRESS);
+    }
+
     public void transitionComplete() {
-        transition(JobState.COMPLETED, JobState.IN_PROGRESS);
+        transition(JobState.COMPLETED, JobState.TRANSFERS_FINISHED);
     }
 
     public void addTransferProcess(String transferProcessId) {
@@ -124,7 +125,7 @@ public class Job {
                 job.stateTimestamp = Instant.now().toEpochMilli();
             }
             job.transferProcessIds = new HashSet<>();
-            job.completedTransferProcessIds = new HashSet<>();
+            job.completedTransferProcessIds = new ArrayList<>();
             return job;
         }
     }

@@ -1,18 +1,20 @@
 package org.eclipse.dataspaceconnector.extensions.job;
 
 import org.eclipse.dataspaceconnector.extensions.file.TransferProcessInput;
-import org.eclipse.dataspaceconnector.extensions.file.TransferProcessFile;
 import org.eclipse.dataspaceconnector.extensions.file.TransferProcessFileHandler;
 import org.eclipse.dataspaceconnector.spi.transfer.TransferInitiateResponse;
 import org.eclipse.dataspaceconnector.spi.transfer.TransferProcessListener;
 import org.eclipse.dataspaceconnector.spi.transfer.TransferProcessManager;
 import org.eclipse.dataspaceconnector.spi.transfer.response.ResponseStatus;
+import org.eclipse.dataspaceconnector.spi.transfer.store.TransferProcessStore;
 import org.eclipse.dataspaceconnector.spi.types.domain.metadata.DataEntry;
 import org.eclipse.dataspaceconnector.spi.types.domain.transfer.DataAddress;
 import org.eclipse.dataspaceconnector.spi.types.domain.transfer.DataRequest;
 import org.eclipse.dataspaceconnector.spi.types.domain.transfer.TransferProcess;
 
+import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 import static java.util.UUID.randomUUID;
 
@@ -20,11 +22,13 @@ public class JobOrchestrator implements TransferProcessListener {
 
     private final TransferProcessManager processManager;
     private final JobStore jobStore;
+    private final TransferProcessStore processStore;
     private final TransferProcessFileHandler transferProcessFileHandler;
 
-    public JobOrchestrator(TransferProcessManager processManager, JobStore jobStore, TransferProcessFileHandler transferProcessFileHandler) {
+    public JobOrchestrator(TransferProcessManager processManager, JobStore jobStore, TransferProcessStore processStore, TransferProcessFileHandler transferProcessFileHandler) {
         this.processManager = processManager;
         this.jobStore = jobStore;
+        this.processStore = processStore;
         this.transferProcessFileHandler = transferProcessFileHandler;
     }
 
@@ -77,6 +81,12 @@ public class JobOrchestrator implements TransferProcessListener {
         }
 
         jobStore.completeTransferProcess(job.getId(), process.getId());
+
+        if (job.getState() == JobState.TRANSFERS_FINISHED) {
+            List<TransferProcess> processes = job.getCompletedTransferProcessIds().stream().map(processStore::find).collect(Collectors.toList());
+            transferProcessFileHandler.aggregate(job, processes);
+            jobStore.completeJob(job.getId());
+        }
     }
 
     public Job findJob(String jobId) {

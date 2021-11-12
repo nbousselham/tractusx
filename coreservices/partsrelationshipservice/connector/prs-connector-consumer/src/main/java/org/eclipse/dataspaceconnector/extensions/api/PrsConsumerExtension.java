@@ -48,8 +48,9 @@ public class PrsConsumerExtension implements ServiceExtension {
         var monitor = context.getMonitor();
         var processManager = context.getService(TransferProcessManager.class);
         var jobStore = context.getService(JobStore.class);
+        var processStore = context.getService(TransferProcessStore.class);
         var transferProcessFileHandler = new TransferProcessFileHandler(monitor);
-        var jobOrchestrator = new JobOrchestrator(processManager, jobStore, transferProcessFileHandler);
+        var jobOrchestrator = new JobOrchestrator(processManager, jobStore, processStore, transferProcessFileHandler);
         TransferProcessObservable transferProcessObservable = context.getService(TransferProcessObservable.class);
         transferProcessObservable.registerListener(jobOrchestrator);
         context.registerService(JobOrchestrator.class, jobOrchestrator);
