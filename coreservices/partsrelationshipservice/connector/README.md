@@ -11,7 +11,7 @@ The goal of this spike is to clarify how a consumer connector can coordinate mul
 
 # Running the spike code
 
-Use the `run-integration-test.sh` script to run the spike. This script spins 3 provider connectors that serve files and a consumer connector that starts a query against the first provider. At the end of the execution you should see the content of all test document files.
+Use the `run-integration-test.sh` script to run the spike. This script spins 3 provider connectors that serve files and a consumer connector that starts a query against the first provider. At the end of the execution you should see the aggregated "value" property in all test document files.
 
 # Provider file structure
 
@@ -33,10 +33,10 @@ The `value` field represents some information provided in this file. The presenc
 
 # Orchestrating logic
 
-The `JobOrchestrator` class takes care of coordinating requests to multiple providers to retrieve all required partial files.
+The `JobOrchestrator` class takes care of coordinating requests to multiple providers to retrieve all required partial files and aggregate these.
 
 1- First a request is sent to `provider1` to retrieve `test-document-1`.
-1- The `JobOrchestrator` registers itself as a `TransferProcessListener` in the `PrsConsumerExtension`, and thus its `complete` method gets called when the first request is finished.
+1- The `JobOrchestrator` registers itself as a `TransferProcessListener` in the `PrsConsumerExtension`, and thus its `complete` method gets called when the request is finished.
 1- The `JobOrchestrator` parses the result and detects that `test-document-1` indicates that further partial files`test-document-2` and `test-document-3` need to be retrieved from `provider2` and `provider3` respectively.
 1- Requests are sent to `provider2` and `provider3`.
 1- The `complete` callback is triggered asynchronously when results are ready. In this case `test-document-3` indicates a further call to retrieve `test-document-4` from `provider2` is required.
