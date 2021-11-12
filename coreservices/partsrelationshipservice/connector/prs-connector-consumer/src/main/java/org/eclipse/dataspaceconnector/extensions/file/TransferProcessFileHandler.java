@@ -3,15 +3,12 @@ package org.eclipse.dataspaceconnector.extensions.file;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.eclipse.dataspaceconnector.extensions.job.Job;
 import org.eclipse.dataspaceconnector.spi.monitor.Monitor;
-import org.eclipse.dataspaceconnector.spi.transfer.flow.DataFlowInitiateResponse;
-import org.eclipse.dataspaceconnector.spi.transfer.response.ResponseStatus;
 import org.eclipse.dataspaceconnector.spi.types.domain.transfer.*;
 
-import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.StandardCopyOption;
+import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -44,12 +41,16 @@ public class TransferProcessFileHandler implements StatusChecker {
             monitor.severe("Could not parse file for process " + process.getId(), e);
         }
 
-        return new TransferProcessFile("error", emptyList());
+        return new TransferProcessFile("error", -1, emptyList());
     }
 
     public void aggregate(Job job, List<TransferProcess> processes) {
         monitor.debug("Aggregating results of job " + job.getId());
-        String aggregatedResult = processes.stream().map(p -> parse(p).getValue()).collect(Collectors.joining(" "));
+        String aggregatedResult = processes.stream()
+                .map(this::parse)
+                .sorted(Comparator.comparingInt(TransferProcessFile::getOrder))
+                .map(TransferProcessFile::getValue)
+                .collect(Collectors.joining(" "));
         Path path = Path.of(job.getDestinationPath());
         try {
             Files.writeString(path, aggregatedResult);

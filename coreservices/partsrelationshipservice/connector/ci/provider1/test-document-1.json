@@ -1,5 +1,6 @@
 {
   "value": "The quick",
+  "order": 1,
   "transferProcesses": [
     {
       "file": "test-document-2",
