@@ -85,6 +85,8 @@ public class ConsumerApiController {
 
         Objects.requireNonNull(request.getFilename(), "filename");
         Objects.requireNonNull(request.getConnectorAddress(), "connectorAddress");
+        Objects.requireNonNull(request.getPartsTreeRequest(), "PartsTreeRequest cannot be null");
+        // TODO: Validate content of PartsTreeRequest.
 
         final var dataRequest = DataRequest.Builder.newInstance()
                 .id(UUID.randomUUID().toString()) //this is not relevant, thus can be random

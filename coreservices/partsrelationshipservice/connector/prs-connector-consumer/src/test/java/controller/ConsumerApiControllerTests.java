@@ -1,5 +1,8 @@
+package controller;
+
 import com.github.javafaker.Faker;
 import jakarta.ws.rs.core.Response;
+import net.catenax.prs.requests.PartsTreeByObjectIdRequest;
 import org.eclipse.dataspaceconnector.extensions.api.ConsumerApiController;
 import org.eclipse.dataspaceconnector.extensions.api.FileRequest;
 import org.eclipse.dataspaceconnector.monitor.ConsoleMonitor;
@@ -84,6 +87,13 @@ public class ConsumerApiControllerTests {
         fileRequest.setFilename(faker.file().fileName());
         fileRequest.setConnectorAddress(faker.internet().url());
         fileRequest.setDestinationPath(faker.file().fileName());
+        PartsTreeByObjectIdRequest partsTreeByObjectIdRequest =
+                PartsTreeByObjectIdRequest.builder()
+                        .oneIDManufacturer(faker.company().name())
+                        .objectIDManufacturer(faker.lorem().characters(10, 20))
+                        .view("AS_BUILT")
+                        .depth(faker.number().numberBetween(1, 5)).build();
+        fileRequest.setPartsTreeRequest(partsTreeByObjectIdRequest);
 
         var dataRequest = DataRequest.Builder.newInstance()
                 .id(UUID.randomUUID().toString())

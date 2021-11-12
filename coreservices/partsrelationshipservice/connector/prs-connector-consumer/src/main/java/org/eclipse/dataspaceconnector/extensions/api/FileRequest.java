@@ -37,5 +37,5 @@ public class FileRequest {
     /**
      * Parts Tree Request.
      */
-    private PartsTreeByObjectIdRequest request;
+    private PartsTreeByObjectIdRequest partsTreeRequest;
 }
