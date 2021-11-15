@@ -124,7 +124,7 @@ public class ConsumerApiControllerTests {
         verify(transferProcessManager).initiateConsumerRequest(dataRequestCaptor.capture());
         assertThat(dataRequestCaptor.getValue()).usingRecursiveComparison()
                 .ignoringFields("id")
-                .ignoringFieldsMatchingRegexes("dataDestination.properties")
+                .ignoringFieldsMatchingRegexes("dataDestination.properties") // Ignore properties as it contains json.
                 .isEqualTo(dataRequest);
         assertThat(dataRequestCaptor.getValue().getId()).isNotBlank();
         var serializedRequest = dataRequestCaptor.getValue().getDataDestination().getProperties().get("request");
