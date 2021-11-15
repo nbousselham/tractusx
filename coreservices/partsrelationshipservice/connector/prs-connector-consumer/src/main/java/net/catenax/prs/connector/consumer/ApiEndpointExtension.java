@@ -7,9 +7,9 @@
 // See the LICENSE file(s) distributed with this work for
 // additional information regarding license terms.
 //
-package org.eclipse.dataspaceconnector.extensions.api;
+package net.catenax.prs.connector.consumer;
 
-import org.eclipse.dataspaceconnector.extensions.annotations.ExcludeFromCodeCoverageGeneratedReport;
+import net.catenax.prs.annotations.ExcludeFromCodeCoverageGeneratedReport;
 import org.eclipse.dataspaceconnector.spi.protocol.web.WebService;
 import org.eclipse.dataspaceconnector.spi.system.ServiceExtension;
 import org.eclipse.dataspaceconnector.spi.system.ServiceExtensionContext;

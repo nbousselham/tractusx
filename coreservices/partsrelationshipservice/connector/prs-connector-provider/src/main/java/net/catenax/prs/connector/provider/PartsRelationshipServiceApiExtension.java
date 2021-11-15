@@ -7,8 +7,9 @@
 // See the LICENSE file(s) distributed with this work for
 // additional information regarding license terms.
 //
-package org.eclipse.dataspaceconnector.extensions.api;
+package net.catenax.prs.connector.provider;
 
+import net.catenax.prs.annotations.ExcludeFromCodeCoverageGeneratedReport;
 import net.catenax.prs.client.api.PartsRelationshipServiceApi;
 import org.eclipse.dataspaceconnector.policy.model.Action;
 import org.eclipse.dataspaceconnector.policy.model.AtomicConstraint;
@@ -27,18 +28,27 @@ import java.util.Set;
 import static org.eclipse.dataspaceconnector.policy.model.Operator.IN;
 
 /**
- * Extension to transfer file.
+ * Extension to call PRS API and save the results.
  */
-@SuppressWarnings("PMD.CommentRequired")
-public class FileTransferExtension implements ServiceExtension {
+@ExcludeFromCodeCoverageGeneratedReport
+public class PartsRelationshipServiceApiExtension implements ServiceExtension {
 
+    /**
+     * Hard-coded policy allowing use in Europe only, for demonstration purposes.
+     */
     public static final String USE_EU_POLICY = "use-eu";
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public Set<String> requires() {
         return Set.of("edc:webservice", PolicyRegistry.FEATURE);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void initialize(final ServiceExtensionContext context) {
 
@@ -47,12 +57,12 @@ public class FileTransferExtension implements ServiceExtension {
         prsClient.getApiClient().setBasePath(prsBasePath);
 
         final var dataFlowMgr = context.getService(DataFlowManager.class);
-        final var flowController = new FileTransferFlowController(context.getMonitor(), prsClient);
+        final var flowController = new PartsRelationshipServiceApiToFileFlowController(context.getMonitor(), prsClient);
         dataFlowMgr.register(flowController);
 
         registerDataEntries(context);
         savePolicies(context);
-        context.getMonitor().info("File Transfer Extension initialized!");
+        context.getMonitor().info(getClass().getName() + " initialized!");
     }
 
     private void savePolicies(final ServiceExtensionContext context) {

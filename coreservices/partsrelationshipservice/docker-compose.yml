@@ -68,7 +68,6 @@ services:
       - db
     profiles:
       - prs
-      - connector
     container_name: prs
     ports:
       - 8080:8080

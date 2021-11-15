@@ -7,10 +7,11 @@
 // See the LICENSE file(s) distributed with this work for
 // additional information regarding license terms.
 //
-package org.eclipse.dataspaceconnector.extensions.api;
+package net.catenax.prs.connector.provider;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import lombok.RequiredArgsConstructor;
 import net.catenax.prs.client.ApiException;
 import net.catenax.prs.client.api.PartsRelationshipServiceApi;
 import net.catenax.prs.requests.PartsTreeByObjectIdRequest;
@@ -26,28 +27,26 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 
 /**
- * Handles a data flow to transfer a file.
+ * Handles a data flow to call PRS API and save the result to a file.
  */
-// Removed BeanMembersShouldSerialize rule because Monitor is final,
-// so adding transient will not have any impact.
-@SuppressWarnings({"PMD.CommentRequired", "PMD.GuardLogStatement", "PMD.BeanMembersShouldSerialize"})
-public class FileTransferFlowController implements DataFlowController {
-
-    private final Monitor monitor;
-
-    private final PartsRelationshipServiceApi prsClient;
-
-    private final ObjectMapper mapper;
+@SuppressWarnings("PMD.GuardLogStatement") // Monitor doesn't offer guard statements
+@RequiredArgsConstructor
+public class PartsRelationshipServiceApiToFileFlowController implements DataFlowController {
 
     /**
-     * @param monitor Logger
-     * @param prsClient Client used to call PRS API
+     * JSON serializer / deserializer.
      */
-    public FileTransferFlowController(final Monitor monitor, final PartsRelationshipServiceApi prsClient) {
-        this.monitor = monitor;
-        this.prsClient = prsClient;
-        this.mapper = new ObjectMapper();
-    }
+    private static final ObjectMapper MAPPER = new ObjectMapper();
+
+    /**
+     * Logger.
+     */
+    private final Monitor monitor;
+
+    /**
+     * Client stub to call PRS API.
+     */
+    private final PartsRelationshipServiceApi prsClient;
 
     @Override
     public boolean canHandle(final DataRequest dataRequest) {
@@ -61,7 +60,7 @@ public class FileTransferFlowController implements DataFlowController {
         PartsTreeByObjectIdRequest request;
         monitor.info("Received request " + serializedRequest);
         try {
-            request = mapper.readValue(serializedRequest, PartsTreeByObjectIdRequest.class);
+            request = MAPPER.readValue(serializedRequest, PartsTreeByObjectIdRequest.class);
             monitor.info("request with " + request.getObjectIDManufacturer());
         } catch (JsonProcessingException e) {
             final String message = "Error deserializing PartsTreeByObjectIdRequest" + e.getMessage();
@@ -69,11 +68,11 @@ public class FileTransferFlowController implements DataFlowController {
             return new DataFlowInitiateResponse(ResponseStatus.FATAL_ERROR, message);
         }
 
-        byte[] partRelationshipsWithInfos;
+        String partRelationshipsWithInfos;
         try {
             final var response = prsClient.getPartsTreeByOneIdAndObjectId(request.getOneIDManufacturer(), request.getObjectIDManufacturer(),
                     request.getView(), request.getAspect(), request.getDepth());
-            partRelationshipsWithInfos = mapper.writeValueAsBytes(response);
+            partRelationshipsWithInfos = MAPPER.writeValueAsString(response);
         } catch (ApiException | JsonProcessingException e) {
             final String message = "Error when getting partRelationshipsWithInfos" + e.getMessage();
             monitor.severe(message);
@@ -82,15 +81,7 @@ public class FileTransferFlowController implements DataFlowController {
 
         final var destinationPath = Path.of(dataRequest.getDataDestination().getProperty("path"));
         try {
-            Files.createFile(destinationPath);
-        } catch (IOException e) {
-            final String message = "Error creating file at" + destinationPath + e.getMessage();
-            monitor.severe(message);
-            return new DataFlowInitiateResponse(ResponseStatus.FATAL_ERROR, message);
-        }
-
-        try {
-            Files.write(destinationPath, partRelationshipsWithInfos);
+            Files.writeString(destinationPath, partRelationshipsWithInfos);
         } catch (IOException e) {
             final String message = "Error writing in file at" + destinationPath + e.getMessage();
             monitor.severe(message);
