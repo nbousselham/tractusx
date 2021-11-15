@@ -40,15 +40,12 @@ public class InMemoryJobStore implements JobStore {
     @Override
     public void addTransferProcess(String jobId, String processId) {
         writeLock(() -> {
-            readLock(() -> {
-                Job job = jobsById.get(jobId);
-                job.addTransferProcess(processId);
-                job.transitionInProgress();
-                job.updateStateTimestamp();
-                delete(job.getId());
-                jobsById.put(job.getId(), job);
-                return null;
-            });
+            Job job = jobsById.get(jobId);
+            job.addTransferProcess(processId);
+            job.transitionInProgress();
+            job.updateStateTimestamp();
+            delete(job.getId());
+            jobsById.put(job.getId(), job);
             return null;
         });
     }
@@ -56,17 +53,14 @@ public class InMemoryJobStore implements JobStore {
     @Override
     public void completeTransferProcess(String jobId, String processId) {
         writeLock(() -> {
-            readLock(() -> {
-                Job job = jobsById.get(jobId);
-                job.transferProcessCompleted(processId);
-                if (job.getTransferProcessIds().isEmpty()) {
-                    job.transitionTransfersFinished();
-                }
-                job.updateStateTimestamp();
-                delete(job.getId());
-                jobsById.put(job.getId(), job);
-                return null;
-            });
+            Job job = jobsById.get(jobId);
+            job.transferProcessCompleted(processId);
+            if (job.getTransferProcessIds().isEmpty()) {
+                job.transitionTransfersFinished();
+            }
+            job.updateStateTimestamp();
+            delete(job.getId());
+            jobsById.put(job.getId(), job);
             return null;
         });
     }
