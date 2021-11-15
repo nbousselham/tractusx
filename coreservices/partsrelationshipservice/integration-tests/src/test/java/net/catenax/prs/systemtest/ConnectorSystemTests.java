@@ -9,7 +9,9 @@
 //
 package net.catenax.prs.systemtest;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import io.restassured.RestAssured;
+import net.catenax.prs.requests.PartsTreeByObjectIdRequest;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpStatus;
@@ -25,6 +27,7 @@ import java.util.UUID;
 
 import static io.restassured.RestAssured.given;
 import static java.lang.String.format;
+import static net.catenax.prs.systemtest.SystemTestsBase.ASPECT_MATERIAL;
 import static net.javacrumbs.jsonunit.assertj.JsonAssertions.assertThatJson;
 import static net.javacrumbs.jsonunit.core.Option.IGNORING_ARRAY_ORDER;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -44,6 +47,9 @@ public class ConnectorSystemTests {
     private static final String baseURI = System.getProperty("ConnectorProviderBaseURI", "https://catenaxdev001akssrv.germanywestcentral.cloudapp.azure.com");
     private static final String namespace = System.getProperty("ConnectorProviderK8sNamespace", "prs-connectors");
     private static final String pod = System.getProperty("ConnectorProviderK8sPod", "prs-connector-provider-0");
+    private static final String VEHICLE_ONEID = "CAXSWPFTJQEVZNZZ";
+    private static final String VEHICLE_OBJECTID = "UVVZI9PKX5D37RFUB";
+    private static final ObjectMapper objectMapper = new ObjectMapper();
 
     @Test
     public void downloadFile() throws Exception {
@@ -65,6 +71,13 @@ public class ConnectorSystemTests {
         params.put("filename", "test-document");
         params.put("connectorAddress", baseURI + "/prs-connector-provider");
         params.put("destinationPath", destFile);
+        params.put("aa", objectMapper.writeValueAsString(PartsTreeByObjectIdRequest.builder()
+                .oneIDManufacturer(VEHICLE_ONEID)
+                .objectIDManufacturer(VEHICLE_OBJECTID)
+                .view("AS_BUILT")
+                .aspect(ASPECT_MATERIAL)
+                .depth(2)
+                .build()));
 
         RestAssured.baseURI = baseURI + "/prs-connector-consumer";
         var requestId =
