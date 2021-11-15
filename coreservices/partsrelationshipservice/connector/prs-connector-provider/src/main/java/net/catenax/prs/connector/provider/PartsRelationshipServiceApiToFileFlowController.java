@@ -11,6 +11,7 @@ package net.catenax.prs.connector.provider;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import net.catenax.prs.annotations.ExcludeFromCodeCoverageGeneratedReport;
 import net.catenax.prs.client.ApiException;
 import net.catenax.prs.client.api.PartsRelationshipServiceApi;
 import net.catenax.prs.requests.PartsTreeByObjectIdRequest;
@@ -29,6 +30,7 @@ import java.nio.file.Path;
  * Handles a data flow to call PRS API and save the result to a file.
  */
 @SuppressWarnings("PMD.GuardLogStatement") // Monitor doesn't offer guard statements
+@ExcludeFromCodeCoverageGeneratedReport
 public class PartsRelationshipServiceApiToFileFlowController implements DataFlowController {
 
     /**
