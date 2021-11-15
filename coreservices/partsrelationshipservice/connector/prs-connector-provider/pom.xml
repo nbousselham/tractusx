@@ -17,6 +17,12 @@
 
   <dependencies>
     <dependency>
+      <groupId>org.projectlombok</groupId>
+      <artifactId>lombok</artifactId>
+      <version>1.18.20</version>
+      <optional>true</optional>
+    </dependency>
+    <dependency>
       <groupId>net.catenax.prs</groupId>
       <artifactId>prs-client</artifactId>
       <version>${revision}</version>

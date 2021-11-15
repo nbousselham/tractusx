@@ -11,6 +11,7 @@ package org.eclipse.dataspaceconnector.extensions.api;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import lombok.RequiredArgsConstructor;
 import net.catenax.prs.client.ApiException;
 import net.catenax.prs.client.api.PartsRelationshipServiceApi;
 import net.catenax.prs.requests.PartsTreeByObjectIdRequest;
@@ -29,6 +30,7 @@ import java.nio.file.Path;
  * Handles a data flow to call PRS API and save the result to a file.
  */
 @SuppressWarnings("PMD.GuardLogStatement") // Monitor doesn't offer guard statements
+@RequiredArgsConstructor
 public class PartsRelationshipServiceApiToFileFlowController implements DataFlowController {
 
     /**
@@ -45,15 +47,6 @@ public class PartsRelationshipServiceApiToFileFlowController implements DataFlow
      * Client stub to call PRS API.
      */
     private final PartsRelationshipServiceApi prsClient;
-
-    /**
-     * @param monitor   Logger
-     * @param prsClient Client used to call PRS API
-     */
-    public PartsRelationshipServiceApiToFileFlowController(final Monitor monitor, final PartsRelationshipServiceApi prsClient) {
-        this.monitor = monitor;
-        this.prsClient = prsClient;
-    }
 
     @Override
     public boolean canHandle(final DataRequest dataRequest) {

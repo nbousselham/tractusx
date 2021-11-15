@@ -9,6 +9,7 @@
 //
 package org.eclipse.dataspaceconnector.extensions.api;
 
+import lombok.RequiredArgsConstructor;
 import org.eclipse.dataspaceconnector.extensions.annotations.ExcludeFromCodeCoverageGeneratedReport;
 import org.eclipse.dataspaceconnector.spi.monitor.Monitor;
 import org.eclipse.dataspaceconnector.spi.types.domain.transfer.ProvisionedResource;
@@ -22,22 +23,15 @@ import java.util.List;
 /**
  * Status checked responsible for providing a file transfer status.
  */
-@SuppressWarnings({"PMD.CommentRequired", "PMD.GuardLogStatement"})
+@SuppressWarnings("PMD.GuardLogStatement") // Monitor doesn't offer guard statements
 @ExcludeFromCodeCoverageGeneratedReport
+@RequiredArgsConstructor
 public class FileStatusChecker implements StatusChecker {
 
-    // Removed BeanMembersShouldSerialize rule because Monitor is final,
-    // so adding transient will not have any impact.
-    @SuppressWarnings({"PMD.BeanMembersShouldSerialize"})
-    private final Monitor monitor;
-
     /**
-     * FileStatusChecker constructor
-     * @param monitor Logger
+     * Logger.
      */
-    public FileStatusChecker(final Monitor monitor) {
-        this.monitor = monitor;
-    }
+    private final Monitor monitor;
 
     @Override
     public boolean isComplete(final TransferProcess transferProcess, final List<ProvisionedResource> list) {
