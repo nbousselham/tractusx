@@ -11,9 +11,9 @@ package net.catenax.prs.connector.provider;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import net.catenax.prs.annotations.ExcludeFromCodeCoverageGeneratedReport;
 import net.catenax.prs.client.ApiException;
 import net.catenax.prs.client.api.PartsRelationshipServiceApi;
+import net.catenax.prs.client.model.PartRelationshipsWithInfos;
 import net.catenax.prs.requests.PartsTreeByObjectIdRequest;
 import org.eclipse.dataspaceconnector.spi.monitor.Monitor;
 import org.eclipse.dataspaceconnector.spi.transfer.flow.DataFlowController;
@@ -30,7 +30,6 @@ import java.nio.file.Path;
  * Handles a data flow to call PRS API and save the result to a file.
  */
 @SuppressWarnings("PMD.GuardLogStatement") // Monitor doesn't offer guard statements
-@ExcludeFromCodeCoverageGeneratedReport
 public class PartsRelationshipServiceApiToFileFlowController implements DataFlowController {
 
     /**
@@ -66,38 +65,54 @@ public class PartsRelationshipServiceApiToFileFlowController implements DataFlow
     public @NotNull DataFlowInitiateResponse initiateFlow(final DataRequest dataRequest) {
         // verify partsTreeRequest
         final String serializedRequest = dataRequest.getDataDestination().getProperty("request");
+        final var destinationPath = Path.of(dataRequest.getDataDestination().getProperty("path"));
+
+        // Read API Request from message payload
+
         PartsTreeByObjectIdRequest request;
         monitor.info("Received request " + serializedRequest);
         try {
             request = MAPPER.readValue(serializedRequest, PartsTreeByObjectIdRequest.class);
             monitor.info("request with " + request.getObjectIDManufacturer());
         } catch (JsonProcessingException e) {
-            final String message = "Error deserializing PartsTreeByObjectIdRequest" + e.getMessage();
+            final String message = "Error deserializing " + PartsTreeByObjectIdRequest.class.getName() + ": " + e.getMessage();
             monitor.severe(message);
             return new DataFlowInitiateResponse(ResponseStatus.FATAL_ERROR, message);
         }
 
-        String partRelationshipsWithInfos;
+        // call API
+
+        final PartRelationshipsWithInfos response;
         try {
-            final var response = prsClient.getPartsTreeByOneIdAndObjectId(request.getOneIDManufacturer(), request.getObjectIDManufacturer(),
+            response = prsClient.getPartsTreeByOneIdAndObjectId(request.getOneIDManufacturer(), request.getObjectIDManufacturer(),
                     request.getView(), request.getAspect(), request.getDepth());
-            partRelationshipsWithInfos = MAPPER.writeValueAsString(response);
-        } catch (ApiException | JsonProcessingException e) {
-            final String message = "Error when getting partRelationshipsWithInfos" + e.getMessage();
+        } catch (ApiException e) {
+            final String message = "Error with API call: " + e.getMessage();
             monitor.severe(message);
             return new DataFlowInitiateResponse(ResponseStatus.FATAL_ERROR, message);
         }
 
-        final var destinationPath = Path.of(dataRequest.getDataDestination().getProperty("path"));
+        // serialize API response
+
+        final String partRelationshipsWithInfos;
+        try {
+            partRelationshipsWithInfos = MAPPER.writeValueAsString(response);
+        } catch (JsonProcessingException e) {
+            final String message = "Error serializing API response: " + e.getMessage();
+            monitor.severe(message);
+            return new DataFlowInitiateResponse(ResponseStatus.FATAL_ERROR, message);
+        }
+
+        // write API response to file
+
         try {
             Files.writeString(destinationPath, partRelationshipsWithInfos);
         } catch (IOException e) {
-            final String message = "Error writing in file at" + destinationPath + e.getMessage();
+            final String message = "Error writing file " + destinationPath + e.getMessage();
             monitor.severe(message);
             return new DataFlowInitiateResponse(ResponseStatus.FATAL_ERROR, message);
         }
 
         return DataFlowInitiateResponse.OK;
     }
-
 }
