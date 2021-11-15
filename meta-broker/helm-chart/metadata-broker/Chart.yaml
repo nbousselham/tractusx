@@ -25,5 +25,9 @@ appVersion: latest
 dependencies: # A list of the chart requirements (optional)
   - name: broker-fuseki
     repository: file://../broker-fuseki
-    condition: fuseki.deploy
-    alias: fuseki
+    condition: broker-fuseki.deploy
+  - name: elasticsearch
+    repository: https://helm.elastic.co
+    condition: broker-elasticsearch.deploy
+    version: 7.15.0
+    alias: broker-elasticsearch
