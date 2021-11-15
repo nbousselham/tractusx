@@ -9,6 +9,7 @@
 //
 package org.eclipse.dataspaceconnector.extensions.api;
 
+import net.catenax.prs.client.api.PartsRelationshipServiceApi;
 import org.eclipse.dataspaceconnector.policy.model.Action;
 import org.eclipse.dataspaceconnector.policy.model.AtomicConstraint;
 import org.eclipse.dataspaceconnector.policy.model.LiteralExpression;
@@ -41,10 +42,13 @@ public class FileTransferExtension implements ServiceExtension {
     @Override
     public void initialize(final ServiceExtensionContext context) {
 
-        final var dataFlowMgr = context.getService(DataFlowManager.class);
-        final var flowController = new FileTransferFlowController(context.getMonitor());
-        dataFlowMgr.register(flowController);
+        var prsBasePath = context.getSetting("PRS_BASE_PATH", "http://localhost:8080");
+        var prsClient = new PartsRelationshipServiceApi();
+        prsClient.getApiClient().setBasePath(prsBasePath);
 
+        final var dataFlowMgr = context.getService(DataFlowManager.class);
+        final var flowController = new FileTransferFlowController(context.getMonitor(), prsClient);
+        dataFlowMgr.register(flowController);
 
         registerDataEntries(context);
         savePolicies(context);
