@@ -57,9 +57,9 @@ FROM runtime AS prs-api
 COPY --from=maven /build/prs-api/target/prs-api-*-exec.jar app.jar
 
 FROM runtime AS prs-connector-provider
+ENV PRS_BASE_PATH="https://catenaxdev001akssrv.germanywestcentral.cloudapp.azure.com/bmw/mtpdc/"
 COPY --from=maven /build/connector/prs-connector-provider/target/prs-connector-provider-*.jar app.jar
 COPY --from=maven /build/connector/prs-connector-provider/dataspaceconnector-configuration.properties .
-RUN echo value-in-test-document > /tmp/test-document.txt
 
 FROM runtime AS prs-connector-consumer
 COPY --from=maven /build/connector/prs-connector-consumer/target/prs-connector-consumer-*.jar app.jar
