@@ -47,12 +47,10 @@ public class PartsRelationshipServiceApiToFileFlowController implements DataFlow
     private final PartsRelationshipServiceApi prsClient;
 
     /**
-     * XX
-     *
-     * @param monitor   XX.
-     * @param prsClient XX.
+     * @param monitor   Logger
+     * @param prsClient Client used to call PRS API
      */
-    public PartsRelationshipServiceApiToFileFlowController(Monitor monitor, PartsRelationshipServiceApi prsClient) {
+    public PartsRelationshipServiceApiToFileFlowController(final Monitor monitor, final PartsRelationshipServiceApi prsClient) {
         this.monitor = monitor;
         this.prsClient = prsClient;
     }
