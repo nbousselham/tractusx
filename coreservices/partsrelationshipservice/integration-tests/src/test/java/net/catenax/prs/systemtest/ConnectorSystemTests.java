@@ -57,7 +57,7 @@ public class ConnectorSystemTests {
         var environment = System.getProperty("environment", "dev");
 
         // Temporarily hardcode the file path. It will change when adding several providers.
-        var fileWithExpectedOutput = "getPartsTreeByOneIdAndObjectId-dev-expected.json";
+        var fileWithExpectedOutput = "getPartsTreeByOneIdAndObjectId-dev-bmw-expected.json";
         var payload = getClass().getResourceAsStream(fileWithExpectedOutput);
 
         // Act
@@ -99,9 +99,11 @@ public class ConnectorSystemTests {
                 .untilAsserted(() -> {
                     var exec = runOnProviderPod("cat", destFile);
                     try (InputStream inputStream = exec.getInputStream()) {
-                        assertThatJson(inputStream.readAllBytes())
+                        String result = new String(inputStream.readAllBytes());
+                        String expectedResult = new String(payload.readAllBytes());
+                        assertThatJson(result)
                                 .when(IGNORING_ARRAY_ORDER)
-                                .isEqualTo(payload.readAllBytes());
+                                .isEqualTo(expectedResult);
                     }
                     exec.waitFor();
                 });
