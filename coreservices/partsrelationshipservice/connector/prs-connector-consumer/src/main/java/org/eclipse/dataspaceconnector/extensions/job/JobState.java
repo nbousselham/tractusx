@@ -1,9 +1,11 @@
 package org.eclipse.dataspaceconnector.extensions.job;
 
+import org.eclipse.dataspaceconnector.spi.EdcException;
+
 import java.util.Arrays;
 
 public enum JobState {
-    UNSAVED(100),
+    UNSAVED(0),
     INITIAL(100),
     IN_PROGRESS(600),
     TRANSFERS_FINISHED(700),
@@ -17,7 +19,7 @@ public enum JobState {
     }
 
     public static JobState from(int code) {
-        return Arrays.stream(values()).filter(tps -> tps.code == code).findFirst().orElse(null);
+        return Arrays.stream(values()).filter(tps -> tps.code == code).findFirst().orElseThrow(() -> new EdcException("Invalid job state code: " + code));
     }
 
     public int code() {
