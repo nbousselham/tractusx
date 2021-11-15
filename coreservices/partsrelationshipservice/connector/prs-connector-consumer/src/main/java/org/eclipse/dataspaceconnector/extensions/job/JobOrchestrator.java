@@ -1,7 +1,7 @@
 package org.eclipse.dataspaceconnector.extensions.job;
 
-import org.eclipse.dataspaceconnector.extensions.file.TransferProcessInput;
 import org.eclipse.dataspaceconnector.extensions.file.TransferProcessFileHandler;
+import org.eclipse.dataspaceconnector.extensions.file.TransferProcessInput;
 import org.eclipse.dataspaceconnector.spi.transfer.TransferInitiateResponse;
 import org.eclipse.dataspaceconnector.spi.transfer.TransferProcessListener;
 import org.eclipse.dataspaceconnector.spi.transfer.TransferProcessManager;
@@ -14,7 +14,9 @@ import org.eclipse.dataspaceconnector.spi.types.domain.transfer.TransferProcess;
 
 import java.nio.file.Path;
 import java.util.UUID;
-import java.util.concurrent.*;
+import java.util.concurrent.SynchronousQueue;
+import java.util.concurrent.ThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
 
 import static java.util.UUID.randomUUID;
 
@@ -26,15 +28,15 @@ public class JobOrchestrator implements TransferProcessListener {
     private final TransferProcessFileHandler transferProcessFileHandler;
     private final ThreadPoolExecutor executor;
 
-    public JobOrchestrator(TransferProcessManager processManager, JobStore jobStore, TransferProcessStore processStore, TransferProcessFileHandler transferProcessFileHandler, int threadPoolSize, int threadPoolQueueSize) {
+    public JobOrchestrator(TransferProcessManager processManager, JobStore jobStore, TransferProcessStore processStore, TransferProcessFileHandler transferProcessFileHandler, int threadPoolSize) {
         this.processManager = processManager;
         this.jobStore = jobStore;
         this.processStore = processStore;
         this.transferProcessFileHandler = transferProcessFileHandler;
         this.executor = new ThreadPoolExecutor(threadPoolSize,
                 threadPoolSize, 0L, TimeUnit.MILLISECONDS,
-                new ArrayBlockingQueue<>(threadPoolQueueSize),  // Fixed length queue to avoid out of memory errors
-                new ThreadPoolExecutor.CallerRunsPolicy());  // calling thread will be used if the queue is full
+                new SynchronousQueue<>(),  // no threads will be queued
+                new ThreadPoolExecutor.CallerRunsPolicy());  // calling thread will be used if no threads left in pool
     }
 
     public JobInitiateResponse startJob(String filename, String connectorAddress, String destinationPath) {
