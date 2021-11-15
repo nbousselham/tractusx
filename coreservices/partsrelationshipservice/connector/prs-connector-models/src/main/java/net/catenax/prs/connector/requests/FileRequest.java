@@ -7,29 +7,31 @@
 // See the LICENSE file(s) distributed with this work for
 // additional information regarding license terms.
 //
-package net.catenax.prs.connector.consumer;
+package net.catenax.prs.connector.requests;
 
-
-import lombok.Data;
-import net.catenax.prs.requests.PartsTreeByObjectIdRequest;
+import lombok.Builder;
+import lombok.Value;
+import lombok.extern.jackson.Jacksonized;
 
 /**
  * JSON payload for file transfer request.
  */
-@Data
+@Value
+@Jacksonized
+@Builder(toBuilder = true)
 public class FileRequest {
     /**
      * Provider connector address to send the message to.
      */
-    private String connectorAddress;
+    String connectorAddress;
 
     /**
      * Destination path where the file should be copied.
      */
-    private String destinationPath;
+    String destinationPath;
 
     /**
      * Parts Tree Request.
      */
-    private PartsTreeByObjectIdRequest partsTreeRequest;
+    PartsTreeByObjectIdRequest partsTreeRequest;
 }

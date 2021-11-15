@@ -4,7 +4,8 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.javafaker.Faker;
 import jakarta.ws.rs.core.Response;
-import net.catenax.prs.requests.PartsTreeByObjectIdRequest;
+import net.catenax.prs.connector.requests.FileRequest;
+import net.catenax.prs.connector.requests.PartsTreeByObjectIdRequest;
 import org.eclipse.dataspaceconnector.monitor.ConsoleMonitor;
 import org.eclipse.dataspaceconnector.spi.monitor.Monitor;
 import org.eclipse.dataspaceconnector.spi.transfer.TransferInitiateResponse;
@@ -85,16 +86,16 @@ public class ConsumerApiControllerTests {
     @Test
     public void initiateTransfer_WhenFileRequestValid_ReturnsProcessId() throws JsonProcessingException {
         //Arrange
-        FileRequest fileRequest = new FileRequest();
-        fileRequest.setConnectorAddress(faker.internet().url());
-        fileRequest.setDestinationPath(faker.file().fileName());
-        PartsTreeByObjectIdRequest partsTreeByObjectIdRequest =
-                PartsTreeByObjectIdRequest.builder()
+        FileRequest fileRequest = FileRequest.builder()
+                .connectorAddress(faker.internet().url())
+                .destinationPath(faker.file().fileName())
+                .partsTreeRequest(PartsTreeByObjectIdRequest.builder()
                         .oneIDManufacturer(faker.company().name())
                         .objectIDManufacturer(faker.lorem().characters(10, 20))
                         .view("AS_BUILT")
-                        .depth(faker.number().numberBetween(1, 5)).build();
-        fileRequest.setPartsTreeRequest(partsTreeByObjectIdRequest);
+                        .depth(faker.number().numberBetween(1, 5))
+                        .build())
+                .build();
 
         var dataRequest = DataRequest.Builder.newInstance()
                 .id(UUID.randomUUID().toString())

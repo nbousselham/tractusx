@@ -52,11 +52,6 @@
 
   <dependencies>
     <dependency>
-      <groupId>net.catenax.prs</groupId>
-      <artifactId>prs-models</artifactId>
-      <version>${project.version}</version>
-    </dependency>
-    <dependency>
       <groupId>org.junit.jupiter</groupId>
       <artifactId>junit-jupiter-engine</artifactId>
       <version>5.7.2</version>
@@ -84,7 +79,7 @@
       <groupId>com.github.javafaker</groupId>
       <artifactId>javafaker</artifactId>
       <version>1.0.2</version>
-      <scope>compile</scope>
+      <scope>test</scope>
     </dependency>
   </dependencies>
 
