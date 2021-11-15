@@ -65,7 +65,6 @@ public class PartsRelationshipServiceApiToFileFlowController implements DataFlow
     public @NotNull DataFlowInitiateResponse initiateFlow(final DataRequest dataRequest) {
         // verify partsTreeRequest
         final String serializedRequest = dataRequest.getDataDestination().getProperty("request");
-        final var destinationPath = Path.of(dataRequest.getDataDestination().getProperty("path"));
 
         // Read API Request from message payload
 
@@ -105,6 +104,7 @@ public class PartsRelationshipServiceApiToFileFlowController implements DataFlow
 
         // write API response to file
 
+        final var destinationPath = Path.of(dataRequest.getDataDestination().getProperty("path"));
         try {
             Files.writeString(destinationPath, partRelationshipsWithInfos);
         } catch (IOException e) {
