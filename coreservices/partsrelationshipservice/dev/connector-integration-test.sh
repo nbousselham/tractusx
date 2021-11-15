@@ -15,4 +15,4 @@ requestId=$(curl -f -X POST http://consumer:9191/api/file -H "Content-type:appli
 ./retry -s 1 -t 120 "test \$(curl -f http://consumer:9191/api/datarequest/$requestId/state) == COMPLETED"
 curl -f http://consumer:9191/api/datarequest/$requestId/state
 echo
-cat /tmp/copy/dest/new-document.txt
+cat /tmp/copy/dest/new-document.txt | grep "objectIDManufacturer\":\"UVVZI9PKX5D37RFUB"
