@@ -13,11 +13,9 @@ import org.eclipse.dataspaceconnector.spi.types.domain.transfer.DataRequest;
 import org.eclipse.dataspaceconnector.spi.types.domain.transfer.TransferProcess;
 
 import java.nio.file.Path;
-import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ThreadPoolExecutor;
-import java.util.stream.Collectors;
 
 import static java.util.UUID.randomUUID;
 
@@ -80,8 +78,8 @@ public class JobOrchestrator implements TransferProcessListener {
         executor.execute(() -> {
             var jobId = process.getDataRequest().getDataDestination().getProperty("jobId");
             var job = jobStore.find(jobId);
-            var result = transferProcessFileHandler.parse(process);
 
+            var result = transferProcessFileHandler.parse(process);
             for (TransferProcessInput nextTransferProcess : result.getTransferProcesses()) {
                 startTransferProcess(job, nextTransferProcess.getFile(), nextTransferProcess.getConnectorUrl());
             }
@@ -89,8 +87,9 @@ public class JobOrchestrator implements TransferProcessListener {
             jobStore.completeTransferProcess(job.getId(), process.getId());
 
             if (job.getState() == JobState.TRANSFERS_FINISHED) {
-                List<TransferProcess> processes = job.getCompletedTransferProcessIds().stream().map(processStore::find).collect(Collectors.toList());
-                transferProcessFileHandler.aggregate(job, processes);
+                transferProcessFileHandler.aggregate(
+                        job.getCompletedTransferProcessIds().stream().map(processStore::find),
+                        job.getDestinationPath());
                 jobStore.completeJob(job.getId());
             }
         });

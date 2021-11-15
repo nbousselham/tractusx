@@ -1,7 +1,6 @@
 package org.eclipse.dataspaceconnector.extensions.file;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.eclipse.dataspaceconnector.extensions.job.Job;
 import org.eclipse.dataspaceconnector.spi.monitor.Monitor;
 import org.eclipse.dataspaceconnector.spi.types.domain.transfer.*;
 
@@ -11,8 +10,10 @@ import java.nio.file.Path;
 import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import static java.util.Collections.emptyList;
+import static java.util.Comparator.comparingInt;
 
 public class TransferProcessFileHandler implements StatusChecker {
 
@@ -44,14 +45,13 @@ public class TransferProcessFileHandler implements StatusChecker {
         return new TransferProcessFile("error", -1, emptyList());
     }
 
-    public void aggregate(Job job, List<TransferProcess> processes) {
-        monitor.debug("Aggregating results of job " + job.getId());
-        String aggregatedResult = processes.stream()
+    public void aggregate(Stream<TransferProcess> processes, String destinationPath) {
+        String aggregatedResult = processes
                 .map(this::parse)
-                .sorted(Comparator.comparingInt(TransferProcessFile::getOrder))
+                .sorted(comparingInt(TransferProcessFile::getOrder))
                 .map(TransferProcessFile::getValue)
                 .collect(Collectors.joining(" "));
-        Path path = Path.of(job.getDestinationPath());
+        Path path = Path.of(destinationPath);
         try {
             Files.writeString(path, aggregatedResult);
         } catch (IOException e) {
