@@ -14,8 +14,7 @@ import org.eclipse.dataspaceconnector.spi.types.domain.transfer.TransferProcess;
 
 import java.nio.file.Path;
 import java.util.UUID;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ThreadPoolExecutor;
+import java.util.concurrent.*;
 
 import static java.util.UUID.randomUUID;
 
@@ -27,12 +26,15 @@ public class JobOrchestrator implements TransferProcessListener {
     private final TransferProcessFileHandler transferProcessFileHandler;
     private final ThreadPoolExecutor executor;
 
-    public JobOrchestrator(TransferProcessManager processManager, JobStore jobStore, TransferProcessStore processStore, TransferProcessFileHandler transferProcessFileHandler, int threadPoolSize) {
+    public JobOrchestrator(TransferProcessManager processManager, JobStore jobStore, TransferProcessStore processStore, TransferProcessFileHandler transferProcessFileHandler, int threadPoolSize, int threadPoolQueueSize) {
         this.processManager = processManager;
         this.jobStore = jobStore;
         this.processStore = processStore;
         this.transferProcessFileHandler = transferProcessFileHandler;
-        this.executor = (ThreadPoolExecutor) Executors.newFixedThreadPool(threadPoolSize);
+        this.executor = new ThreadPoolExecutor(threadPoolSize,
+                threadPoolSize, 0L, TimeUnit.MILLISECONDS,
+                new ArrayBlockingQueue<>(threadPoolQueueSize),  // Fixed length queue to avoid out of memory errors
+                new ThreadPoolExecutor.CallerRunsPolicy());  // calling thread will be used if the queue is full
     }
 
     public JobInitiateResponse startJob(String filename, String connectorAddress, String destinationPath) {
