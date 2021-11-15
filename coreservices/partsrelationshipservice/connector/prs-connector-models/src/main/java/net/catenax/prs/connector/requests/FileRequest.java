@@ -23,15 +23,15 @@ public class FileRequest {
     /**
      * Provider connector address to send the message to.
      */
-    String connectorAddress;
+    private String connectorAddress;
 
     /**
      * Destination path where the file should be copied.
      */
-    String destinationPath;
+    private String destinationPath;
 
     /**
      * Parts Tree Request.
      */
-    PartsTreeByObjectIdRequest partsTreeRequest;
+    private PartsTreeByObjectIdRequest partsTreeRequest;
 }

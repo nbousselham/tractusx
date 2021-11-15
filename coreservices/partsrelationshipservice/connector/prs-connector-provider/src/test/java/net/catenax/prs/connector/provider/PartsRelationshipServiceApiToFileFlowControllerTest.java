@@ -6,8 +6,7 @@ import net.catenax.prs.client.ApiException;
 import net.catenax.prs.client.api.PartsRelationshipServiceApi;
 import net.catenax.prs.client.model.PartInfo;
 import net.catenax.prs.client.model.PartRelationshipsWithInfos;
-import net.catenax.prs.dtos.PartsTreeView;
-import net.catenax.prs.requests.PartsTreeByObjectIdRequest;
+import net.catenax.prs.connector.requests.PartsTreeByObjectIdRequest;
 import org.eclipse.dataspaceconnector.monitor.ConsoleMonitor;
 import org.eclipse.dataspaceconnector.spi.monitor.Monitor;
 import org.eclipse.dataspaceconnector.spi.transfer.flow.DataFlowInitiateResponse;
@@ -184,7 +183,7 @@ class PartsRelationshipServiceApiToFileFlowControllerTest {
         return PartsTreeByObjectIdRequest.builder()
                 .oneIDManufacturer(faker.lorem().characters())
                 .objectIDManufacturer(faker.lorem().characters())
-                .view(faker.options().option(PartsTreeView.class).name())
+                .view(faker.lorem().word())
                 .build();
     }
 

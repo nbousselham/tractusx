@@ -17,10 +17,14 @@
 
   <dependencies>
     <dependency>
+      <groupId>com.catenax.prs</groupId>
+      <artifactId>prs-connector-models</artifactId>
+      <version>${revision}</version>
+    </dependency>
+    <dependency>
       <groupId>net.catenax.prs</groupId>
       <artifactId>prs-client</artifactId>
       <version>${revision}</version>
-      <scope>compile</scope>
     </dependency>
     <dependency>
       <groupId>jakarta.ws.rs</groupId>

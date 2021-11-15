@@ -26,6 +26,8 @@ import org.mockito.Mock;
 import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.io.FileReader;
+import java.util.Optional;
 import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -42,10 +44,7 @@ public class ConsumerApiControllerTests {
     Monitor monitor = new ConsoleMonitor();
 
     @Mock
-    TransferProcessStore processStore;
-
-    @Mock
-    TransferProcessManager transferProcessManager;
+    ConsumerService service;
 
     @InjectMocks
     ConsumerApiController controller;
@@ -53,6 +52,17 @@ public class ConsumerApiControllerTests {
     String processId = UUID.randomUUID().toString();
 
     Faker faker = new Faker();
+
+    TransferProcessStates status = faker.options().option(TransferProcessStates.class);
+
+    FileRequest fileRequest = FileRequest.builder()
+            .connectorAddress(faker.internet().url())
+            .destinationPath(faker.file().fileName())
+            .build();
+
+    TransferInitiateResponse transferResponse = TransferInitiateResponse.Builder.newInstance()
+            .id(faker.lorem().characters())
+            .status(faker.options().option(ResponseStatus.class)).build();
 
     @Captor
     ArgumentCaptor<DataRequest> dataRequestCaptor;
@@ -62,8 +72,29 @@ public class ConsumerApiControllerTests {
         assertThat(controller.checkHealth()).isEqualTo("I'm alive!");
     }
 
+
     @Test
-    public void getStatus_WhenProcessNotInStore_ReturnsNotFound() {
+    public void initiateTransfer_WhenFailure_ReturnsError() throws Exception {
+        // Act
+        var response = controller.initiateTransfer(fileRequest);
+        // Assert
+        assertThat(response.getStatus()).isEqualTo(500);
+        assertThat(response.getEntity()).isNull();
+    }
+
+    @Test
+    public void initiateTransfer_WhenSuccess_ReturnsTransferId() throws Exception {
+        // Arrange
+        when(service.initiateTransfer(fileRequest)).thenReturn(Optional.of(transferResponse));
+        // Act
+        var response = controller.initiateTransfer(fileRequest);
+        // Assert
+        assertThat(response.getStatus()).isEqualTo(200);
+        assertThat(response.getEntity()).isEqualTo(transferResponse.getId());
+    }
+
+    @Test
+    public void getStatus_WhenNotFound_ReturnsNotFound() {
         //Act
         var response = controller.getStatus(processId);
         //Assert
@@ -71,66 +102,13 @@ public class ConsumerApiControllerTests {
     }
 
     @Test
-    public void getStatus_WhenProcessInStore_ReturnsStatus() {
+    public void getStatus_WhenSuccess_ReturnsStatus() {
         //Arrange
-        TransferProcess transferProcess = mock(TransferProcess.class);
-        when(transferProcess.getState()).thenReturn(TransferProcessStates.PROVISIONING.code());
-        when(processStore.find(anyString())).thenReturn(transferProcess);
+        when(service.getStatus(processId)).thenReturn(Optional.of(status));
         //Act
         var response = controller.getStatus(processId);
         //Assert
-        assertThat(response.getEntity()).isEqualTo(TransferProcessStates.PROVISIONING.toString());
+        assertThat(response.getEntity()).isEqualTo(status.name());
         assertThat(response.getStatus()).isEqualTo(Response.Status.OK.getStatusCode());
-    }
-
-    @Test
-    public void initiateTransfer_WhenFileRequestValid_ReturnsProcessId() throws JsonProcessingException {
-        //Arrange
-        FileRequest fileRequest = FileRequest.builder()
-                .connectorAddress(faker.internet().url())
-                .destinationPath(faker.file().fileName())
-                .partsTreeRequest(PartsTreeByObjectIdRequest.builder()
-                        .oneIDManufacturer(faker.company().name())
-                        .objectIDManufacturer(faker.lorem().characters(10, 20))
-                        .view("AS_BUILT")
-                        .depth(faker.number().numberBetween(1, 5))
-                        .build())
-                .build();
-
-        var dataRequest = DataRequest.Builder.newInstance()
-                .id(UUID.randomUUID().toString())
-                .connectorAddress(fileRequest.getConnectorAddress())
-                .protocol("ids-rest")
-                .connectorId("consumer")
-                .dataEntry(DataEntry.Builder.newInstance()
-                        .id("prs-request")
-                        .policyId("use-eu")
-                        .build())
-                .dataDestination(DataAddress.Builder.newInstance()
-                        .type("File")
-                        .property("path", fileRequest.getDestinationPath())
-                        .build())
-                .managedResources(false)
-                .build();
-
-        when(transferProcessManager.initiateConsumerRequest(any(DataRequest.class)))
-                .thenReturn(TransferInitiateResponse.Builder.newInstance().id(UUID.randomUUID().toString()).status(ResponseStatus.OK).build());
-        ObjectMapper mapper = new ObjectMapper();
-
-        //Act
-        var response = controller.initiateTransfer(fileRequest);
-        //Assert
-        assertThat(response.getStatus()).isEqualTo(Response.Status.OK.getStatusCode());
-        // Verify that initiateConsumerRequest got called with correct DataRequest input.
-        verify(transferProcessManager).initiateConsumerRequest(dataRequestCaptor.capture());
-        assertThat(dataRequestCaptor.getValue()).usingRecursiveComparison()
-                .ignoringFields("id")
-                .ignoringFieldsMatchingRegexes("dataDestination.properties") // Ignore properties as it contains json.
-                .isEqualTo(dataRequest);
-        assertThat(dataRequestCaptor.getValue().getId()).isNotBlank();
-        var serializedRequest = dataRequestCaptor.getValue().getDataDestination().getProperties().get("request");
-        assertThat(mapper.readValue(serializedRequest, PartsTreeByObjectIdRequest.class)).isEqualTo(fileRequest.getPartsTreeRequest());
-        var destinationFile = dataRequestCaptor.getValue().getDataDestination().getProperties().get("path");
-        assertThat(destinationFile).isEqualTo(fileRequest.getDestinationPath());
     }
 }

@@ -14,7 +14,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import net.catenax.prs.client.ApiException;
 import net.catenax.prs.client.api.PartsRelationshipServiceApi;
 import net.catenax.prs.client.model.PartRelationshipsWithInfos;
-import net.catenax.prs.requests.PartsTreeByObjectIdRequest;
+import net.catenax.prs.connector.requests.PartsTreeByObjectIdRequest;
 import org.eclipse.dataspaceconnector.spi.monitor.Monitor;
 import org.eclipse.dataspaceconnector.spi.transfer.flow.DataFlowController;
 import org.eclipse.dataspaceconnector.spi.transfer.flow.DataFlowInitiateResponse;
