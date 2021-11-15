@@ -26,7 +26,6 @@ import java.util.Map;
 import java.util.UUID;
 
 import static io.restassured.RestAssured.given;
-import static java.lang.String.format;
 import static net.catenax.prs.systemtest.SystemTestsBase.ASPECT_MATERIAL;
 import static net.javacrumbs.jsonunit.assertj.JsonAssertions.assertThatJson;
 import static net.javacrumbs.jsonunit.core.Option.IGNORING_ARRAY_ORDER;
@@ -65,18 +64,17 @@ public class ConnectorSystemTests {
 
         // Send query to Consumer connector, to perform file copy on Provider
         var destFile = "/tmp/copy/dest/" + UUID.randomUUID();
-        Map<String, String> params = new HashMap<>();
+        Map<String, Object> params = new HashMap<>();
         params.put("filename", "test-document");
         params.put("connectorAddress", baseURI + "/prs-connector-provider");
         params.put("destinationPath", destFile);
-        var serializedParsTreeRequest = objectMapper.writeValueAsString(PartsTreeByObjectIdRequest.builder()
+        params.put("partsTreeRequest", PartsTreeByObjectIdRequest.builder()
                 .oneIDManufacturer(VEHICLE_ONEID)
                 .objectIDManufacturer(VEHICLE_OBJECTID)
                 .view("AS_BUILT")
                 .aspect(ASPECT_MATERIAL)
                 .depth(2)
                 .build());
-        params.put("partsTreeRequest", serializedParsTreeRequest);
 
         RestAssured.baseURI = baseURI + "/prs-connector-consumer";
         var requestId =
