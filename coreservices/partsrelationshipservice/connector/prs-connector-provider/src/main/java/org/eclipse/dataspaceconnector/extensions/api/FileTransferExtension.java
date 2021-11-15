@@ -42,8 +42,8 @@ public class FileTransferExtension implements ServiceExtension {
     @Override
     public void initialize(final ServiceExtensionContext context) {
 
-        var prsBasePath = context.getSetting("PRS_BASE_PATH", "http://localhost:8080");
-        var prsClient = new PartsRelationshipServiceApi();
+        final var prsBasePath = context.getSetting("PRS_BASE_PATH", "http://localhost:8080");
+        final var prsClient = new PartsRelationshipServiceApi();
         prsClient.getApiClient().setBasePath(prsBasePath);
 
         final var dataFlowMgr = context.getService(DataFlowManager.class);

@@ -13,7 +13,6 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import net.catenax.prs.client.ApiException;
 import net.catenax.prs.client.api.PartsRelationshipServiceApi;
-import net.catenax.prs.client.model.PartRelationshipsWithInfos;
 import net.catenax.prs.requests.PartsTreeByObjectIdRequest;
 import org.eclipse.dataspaceconnector.spi.monitor.Monitor;
 import org.eclipse.dataspaceconnector.spi.transfer.flow.DataFlowController;
@@ -42,6 +41,7 @@ public class FileTransferFlowController implements DataFlowController {
 
     /**
      * @param monitor Logger
+     * @param prsClient Client used to call PRS API
      */
     public FileTransferFlowController(final Monitor monitor, final PartsRelationshipServiceApi prsClient) {
         this.monitor = monitor;
@@ -69,18 +69,18 @@ public class FileTransferFlowController implements DataFlowController {
             return new DataFlowInitiateResponse(ResponseStatus.FATAL_ERROR, message);
         }
 
-        byte[] partRelationshipsWithInfos = null;
+        byte[] partRelationshipsWithInfos;
         try {
-            var response = prsClient.getPartsTreeByOneIdAndObjectId(request.getOneIDManufacturer(), request.getObjectIDManufacturer(),
+            final var response = prsClient.getPartsTreeByOneIdAndObjectId(request.getOneIDManufacturer(), request.getObjectIDManufacturer(),
                     request.getView(), request.getAspect(), request.getDepth());
-            partRelationshipsWithInfos = (mapper.writeValueAsBytes(response));
+            partRelationshipsWithInfos = mapper.writeValueAsBytes(response);
         } catch (ApiException | JsonProcessingException e) {
             final String message = "Error when getting partRelationshipsWithInfos" + e.getMessage();
             monitor.severe(message);
             return new DataFlowInitiateResponse(ResponseStatus.FATAL_ERROR, message);
         }
 
-        var destinationPath = Path.of(dataRequest.getDataDestination().getProperty("path"));
+        final var destinationPath = Path.of(dataRequest.getDataDestination().getProperty("path"));
         try {
             Files.createFile(destinationPath);
         } catch (IOException e) {
