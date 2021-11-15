@@ -1,4 +1,4 @@
-package net.catenax.prs.connector.consumer;
+package net.catenax.prs.connector.consumer.service;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;

@@ -7,7 +7,7 @@
 // See the LICENSE file(s) distributed with this work for
 // additional information regarding license terms.
 //
-package net.catenax.prs.connector.consumer;
+package net.catenax.prs.connector.consumer.transfer;
 
 import lombok.RequiredArgsConstructor;
 import net.catenax.prs.annotations.ExcludeFromCodeCoverageGeneratedReport;
