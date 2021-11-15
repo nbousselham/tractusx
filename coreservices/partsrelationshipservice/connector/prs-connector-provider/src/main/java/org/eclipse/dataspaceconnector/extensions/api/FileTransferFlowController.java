@@ -58,11 +58,10 @@ public class FileTransferFlowController implements DataFlowController {
         }
 
         try {
-            Thread.sleep(2000); // introduce delay simulating data transfer work
             var tmpDestinationPath = Path.of(destinationPath.getParent().toString(), destinationPath.getFileName() + ".tmp");
             Files.copy(sourcePath, tmpDestinationPath, REPLACE_EXISTING, COPY_ATTRIBUTES);
             Files.move(tmpDestinationPath, destinationPath, REPLACE_EXISTING, ATOMIC_MOVE);
-        } catch (IOException | InterruptedException e) {
+        } catch (IOException e) {
             String message = "Error copying file " + e.getMessage();
             monitor.severe(message);
             return new DataFlowInitiateResponse(ResponseStatus.FATAL_ERROR, message);
