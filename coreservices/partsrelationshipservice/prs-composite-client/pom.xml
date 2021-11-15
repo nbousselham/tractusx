@@ -17,12 +17,6 @@
 
     <dependencies>
         <dependency>
-            <groupId>net.catenax.prs</groupId>
-            <artifactId>prs-models</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-
-        <dependency>
             <groupId>com.github.spotbugs</groupId>
             <artifactId>spotbugs-annotations</artifactId>
             <version>${spotbugs.version}</version>
