@@ -55,8 +55,6 @@ public class ConnectorSystemTests {
     public void downloadFile() throws Exception {
 
         // Arrange
-
-        // Arrange
         var environment = System.getProperty("environment", "dev");
 
         // Temporarily hardcode the file path. It will change when adding several providers.
@@ -71,13 +69,14 @@ public class ConnectorSystemTests {
         params.put("filename", "test-document");
         params.put("connectorAddress", baseURI + "/prs-connector-provider");
         params.put("destinationPath", destFile);
-        params.put("aa", objectMapper.writeValueAsString(PartsTreeByObjectIdRequest.builder()
+        var serializedParsTreeRequest = objectMapper.writeValueAsString(PartsTreeByObjectIdRequest.builder()
                 .oneIDManufacturer(VEHICLE_ONEID)
                 .objectIDManufacturer(VEHICLE_OBJECTID)
                 .view("AS_BUILT")
                 .aspect(ASPECT_MATERIAL)
                 .depth(2)
-                .build()));
+                .build());
+        params.put("partsTreeRequest", serializedParsTreeRequest);
 
         RestAssured.baseURI = baseURI + "/prs-connector-consumer";
         var requestId =
@@ -102,9 +101,9 @@ public class ConnectorSystemTests {
                 .untilAsserted(() -> {
                     var exec = runOnProviderPod("cat", destFile);
                     try (InputStream inputStream = exec.getInputStream()) {
-                        assertThatJson(inputStream)
+                        assertThatJson(inputStream.readAllBytes())
                                 .when(IGNORING_ARRAY_ORDER)
-                                .isEqualTo(new String(payload.readAllBytes()));
+                                .isEqualTo(payload.readAllBytes());
                     }
                     exec.waitFor();
                 });
