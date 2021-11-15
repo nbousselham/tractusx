@@ -7,8 +7,9 @@
 // See the LICENSE file(s) distributed with this work for
 // additional information regarding license terms.
 //
-package org.eclipse.dataspaceconnector.extensions.api;
+package net.catenax.prs.connector.provider;
 
+import net.catenax.prs.annotations.ExcludeFromCodeCoverageGeneratedReport;
 import net.catenax.prs.client.api.PartsRelationshipServiceApi;
 import org.eclipse.dataspaceconnector.policy.model.Action;
 import org.eclipse.dataspaceconnector.policy.model.AtomicConstraint;
@@ -29,6 +30,7 @@ import static org.eclipse.dataspaceconnector.policy.model.Operator.IN;
 /**
  * Extension to call PRS API and save the results.
  */
+@ExcludeFromCodeCoverageGeneratedReport
 public class PartsRelationshipServiceApiExtension implements ServiceExtension {
 
     /**

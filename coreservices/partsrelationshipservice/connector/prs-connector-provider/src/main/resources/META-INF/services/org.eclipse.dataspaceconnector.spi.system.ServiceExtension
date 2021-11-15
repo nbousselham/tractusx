@@ -1,1 +1,1 @@
-org.eclipse.dataspaceconnector.extensions.api.PartsRelationshipServiceApiExtension
+net.catenax.prs.connector.provider.PartsRelationshipServiceApiExtension

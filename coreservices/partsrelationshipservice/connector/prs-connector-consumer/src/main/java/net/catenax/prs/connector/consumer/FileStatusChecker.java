@@ -7,10 +7,10 @@
 // See the LICENSE file(s) distributed with this work for
 // additional information regarding license terms.
 //
-package org.eclipse.dataspaceconnector.extensions.api;
+package net.catenax.prs.connector.consumer;
 
 import lombok.RequiredArgsConstructor;
-import org.eclipse.dataspaceconnector.extensions.annotations.ExcludeFromCodeCoverageGeneratedReport;
+import net.catenax.prs.annotations.ExcludeFromCodeCoverageGeneratedReport;
 import org.eclipse.dataspaceconnector.spi.monitor.Monitor;
 import org.eclipse.dataspaceconnector.spi.types.domain.transfer.ProvisionedResource;
 import org.eclipse.dataspaceconnector.spi.types.domain.transfer.StatusChecker;
