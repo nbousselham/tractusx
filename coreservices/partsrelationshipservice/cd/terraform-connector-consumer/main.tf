@@ -72,4 +72,10 @@ resource "helm_release" "prs-connector-provider" {
     name  = "image.tag"
     value = var.image_tag
   }
+
+  set {
+    name = "prs.basePath"
+    value = var.prs_base_path
+  }
 }
+

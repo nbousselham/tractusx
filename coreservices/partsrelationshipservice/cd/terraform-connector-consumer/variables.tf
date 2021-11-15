@@ -32,3 +32,8 @@ variable "image_tag" {
   type        = string
   description = "Connector image tag that will be deployed."
 }
+
+variable "prs_base_path" {
+  type        = string
+  description = "PRS base path used to query PRS by the provider"
+}

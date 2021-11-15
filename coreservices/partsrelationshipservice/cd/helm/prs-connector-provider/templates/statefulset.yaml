@@ -29,6 +29,9 @@ spec:
             limits:
               cpu: 500m
               memory: 512Mi
+          env:
+            - name: PRS_BASE_PATH
+              value: {{ .Values.prs.basePath }}
           volumeMounts:
             - name: copy-source
               mountPath: /tmp/copy/source
