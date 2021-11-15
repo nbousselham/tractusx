@@ -24,6 +24,9 @@ import java.util.Map;
 import java.util.UUID;
 
 import static io.restassured.RestAssured.given;
+import static java.lang.String.format;
+import static net.javacrumbs.jsonunit.assertj.JsonAssertions.assertThatJson;
+import static net.javacrumbs.jsonunit.core.Option.IGNORING_ARRAY_ORDER;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.awaitility.Awaitility.await;
 
@@ -47,18 +50,12 @@ public class ConnectorSystemTests {
 
         // Arrange
 
-        var payload = UUID.randomUUID().toString();
+        // Arrange
+        var environment = System.getProperty("environment", "dev");
 
-        // Create source file on Provider pod, to be copied to destination file
-        var createSourceFile = runOnProviderPod(
-                "sh",
-                "-c",
-                "echo " + payload + " > /tmp/copy/source/test-document.txt"
-        );
-        int exitCode = createSourceFile.waitFor();
-        assertThat(exitCode)
-                .as("kubectl command failed")
-                .isEqualTo(0);
+        // Temporarily hardcode the file path. It will change when adding several providers.
+        var fileWithExpectedOutput = "getPartsTreeByOneIdAndObjectId-dev-expected.json";
+        var payload = getClass().getResourceAsStream(fileWithExpectedOutput);
 
         // Act
 
@@ -92,7 +89,9 @@ public class ConnectorSystemTests {
                 .untilAsserted(() -> {
                     var exec = runOnProviderPod("cat", destFile);
                     try (InputStream inputStream = exec.getInputStream()) {
-                        assertThat(inputStream).hasContent(payload);
+                        assertThatJson(inputStream)
+                                .when(IGNORING_ARRAY_ORDER)
+                                .isEqualTo(new String(payload.readAllBytes()));
                     }
                     exec.waitFor();
                 });
