@@ -51,6 +51,9 @@ public class ConsumerService {
      */
     private final TransferProcessStore processStore;
 
+    /**
+     * JSON object mapper.
+     */
     private static final ObjectMapper MAPPER = new ObjectMapper();
 
     /**

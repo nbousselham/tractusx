@@ -47,6 +47,9 @@ public class ConsumerApiController {
      */
     private final ConsumerService service;
 
+    /**
+     * Middleware to process request exceptions.
+     */
     private final RequestMiddleware middleware;
 
     /**
