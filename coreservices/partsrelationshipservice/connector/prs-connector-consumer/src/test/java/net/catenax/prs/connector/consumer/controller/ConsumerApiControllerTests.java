@@ -87,19 +87,19 @@ public class ConsumerApiControllerTests {
 
     @Test
     public void getStatus_WhenNotFound_ReturnsNotFound() {
-        //Act
+        // Act
         var response = controller.getStatus(processId);
-        //Assert
+        // Assert
         assertThat(response.getStatus()).isEqualTo(Response.Status.NOT_FOUND.getStatusCode());
     }
 
     @Test
     public void getStatus_WhenSuccess_ReturnsStatus() {
-        //Arrange
+        // Arrange
         when(service.getStatus(processId)).thenReturn(Optional.of(status));
-        //Act
+        // Act
         var response = controller.getStatus(processId);
-        //Assert
+        // Assert
         assertThat(response.getEntity()).isEqualTo(status.name());
         assertThat(response.getStatus()).isEqualTo(Response.Status.OK.getStatusCode());
     }

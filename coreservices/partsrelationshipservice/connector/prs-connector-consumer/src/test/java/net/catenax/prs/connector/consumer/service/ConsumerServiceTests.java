@@ -57,27 +57,27 @@ public class ConsumerServiceTests {
 
     @Test
     public void getStatus_WhenProcessNotInStore_ReturnsEmpty() {
-        //Act
+        // Act
         var response = service.getStatus(processId);
-        //Assert
+        // Assert
         assertThat(response.isEmpty());
     }
 
     @Test
     public void getStatus_WhenProcessInStore_ReturnsState() {
-        //Arrange
+        // Arrange
         TransferProcess transferProcess = mock(TransferProcess.class);
         when(transferProcess.getState()).thenReturn(TransferProcessStates.PROVISIONING.code());
         when(processStore.find(processId)).thenReturn(transferProcess);
-        //Act
+        // Act
         var response = service.getStatus(processId);
-        //Assert
+        // Assert
         assertThat(response).contains(TransferProcessStates.PROVISIONING);
     }
 
     @Test
     public void initiateTransfer_WhenFileRequestValid_ReturnsProcessId() throws JsonProcessingException {
-        //Arrange
+        // Arrange
         FileRequest fileRequest = FileRequest.builder()
                 .connectorAddress(faker.internet().url())
                 .destinationPath(faker.file().fileName())
@@ -109,9 +109,9 @@ public class ConsumerServiceTests {
                 .thenReturn(TransferInitiateResponse.Builder.newInstance().id(UUID.randomUUID().toString()).status(ResponseStatus.OK).build());
         ObjectMapper mapper = new ObjectMapper();
 
-        //Act
+        // Act
         var response = service.initiateTransfer(fileRequest);
-        //Assert
+        // Assert
         assertThat(response).isPresent();
         // Verify that initiateConsumerRequest got called with correct DataRequest input.
         verify(transferProcessManager).initiateConsumerRequest(dataRequestCaptor.capture());
