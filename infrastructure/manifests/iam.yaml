@@ -60,7 +60,7 @@ spec:
         - name: DB_DATABASE
           value: "iam"
         - name: DB_USER
-          value: "catenax@catenaxperfdataba"
+          value: "catenax@catenaxperfdatabase"
         - name: DB_PASSWORD
           value: "XatenaC42"
         - name: KEYCLOAK_LOGLEVEL
