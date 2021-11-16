@@ -60,9 +60,9 @@ spec:
         - name: DB_DATABASE
           value: "iam"
         - name: DB_USER
-          value: "${DB_USER}@${DB_HOST}"
+          value: "catenax@catenaxperfdataba"
         - name: DB_PASSWORD
-          value: "${DB_PASSWORD}"
+          value: "XatenaC42"
         - name: KEYCLOAK_LOGLEVEL
           value: "INFO"
         ports:
