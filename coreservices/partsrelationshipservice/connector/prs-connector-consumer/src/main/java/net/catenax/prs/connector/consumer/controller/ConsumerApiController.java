@@ -10,7 +10,6 @@
 package net.catenax.prs.connector.consumer.controller;
 
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import jakarta.ws.rs.Consumes;
 import jakarta.ws.rs.GET;
 import jakarta.ws.rs.POST;
@@ -20,9 +19,13 @@ import jakarta.ws.rs.Produces;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 import lombok.RequiredArgsConstructor;
+import net.catenax.prs.connector.consumer.middleware.RequestMiddleware;
 import net.catenax.prs.connector.consumer.service.ConsumerService;
 import net.catenax.prs.connector.requests.FileRequest;
 import org.eclipse.dataspaceconnector.spi.monitor.Monitor;
+import org.eclipse.dataspaceconnector.spi.transfer.TransferInitiateResponse;
+
+import java.util.Optional;
 
 /**
  * Consumer API Controller.
@@ -43,6 +46,11 @@ public class ConsumerApiController {
      * Service implementation.
      */
     private final ConsumerService service;
+
+    /**
+     * Middleware to process request exceptions.
+     */
+    private final RequestMiddleware middleware;
 
     /**
      * Health endpoint.
@@ -67,26 +75,31 @@ public class ConsumerApiController {
     @Path("file")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.TEXT_PLAIN)
-    public Response initiateTransfer(final FileRequest request) throws JsonProcessingException {
-        final var transferInfo = service.initiateTransfer(request);
-        return transferInfo.isPresent()
-                ? Response.ok(transferInfo.get().getId()).build()
-                : Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();
+    public Response initiateTransfer(final FileRequest request) {
+        return middleware.invoke(() -> {
+            final Optional<TransferInitiateResponse> transferInfo;
+            transferInfo = service.initiateTransfer(request);
+            return transferInfo.isPresent()
+                    ? Response.ok(transferInfo.get().getId()).build()
+                    : Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();
+        });
     }
 
     /**
      * Provides status of a process
      *
-     * @param requestId If of the process
+     * @param requestId ID of the process
      * @return Process state
      */
     @GET
     @Path("datarequest/{id}/state")
     @Produces(MediaType.TEXT_PLAIN)
     public Response getStatus(final @PathParam("id") String requestId) {
-        final var status = service.getStatus(requestId);
-        return status.isPresent()
-                ? Response.ok(status.get().name()).build()
-                : Response.status(Response.Status.NOT_FOUND).build();
+        return middleware.invoke(() -> {
+            final var status = service.getStatus(requestId);
+            return status.isPresent()
+                    ? Response.ok(status.get().name()).build()
+                    : Response.status(Response.Status.NOT_FOUND).build();
+        });
     }
 }
