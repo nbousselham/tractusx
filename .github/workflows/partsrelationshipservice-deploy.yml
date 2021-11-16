@@ -62,7 +62,7 @@ jobs:
       - name: "Build index of dataspace URLs for stub registry"
         run: |
 
-             cat env_partition_json.json > dataspace-deployments.json
+             cat env_partitions_json.json > dataspace-deployments.json
 
       - run: |
           . cd/environments/$ENVIRONMENT.sh
