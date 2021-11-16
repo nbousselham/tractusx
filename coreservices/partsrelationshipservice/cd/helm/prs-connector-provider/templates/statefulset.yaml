@@ -31,7 +31,7 @@ spec:
               memory: 512Mi
           env:
             - name: PRS_API_URL
-              value: {{ .Values.prs.basePath }}
+              value: {{ .Values.prs.apiUrl }}
           volumeMounts:
             - name: copy-source
               mountPath: /tmp/copy/source
