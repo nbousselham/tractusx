@@ -2,6 +2,7 @@ package net.catenax.prs.connector.consumer.controller;
 
 import com.github.javafaker.Faker;
 import jakarta.ws.rs.core.Response;
+import net.catenax.prs.connector.consumer.middleware.RequestMiddleware;
 import net.catenax.prs.connector.consumer.service.ConsumerService;
 import net.catenax.prs.connector.requests.FileRequest;
 import org.eclipse.dataspaceconnector.monitor.ConsoleMonitor;
@@ -30,6 +31,9 @@ public class ConsumerApiControllerTests {
 
     @Spy
     Monitor monitor = new ConsoleMonitor();
+
+    @Spy
+    RequestMiddleware handler = new RequestMiddleware(monitor);
 
     @Mock
     ConsumerService service;
