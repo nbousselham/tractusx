@@ -69,7 +69,6 @@ public class ConsumerService {
         Objects.requireNonNull(request.getConnectorAddress(), "connectorAddress");
         Objects.requireNonNull(request.getPartsTreeRequest(), "PartsTreeRequest cannot be null");
 
-
         final String serializedRequest;
         try {
             serializedRequest = MAPPER.writeValueAsString(request.getPartsTreeRequest());
