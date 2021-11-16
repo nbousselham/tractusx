@@ -10,7 +10,6 @@
 package net.catenax.prs.connector.consumer.controller;
 
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import jakarta.ws.rs.Consumes;
 import jakarta.ws.rs.GET;
 import jakarta.ws.rs.POST;
@@ -75,11 +74,11 @@ public class ConsumerApiController {
     public Response initiateTransfer(final FileRequest request) {
         return middleware.invoke(() -> {
             final Optional<TransferInitiateResponse> transferInfo;
-                transferInfo = service.initiateTransfer(request);
+            transferInfo = service.initiateTransfer(request);
             return transferInfo.isPresent()
-                            ? Response.ok(transferInfo.get().getId()).build()
-                            : Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();
-                });
+                    ? Response.ok(transferInfo.get().getId()).build()
+                    : Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();
+        });
     }
 
     /**
@@ -93,10 +92,10 @@ public class ConsumerApiController {
     @Produces(MediaType.TEXT_PLAIN)
     public Response getStatus(final @PathParam("id") String requestId) {
         return middleware.invoke(() -> {
-                    final var status = service.getStatus(requestId);
-                    return status.isPresent()
-                            ? Response.ok(status.get().name()).build()
-                            : Response.status(Response.Status.NOT_FOUND).build();
-                });
+            final var status = service.getStatus(requestId);
+            return status.isPresent()
+                    ? Response.ok(status.get().name()).build()
+                    : Response.status(Response.Status.NOT_FOUND).build();
+        });
     }
 }
