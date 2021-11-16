@@ -1,4 +1,4 @@
-package org.eclipse.dataspaceconnector.extensions.monitor;
+package net.catenax.prs.connector.consumer.monitor;
 
 import org.eclipse.dataspaceconnector.spi.monitor.Monitor;
 
