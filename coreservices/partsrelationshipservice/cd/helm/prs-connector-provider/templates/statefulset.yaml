@@ -30,7 +30,7 @@ spec:
               cpu: 500m
               memory: 512Mi
           env:
-            - name: PRS_BASE_PATH
+            - name: PRS_API_URL
               value: {{ .Values.prs.basePath }}
           volumeMounts:
             - name: copy-source
