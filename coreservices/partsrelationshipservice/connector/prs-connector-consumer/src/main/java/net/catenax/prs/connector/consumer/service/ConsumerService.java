@@ -65,10 +65,10 @@ public class ConsumerService {
     public Optional<TransferInitiateResponse> initiateTransfer(final FileRequest request) {
         monitor.info(format("Received request against provider %s", request.getConnectorAddress()));
 
-        //TODO: Make it return bad request. For now it returns 500.
+        // TODO: Validate content of PartsTreeRequest. task A1MTDC-158
         Objects.requireNonNull(request.getConnectorAddress(), "connectorAddress");
         Objects.requireNonNull(request.getPartsTreeRequest(), "PartsTreeRequest cannot be null");
-        // TODO: Validate content of PartsTreeRequest.
+
 
         final String serializedRequest;
         try {
