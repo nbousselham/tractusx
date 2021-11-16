@@ -65,7 +65,7 @@ public class ConsumerService {
     public Optional<TransferInitiateResponse> initiateTransfer(final FileRequest request) {
         monitor.info(format("Received request against provider %s", request.getConnectorAddress()));
 
-        // TODO: Validate content of PartsTreeRequest. task A1MTDC-158
+        // TODO: Validate content of PartsTreeRequest. Task #A1MTDC-158
         Objects.requireNonNull(request.getConnectorAddress(), "connectorAddress");
         Objects.requireNonNull(request.getPartsTreeRequest(), "PartsTreeRequest cannot be null");
 
