@@ -7,3 +7,6 @@
 [submodule "meta-broker/src"]
 	path = meta-broker/src
 	url = https://github.com/International-Data-Spaces-Association/metadata-broker-open-core.git
+[submodule "vocabulary/src"]
+	path = vocabulary/src
+	url = https://gitlab.cc-asp.fraunhofer.de/hemid/idsvocabularyprovider
