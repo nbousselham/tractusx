@@ -9,8 +9,8 @@
 //
 package net.catenax.prs.connector.provider;
 
-import net.catenax.prs.annotations.ExcludeFromCodeCoverageGeneratedReport;
 import net.catenax.prs.client.api.PartsRelationshipServiceApi;
+import net.catenax.prs.connector.annotations.ExcludeFromCodeCoverageGeneratedReport;
 import org.eclipse.dataspaceconnector.policy.model.Action;
 import org.eclipse.dataspaceconnector.policy.model.AtomicConstraint;
 import org.eclipse.dataspaceconnector.policy.model.LiteralExpression;
