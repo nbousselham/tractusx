@@ -74,8 +74,8 @@ resource "helm_release" "prs-connector-provider" {
   }
 
   set {
-    name  = "prs.basePath"
-    value = var.prs_base_path
+    name  = "prs.apiUrl"
+    value = var.prs_api_url
   }
 }
 

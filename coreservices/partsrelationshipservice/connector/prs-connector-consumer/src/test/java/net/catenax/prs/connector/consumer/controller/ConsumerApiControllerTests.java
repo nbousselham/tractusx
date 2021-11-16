@@ -2,6 +2,7 @@ package net.catenax.prs.connector.consumer.controller;
 
 import com.github.javafaker.Faker;
 import jakarta.ws.rs.core.Response;
+import net.catenax.prs.connector.consumer.middleware.RequestMiddleware;
 import net.catenax.prs.connector.consumer.service.ConsumerService;
 import net.catenax.prs.connector.requests.FileRequest;
 import org.eclipse.dataspaceconnector.monitor.ConsoleMonitor;
@@ -30,6 +31,9 @@ public class ConsumerApiControllerTests {
 
     @Spy
     Monitor monitor = new ConsoleMonitor();
+
+    @Spy
+    RequestMiddleware handler = new RequestMiddleware(monitor);
 
     @Mock
     ConsumerService service;
@@ -83,19 +87,19 @@ public class ConsumerApiControllerTests {
 
     @Test
     public void getStatus_WhenNotFound_ReturnsNotFound() {
-        //Act
+        // Act
         var response = controller.getStatus(processId);
-        //Assert
+        // Assert
         assertThat(response.getStatus()).isEqualTo(Response.Status.NOT_FOUND.getStatusCode());
     }
 
     @Test
     public void getStatus_WhenSuccess_ReturnsStatus() {
-        //Arrange
+        // Arrange
         when(service.getStatus(processId)).thenReturn(Optional.of(status));
-        //Act
+        // Act
         var response = controller.getStatus(processId);
-        //Assert
+        // Assert
         assertThat(response.getEntity()).isEqualTo(status.name());
         assertThat(response.getStatus()).isEqualTo(Response.Status.OK.getStatusCode());
     }

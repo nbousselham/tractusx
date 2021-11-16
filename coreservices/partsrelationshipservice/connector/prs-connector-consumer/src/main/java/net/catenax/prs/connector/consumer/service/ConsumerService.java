@@ -52,21 +52,31 @@ public class ConsumerService {
     private final TransferProcessStore processStore;
 
     /**
+     * JSON object mapper.
+     */
+    private static final ObjectMapper MAPPER = new ObjectMapper();
+
+    /**
      * Endpoint to trigger a request, so that a file get copied into a specific destination.
      *
      * @param request Request parameters.
      * @return TransferInitiateResponse with process id.
      */
-    public Optional<TransferInitiateResponse> initiateTransfer(final FileRequest request) throws JsonProcessingException {
+    public Optional<TransferInitiateResponse> initiateTransfer(final FileRequest request) {
         monitor.info(format("Received request against provider %s", request.getConnectorAddress()));
 
-        //TODO: Make it return bad request. For now it returns 500.
+        // TODO: Validate content of PartsTreeRequest. Task #A1MTDC-158
         Objects.requireNonNull(request.getConnectorAddress(), "connectorAddress");
         Objects.requireNonNull(request.getPartsTreeRequest(), "PartsTreeRequest cannot be null");
-        // TODO: Validate content of PartsTreeRequest.
 
-        final ObjectMapper mapper = new ObjectMapper();
-        final String serializedRequest = mapper.writeValueAsString(request.getPartsTreeRequest());
+        final String serializedRequest;
+        try {
+            serializedRequest = MAPPER.writeValueAsString(request.getPartsTreeRequest());
+        } catch (JsonProcessingException e) {
+            // should not happen
+            monitor.severe("Error serializing request", e);
+            return Optional.empty();
+        }
 
         final var dataRequest = DataRequest.Builder.newInstance()
                 .id(UUID.randomUUID().toString()) //this is not relevant, thus can be random

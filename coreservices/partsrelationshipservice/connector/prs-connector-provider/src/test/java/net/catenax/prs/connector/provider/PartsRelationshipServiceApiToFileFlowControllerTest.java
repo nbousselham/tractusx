@@ -163,19 +163,19 @@ class PartsRelationshipServiceApiToFileFlowControllerTest {
 
     private DataRequest generateDataRequest(File file, String value) {
         return DataRequest.Builder.newInstance()
-                .id(UUID.randomUUID().toString()) //this is not relevant, thus can be random
-                .protocol("ids-rest") //must be ids-rest
+                .id(UUID.randomUUID().toString()) // This is not relevant, thus can be random.
+                .protocol("ids-rest") // Must be ids-rest.
                 .connectorId("consumer")
-                .dataEntry(DataEntry.Builder.newInstance() //the data entry is the source asset
+                .dataEntry(DataEntry.Builder.newInstance()
                         .id("prs-request")
                         .policyId("use-eu")
                         .build())
                 .dataDestination(DataAddress.Builder.newInstance()
-                        .type("File") //the provider uses this to select the correct DataFlowController
+                        .type("File") // The provider uses this to select the correct DataFlowController.
                         .property("request", value)
                         .property("path", file.getAbsolutePath())
                         .build())
-                .managedResources(false) //we do not need any provisioning
+                .managedResources(false) // We do not need any provisioning.
                 .build();
     }
 

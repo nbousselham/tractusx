@@ -10,7 +10,7 @@
 package net.catenax.prs.connector.consumer.transfer;
 
 import lombok.RequiredArgsConstructor;
-import net.catenax.prs.annotations.ExcludeFromCodeCoverageGeneratedReport;
+import net.catenax.prs.connector.annotations.ExcludeFromCodeCoverageGeneratedReport;
 import org.eclipse.dataspaceconnector.spi.monitor.Monitor;
 import org.eclipse.dataspaceconnector.spi.types.domain.transfer.ProvisionedResource;
 import org.eclipse.dataspaceconnector.spi.types.domain.transfer.StatusChecker;
