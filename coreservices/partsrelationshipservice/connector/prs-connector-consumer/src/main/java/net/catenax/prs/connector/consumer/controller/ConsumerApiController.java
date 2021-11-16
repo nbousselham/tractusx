@@ -57,9 +57,10 @@ public class ConsumerApiController {
     }
 
     /**
-     * Endpoint to trigger a request, so that a file get copied into a specific destination.
-     *
-     * @param request Request parameters.
+     * Endpoint to trigger a request, so that parts tree get written into a file.
+     * Consumer will forward the PartsTreeByObjectIdRequest to a provider.
+     * @param request FileRequest. Contains a PartsTreeByObjectIdRequest corresponding to prs-request and other
+     *                information such that the destination file where the result of the PRS request should be written.
      * @return TransferInitiateResponse with process id.
      */
     @POST
