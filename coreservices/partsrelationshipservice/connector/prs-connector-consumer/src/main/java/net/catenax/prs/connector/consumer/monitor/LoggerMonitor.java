@@ -1,3 +1,12 @@
+//
+// Copyright (c) 2021 Copyright Holder (Catena-X Consortium)
+//
+// See the AUTHORS file(s) distributed with this work for additional
+// information regarding authorship.
+//
+// See the LICENSE file(s) distributed with this work for
+// additional information regarding license terms.
+//
 package net.catenax.prs.connector.consumer.monitor;
 
 import org.eclipse.dataspaceconnector.spi.monitor.Monitor;
@@ -8,12 +17,12 @@ import java.util.function.Supplier;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+/**
+ * Logging monitor using JUL
+ */
 public class LoggerMonitor implements Monitor {
 
-    private final static Logger LOGGER = Logger.getLogger(Logger.GLOBAL_LOGGER_NAME);
-
-    public LoggerMonitor() {
-    }
+    private static final Logger LOGGER = Logger.getLogger(Logger.GLOBAL_LOGGER_NAME);
 
     @Override
     public void severe(Supplier<String> supplier, Throwable... errors) {
@@ -57,7 +66,7 @@ public class LoggerMonitor implements Monitor {
 
     @Override
     public void debug(String message, Throwable... errors) {
-        logForEach(()-> message, Level.FINE, errors);
+        logForEach(() -> message, Level.FINE, errors);
     }
 
     private void logForEach(Supplier<String> message, Level level, Throwable... errors) {
