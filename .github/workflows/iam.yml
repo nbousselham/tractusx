@@ -31,6 +31,7 @@ on:
       # ADAPT HERE TO ADD NEW WORKSPACES
       - feature/CAX-9-onboarding@deploy
       # ADAPT HERE TO ADD NEW WORKSPACES
+      - feature/CAX-12-devops@CPLP-63-Setup-Perf-Landscape 
 
 jobs:
   ########################################
@@ -67,7 +68,10 @@ jobs:
                   echo "::set-output name=workspace::dev042"
               elif [[ "${{github.ref}}" = refs/heads/feature/CAX-9-onboarding ]]; then
                   echo "Determined ONBOARDING"
-                  echo "::set-output name=workspace::dev003"             
+                  echo "::set-output name=workspace::dev003"  
+              elif [[ "${{github.ref}}" = refs/heads/feature/CAX-12-devops@CPLP-63-Setup-Perf-Landscape ]]; then
+                  echo "Determined PERF"
+                  echo "::set-output name=workspace::perf"           
               else 
                   echo "Unsupported Branch on CATENAX. Leaving Workspace empty."
               fi

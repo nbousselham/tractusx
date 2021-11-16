@@ -18,7 +18,7 @@ Run the following commands to deploy the infrastructure to your target landscape
 
 Since terraform has been configured a) to use a backend-based state persistence and b) to use a potential Service Principal, you may need to interactively enter additional information throughout the process, such as the azure_storage_account_key, the azure_subscription_id, the azure tenant_id, the azure_client_id and your azure_client_secret. 
 
-You will furthermore need a private/public key pair (ssh.priv, ssh.pub) to sign in to the kubernetes nodes (the host OS, that is).
+You will furthermore need a private/public key pair (ssh.priv, ssh.pub) to sign in to the kubernetes nodes (the host OS, that is). You can use the command "ssh-keygen -t rsa -b 2048" to generate the key pair.
 
 ### Terraform Actions
 
