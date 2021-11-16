@@ -6,5 +6,5 @@ ingress:
   className: nginx
   prefix: /prs-connector-provider
 #prs:
-#  basePath: "http://prs:8080"
+#  apiUrl: "http://prs:8080"
 
