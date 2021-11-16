@@ -87,7 +87,7 @@ public class InMemoryJobStore implements JobStore {
                 lock.readLock().unlock();
             }
         } catch (InterruptedException e) {
-            Thread.interrupted();
+            Thread.currentThread().interrupt();
             throw new EdcException(e);
         }
     }
@@ -103,7 +103,7 @@ public class InMemoryJobStore implements JobStore {
                 lock.writeLock().unlock();
             }
         } catch (InterruptedException e) {
-            Thread.interrupted();
+            Thread.currentThread().interrupt();
             throw new EdcException(e);
         }
     }
