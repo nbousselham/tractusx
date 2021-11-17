@@ -72,13 +72,13 @@ public class LoggerMonitor implements Monitor {
 
     private void log(Supplier<String> supplier, Level level, Throwable... errors) {
         if (errors.length != 0) {
-            logForEach(supplier, Level.SEVERE, errors);
+            logForEach(supplier, level, errors);
         } else {
             LOGGER.log(level, supplier);
         }
     }
 
-    private void logForEach(Supplier<String> message, Level level, Throwable... errors) {
-        Arrays.stream(errors).forEach(error -> LOGGER.log(level, message.get(), error));
+    private void logForEach(Supplier<String> supplier, Level level, Throwable... errors) {
+        Arrays.stream(errors).forEach(error -> LOGGER.log(level, supplier.get(), error));
     }
 }
