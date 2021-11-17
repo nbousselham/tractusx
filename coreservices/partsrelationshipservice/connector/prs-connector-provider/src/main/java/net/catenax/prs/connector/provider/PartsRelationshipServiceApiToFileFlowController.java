@@ -25,6 +25,10 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
+import static java.lang.String.format;
+import static java.nio.file.StandardCopyOption.ATOMIC_MOVE;
+import static java.nio.file.StandardCopyOption.REPLACE_EXISTING;
+
 /**
  * Handles a data flow to call PRS API and save the result to a file.
  */
@@ -105,7 +109,7 @@ public class PartsRelationshipServiceApiToFileFlowController implements DataFlow
 
         final var destinationPath = Path.of(dataRequest.getDataDestination().getProperty("path"));
         try {
-            Files.writeString(destinationPath, partRelationshipsWithInfos);
+            writeToFile(partRelationshipsWithInfos, destinationPath);
         } catch (IOException e) {
             final String message = "Error writing file " + destinationPath + e.getMessage();
             monitor.severe(message);
@@ -113,5 +117,12 @@ public class PartsRelationshipServiceApiToFileFlowController implements DataFlow
         }
 
         return DataFlowInitiateResponse.OK;
+    }
+
+    private void writeToFile(String content, Path path) throws IOException {
+        // write to temporary file first, so that test does not pick up an empty file while writing
+        var tmpPath = Path.of(path.getParent().toString(), format(".%s.tmp" , path.getFileName()));
+        Files.writeString(tmpPath, content);
+        Files.move(tmpPath, path, REPLACE_EXISTING, ATOMIC_MOVE);
     }
 }

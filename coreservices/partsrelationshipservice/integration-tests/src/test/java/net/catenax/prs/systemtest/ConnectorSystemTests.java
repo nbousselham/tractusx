@@ -56,14 +56,14 @@ public class ConnectorSystemTests {
     private static final String VEHICLE_OBJECTID = "UVVZI9PKX5D37RFUB";
 
     @Test
-    public void downloadFile() {
+    public void downloadFile() throws Exception {
 
         // Arrange
         var environment = System.getProperty("environment", "dev");
 
         // Temporarily hardcode the file path. It will change when adding several providers.
         var fileWithExpectedOutput = format("getPartsTreeByOneIdAndObjectId-%s-bmw-expected.json", environment);
-        var payload = getClass().getResourceAsStream(fileWithExpectedOutput);
+        var expectedResult = new String(getClass().getResourceAsStream(fileWithExpectedOutput).readAllBytes());
 
         // Act
 
@@ -103,14 +103,13 @@ public class ConnectorSystemTests {
                 .atMost(Duration.ofSeconds(30))
                 .untilAsserted(() -> {
                     var exec = runOnProviderPod("cat", destFile);
+                    assertThat(exec.waitFor()).isEqualTo(0);
                     try (InputStream inputStream = exec.getInputStream()) {
                         String result = new String(inputStream.readAllBytes());
-                        String expectedResult = new String(payload.readAllBytes());
                         assertThatJson(result)
                                 .when(IGNORING_ARRAY_ORDER)
                                 .isEqualTo(expectedResult);
                     }
-                    assertThat(exec.waitFor()).isEqualTo(0);
                 });
     }
 
