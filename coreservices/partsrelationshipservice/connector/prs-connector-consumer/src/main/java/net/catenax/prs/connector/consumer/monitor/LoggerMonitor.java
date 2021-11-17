@@ -26,12 +26,12 @@ public class LoggerMonitor implements Monitor {
 
     @Override
     public void severe(Supplier<String> supplier, Throwable... errors) {
-        logForEach(supplier, Level.SEVERE, errors);
+        log(supplier, Level.SEVERE, errors);
     }
 
     @Override
     public void severe(String message, Throwable... errors) {
-        logForEach(() -> message, Level.SEVERE, errors);
+        severe(() -> message, errors);
     }
 
     @Override
@@ -41,32 +41,41 @@ public class LoggerMonitor implements Monitor {
 
     @Override
     public void warning(Supplier<String> supplier, Throwable... errors) {
-        logForEach(supplier, Level.WARNING, errors);
+        log(supplier, Level.WARNING, errors);
     }
 
     @Override
     public void warning(String message, Throwable... errors) {
-        logForEach(() -> message, Level.WARNING, errors);
+        warning(() -> message, errors);
     }
 
     @Override
     public void info(Supplier<String> supplier, Throwable... errors) {
-        logForEach(supplier, Level.INFO, errors);
+        log(supplier, Level.INFO, errors);
     }
 
     @Override
     public void info(String message, Throwable... errors) {
-        logForEach(() -> message, Level.INFO, errors);
+        log(() -> message, Level.INFO, errors);
+
     }
 
     @Override
     public void debug(Supplier<String> supplier, Throwable... errors) {
-        logForEach(supplier, Level.FINE, errors);
+        log(supplier, Level.FINE, errors);
     }
 
     @Override
     public void debug(String message, Throwable... errors) {
-        logForEach(() -> message, Level.FINE, errors);
+        debug(() -> message, errors);
+    }
+
+    private void log(Supplier<String> supplier, Level level, Throwable... errors) {
+        if (errors.length != 0) {
+            logForEach(supplier, level, errors);
+        } else {
+            LOGGER.log(Level.SEVERE, supplier);
+        }
     }
 
     private void logForEach(Supplier<String> message, Level level, Throwable... errors) {
