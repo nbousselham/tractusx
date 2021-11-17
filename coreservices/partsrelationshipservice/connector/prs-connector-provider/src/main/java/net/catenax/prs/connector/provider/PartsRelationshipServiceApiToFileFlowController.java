@@ -121,7 +121,7 @@ public class PartsRelationshipServiceApiToFileFlowController implements DataFlow
 
     private void writeToFile(String content, Path path) throws IOException {
         // write to temporary file first, so that test does not pick up an empty file while writing
-        var tmpPath = Path.of(path.getParent().toString(), format(".%s.tmp" , path.getFileName()));
+        var tmpPath = Path.of(path.getParent().toString(), format(".%s.tmp", path.getFileName()));
         Files.writeString(tmpPath, content);
         Files.move(tmpPath, path, REPLACE_EXISTING, ATOMIC_MOVE);
     }
