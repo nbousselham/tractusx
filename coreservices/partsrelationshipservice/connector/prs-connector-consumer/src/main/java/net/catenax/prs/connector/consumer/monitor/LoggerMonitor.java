@@ -72,9 +72,9 @@ public class LoggerMonitor implements Monitor {
 
     private void log(Supplier<String> supplier, Level level, Throwable... errors) {
         if (errors.length != 0) {
-            logForEach(supplier, level, errors);
+            logForEach(supplier, Level.SEVERE, errors);
         } else {
-            LOGGER.log(Level.SEVERE, supplier);
+            LOGGER.log(level, supplier);
         }
     }
 
