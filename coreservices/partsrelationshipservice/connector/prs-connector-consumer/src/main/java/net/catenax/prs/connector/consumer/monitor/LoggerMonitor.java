@@ -11,18 +11,34 @@ package net.catenax.prs.connector.consumer.monitor;
 
 import org.eclipse.dataspaceconnector.spi.monitor.Monitor;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.Arrays;
 import java.util.Map;
 import java.util.function.Supplier;
 import java.util.logging.Level;
+import java.util.logging.LogManager;
 import java.util.logging.Logger;
 
 /**
- * Logging monitor using JUL
+ * Logging monitor using java.util.logging
  */
 public class LoggerMonitor implements Monitor {
 
-    private static final Logger LOGGER = Logger.getLogger(Logger.GLOBAL_LOGGER_NAME);
+    private static Logger logger = Logger.getLogger(Logger.GLOBAL_LOGGER_NAME);
+
+    /**
+     * Constructor loading the log configuration from logging.properties file from the resources.
+     */
+    public LoggerMonitor() {
+        InputStream stream = LoggerMonitor.class.getResourceAsStream("logging.properties");
+        try {
+            LogManager.getLogManager().readConfiguration(stream);
+            logger = Logger.getLogger(Logger.GLOBAL_LOGGER_NAME);
+        } catch (IOException e) {
+            logger.log(Level.SEVERE, "Error when loading logging.properties.", e);
+        }
+    }
 
     @Override
     public void severe(Supplier<String> supplier, Throwable... errors) {
@@ -36,7 +52,7 @@ public class LoggerMonitor implements Monitor {
 
     @Override
     public void severe(Map<String, Object> data) {
-        data.forEach((key, value) -> LOGGER.log(Level.SEVERE, key, value));
+        data.forEach((key, value) -> logger.log(Level.SEVERE, key, value));
     }
 
     @Override
@@ -73,11 +89,11 @@ public class LoggerMonitor implements Monitor {
         if (errors.length != 0) {
             logForEach(supplier, level, errors);
         } else {
-            LOGGER.log(level, supplier);
+            logger.log(level, supplier);
         }
     }
 
     private void logForEach(Supplier<String> supplier, Level level, Throwable... errors) {
-        Arrays.stream(errors).forEach(error -> LOGGER.log(level, supplier.get(), error));
+        Arrays.stream(errors).forEach(error -> logger.log(level, supplier.get(), error));
     }
 }

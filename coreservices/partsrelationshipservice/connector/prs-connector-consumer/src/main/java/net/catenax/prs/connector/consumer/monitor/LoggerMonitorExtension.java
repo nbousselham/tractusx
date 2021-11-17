@@ -16,6 +16,7 @@ import org.eclipse.dataspaceconnector.spi.system.MonitorExtension;
  * Extension adding logging monitor.
  */
 public class LoggerMonitorExtension implements MonitorExtension {
+
     @Override
     public Monitor getMonitor() {
         return new LoggerMonitor();
