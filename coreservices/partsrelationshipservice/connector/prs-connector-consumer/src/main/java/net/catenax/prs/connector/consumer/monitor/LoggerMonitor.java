@@ -22,25 +22,25 @@ import java.util.function.Supplier;
  */
 public class LoggerMonitor implements Monitor {
 
-    private static Logger logger = LoggerFactory.getLogger(LoggerMonitor.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(LoggerMonitor.class);
 
     @Override
     public void severe(Supplier<String> supplier, Throwable... errors) {
-       severe(supplier.get(), errors);
+        severe(supplier.get(), errors);
     }
 
     @Override
     public void severe(String message, Throwable... errors) {
         if (errors.length != 0) {
-            Arrays.stream(errors).forEach(error -> logger.error(message, error));
+            Arrays.stream(errors).forEach(error -> LOGGER.error(message, error));
         } else {
-            logger.error(message);
+            LOGGER.error(message);
         }
     }
 
     @Override
     public void severe(Map<String, Object> data) {
-        data.forEach((key, value) -> logger.error(key, value));
+        data.forEach(LOGGER::error);
     }
 
     @Override
@@ -51,9 +51,9 @@ public class LoggerMonitor implements Monitor {
     @Override
     public void warning(String message, Throwable... errors) {
         if (errors.length != 0) {
-            Arrays.stream(errors).forEach(error -> logger.warn(message, error));
+            Arrays.stream(errors).forEach(error -> LOGGER.warn(message, error));
         } else {
-            logger.warn(message);
+            LOGGER.warn(message);
         }
     }
 
@@ -65,9 +65,9 @@ public class LoggerMonitor implements Monitor {
     @Override
     public void info(String message, Throwable... errors) {
         if (errors.length != 0) {
-            Arrays.stream(errors).forEach(error -> logger.info(message, error));
+            Arrays.stream(errors).forEach(error -> LOGGER.info(message, error));
         } else {
-            logger.info(message);
+            LOGGER.info(message);
         }
     }
 
@@ -79,9 +79,9 @@ public class LoggerMonitor implements Monitor {
     @Override
     public void debug(String message, Throwable... errors) {
         if (errors.length != 0) {
-            Arrays.stream(errors).forEach(error -> logger.debug(message, error));
+            Arrays.stream(errors).forEach(error -> LOGGER.debug(message, error));
         } else {
-            logger.debug(message);
+            LOGGER.debug(message);
         }
     }
 }

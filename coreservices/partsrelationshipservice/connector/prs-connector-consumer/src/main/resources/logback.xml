@@ -9,11 +9,11 @@
         </layout>
     </appender>
 
-    <logger name="net.catenax" level="debug" additivity="false">
+    <logger name="net.catenax.prs" level="debug" additivity="false">
         <appender-ref ref="CONSOLE"/>
     </logger>
 
-    <root level="error">
+    <root level="debug">
         <appender-ref ref="CONSOLE"/>
     </root>
 
