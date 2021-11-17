@@ -99,6 +99,7 @@ public class PartsRelationshipServiceApiToFileFlowController implements DataFlow
         final String partRelationshipsWithInfos;
         try {
             partRelationshipsWithInfos = MAPPER.writeValueAsString(response);
+            monitor.info("PRS partRelationshipsWithInfos:" + partRelationshipsWithInfos);
         } catch (JsonProcessingException e) {
             final String message = "Error serializing API response: " + e.getMessage();
             monitor.severe(message);
