@@ -123,7 +123,6 @@ public class ConnectorSystemTests {
                 pod,
                 "--"));
         l.addAll(Arrays.asList(command));
-        System.out.println(l.stream().collect(Collectors.joining(" ")));
         return new ProcessBuilder()
                 .redirectError(ProcessBuilder.Redirect.INHERIT)
                 .command(l)
