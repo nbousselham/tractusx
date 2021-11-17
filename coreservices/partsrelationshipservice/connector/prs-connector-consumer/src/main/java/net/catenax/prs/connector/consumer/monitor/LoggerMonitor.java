@@ -57,7 +57,6 @@ public class LoggerMonitor implements Monitor {
     @Override
     public void info(String message, Throwable... errors) {
         log(() -> message, Level.INFO, errors);
-
     }
 
     @Override
