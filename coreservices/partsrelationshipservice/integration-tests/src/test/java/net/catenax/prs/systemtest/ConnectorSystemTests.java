@@ -106,6 +106,8 @@ public class ConnectorSystemTests {
                     assertThat(exec.waitFor()).isEqualTo(0);
                     try (InputStream inputStream = exec.getInputStream()) {
                         String result = new String(inputStream.readAllBytes());
+                        System.out.println("destination file content:" + result);
+                        System.out.println("expectedResult:" + expectedResult);
                         assertThatJson(result)
                                 .when(IGNORING_ARRAY_ORDER)
                                 .isEqualTo(expectedResult);
