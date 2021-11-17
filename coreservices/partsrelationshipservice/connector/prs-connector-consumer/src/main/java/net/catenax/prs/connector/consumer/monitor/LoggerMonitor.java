@@ -10,90 +10,78 @@
 package net.catenax.prs.connector.consumer.monitor;
 
 import org.eclipse.dataspaceconnector.spi.monitor.Monitor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-import java.io.IOException;
-import java.io.InputStream;
 import java.util.Arrays;
 import java.util.Map;
 import java.util.function.Supplier;
-import java.util.logging.Level;
-import java.util.logging.LogManager;
-import java.util.logging.Logger;
 
 /**
  * Logging monitor using java.util.logging
  */
 public class LoggerMonitor implements Monitor {
 
-    private static Logger logger = Logger.getLogger(Logger.GLOBAL_LOGGER_NAME);
-
-    /**
-     * Constructor loading the log configuration from logging.properties file from the resources.
-     */
-    public LoggerMonitor() {
-        InputStream stream = LoggerMonitor.class.getResourceAsStream("logging.properties");
-        try {
-            LogManager.getLogManager().readConfiguration(stream);
-            logger = Logger.getLogger(Logger.GLOBAL_LOGGER_NAME);
-        } catch (IOException e) {
-            logger.log(Level.SEVERE, "Error when loading logging.properties.", e);
-        }
-    }
+    private static Logger logger = LoggerFactory.getLogger(LoggerMonitor.class);
 
     @Override
     public void severe(Supplier<String> supplier, Throwable... errors) {
-        log(supplier, Level.SEVERE, errors);
+       severe(supplier.get(), errors);
     }
 
     @Override
     public void severe(String message, Throwable... errors) {
-        severe(() -> message, errors);
+        if (errors.length != 0) {
+            Arrays.stream(errors).forEach(error -> logger.error(message, error));
+        } else {
+            logger.error(message);
+        }
     }
 
     @Override
     public void severe(Map<String, Object> data) {
-        data.forEach((key, value) -> logger.log(Level.SEVERE, key, value));
+        data.forEach((key, value) -> logger.error(key, value));
     }
 
     @Override
     public void warning(Supplier<String> supplier, Throwable... errors) {
-        log(supplier, Level.WARNING, errors);
+        warning(supplier.get(), errors);
     }
 
     @Override
     public void warning(String message, Throwable... errors) {
-        warning(() -> message, errors);
+        if (errors.length != 0) {
+            Arrays.stream(errors).forEach(error -> logger.warn(message, error));
+        } else {
+            logger.warn(message);
+        }
     }
 
     @Override
     public void info(Supplier<String> supplier, Throwable... errors) {
-        log(supplier, Level.INFO, errors);
+        info(supplier.get(), errors);
     }
 
     @Override
     public void info(String message, Throwable... errors) {
-        log(() -> message, Level.INFO, errors);
+        if (errors.length != 0) {
+            Arrays.stream(errors).forEach(error -> logger.info(message, error));
+        } else {
+            logger.info(message);
+        }
     }
 
     @Override
     public void debug(Supplier<String> supplier, Throwable... errors) {
-        log(supplier, Level.FINE, errors);
+        debug(supplier.get(), errors);
     }
 
     @Override
     public void debug(String message, Throwable... errors) {
-        debug(() -> message, errors);
-    }
-
-    private void log(Supplier<String> supplier, Level level, Throwable... errors) {
         if (errors.length != 0) {
-            logForEach(supplier, level, errors);
+            Arrays.stream(errors).forEach(error -> logger.debug(message, error));
         } else {
-            logger.log(level, supplier);
+            logger.debug(message);
         }
-    }
-
-    private void logForEach(Supplier<String> supplier, Level level, Throwable... errors) {
-        Arrays.stream(errors).forEach(error -> logger.log(level, supplier.get(), error));
     }
 }
