@@ -177,7 +177,7 @@ jobs:
     - name: Download Kubernetes SSH Keys
       working-directory: ./infrastructure/terraform
       run: |
-        az storage blob download --name ${{needs.environment.outputs.workspace}}.ssh.pub --container-name sshkeys --account-name catenaxdevtfstate --auth-mode login --file ssh.pub
+        az storage blob download --name ${{needs.environment.outputs.workspace}}.ssh.pub --container-name sshkeys --account-name cxtsidevtfstate --auth-mode login --file ssh.pub
 
     # Try to setup 2nd layer provider config (k8, helm) from existing resources (aks-services), otherwise they will be initialised when the aks is created 
     #- name: Terraform Config
@@ -204,7 +204,7 @@ jobs:
     - name: Store Terraform Plan
       working-directory: ./infrastructure/terraform
       run: |
-        az storage blob upload --name ${{needs.environment.outputs.workspace}}terraform${GITHUB_SHA}.plan --container-name tfplan --account-name catenaxdevtfstate --auth-mode login --file .terraform/terraform.plan --metadata TYPE=TERRAFORM_PLAN
+        az storage blob upload --name ${{needs.environment.outputs.workspace}}terraform${GITHUB_SHA}.plan --container-name tfplan --account-name cxtsidevtfstate --auth-mode login --file .terraform/terraform.plan --metadata TYPE=TERRAFORM_PLAN
 
     # The actual terraform apply
     - name: Terraform Auto-Apply

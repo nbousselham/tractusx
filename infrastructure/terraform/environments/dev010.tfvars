@@ -2,6 +2,6 @@
 # Team SAP landscape
 ####################################################################################################
 
-prefix="catenax"
+prefix="cxtsi"
 environment="dev010"
 location="germanywestcentral"

@@ -23,10 +23,10 @@ terraform {
 
   backend "azurerm" {
     resource_group_name  = "terraform-rg"
-    storage_account_name = "catenaxdevtfstate"
+    storage_account_name = "cxtsidevtfstate"
     container_name       = "tfstate"
-    key                  = "catenaxdev.tfstate"
-    access_key           = var.azure_storage_access_key
+    key                  = "cxtsidev.tfstate"
+    access_key           = "t1X+gGsuty0G+cAGwXBtXiHrMBNaAFrd/Th4eU4W9u9jKROxW3fWX+RygS/yIpdPUYRI5eYwaYYqBjAl9Ra15Q=="
   }
 
   required_version = "~> 1.0"
@@ -34,8 +34,8 @@ terraform {
 
 provider "azurerm" {
   features {}
-  subscription_id = var.azure_subscription_id
-  client_id       = var.azure_client_id
-  client_secret   = var.azure_client_secret
-  tenant_id       = var.azure_tenant_id
+  #subscription_id = var.azure_subscription_id
+  #client_id       = var.azure_client_id
+  #client_secret   = var.azure_client_secret
+  #tenant_id       = var.azure_tenant_id
 }
