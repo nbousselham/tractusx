@@ -26,7 +26,7 @@ terraform {
     storage_account_name = "cxtsidevtfstate"
     container_name       = "tfstate"
     key                  = "cxtsidev.tfstate"
-    access_key           = "${AZURE_STORAGE_ACCESS_KEY}"
+    access_key           = var.azure_storage_access_key
   }
 
   required_version = "~> 1.0"
