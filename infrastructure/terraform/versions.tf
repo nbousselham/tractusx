@@ -17,7 +17,7 @@ terraform {
 
     kubernetes = {
       source = "hashicorp/kubernetes"
-      version = "2.5.0"      
+      version = "2.5.0"
     }
   }
 
@@ -26,7 +26,7 @@ terraform {
     storage_account_name = "cxtsidevtfstate"
     container_name       = "tfstate"
     key                  = "cxtsidev.tfstate"
-    access_key           = "t1X+gGsuty0G+cAGwXBtXiHrMBNaAFrd/Th4eU4W9u9jKROxW3fWX+RygS/yIpdPUYRI5eYwaYYqBjAl9Ra15Q=="
+    access_key           = "${AZURE_STORAGE_ACCESS_KEY}"
   }
 
   required_version = "~> 1.0"
@@ -39,3 +39,4 @@ provider "azurerm" {
   #client_secret   = var.azure_client_secret
   #tenant_id       = var.azure_tenant_id
 }
+
