@@ -1,0 +1,17 @@
+server:
+  port: 9095
+  servlet:
+    context-path: /provider
+
+connector: 
+  username: admin
+  password: password
+  provider:
+    baseUrl: https://npmconsumer.northeurope.cloudapp.azure.com:8083/api/
+    
+spring:
+  data:
+    mongodb:
+      host: localhost 
+      port: 27017
+      database: csds-mongo

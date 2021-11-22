@@ -1,0 +1,97 @@
+version: '3.9'
+services:
+  config: 
+    build: config
+    depends_on:
+      - "postgres"
+    networks: 
+      - backend
+    ports:
+      - 9090:9090
+      
+  service-discovery: 
+    build: service-discovery
+    depends_on:
+      - "config"
+    networks: 
+      - backend 
+    ports: 
+      - 9091:9091 
+    deploy: 
+      replicas: 1
+      update_config:
+        parallelism: 2
+        delay: 10s
+      restart_policy:
+        condition: on-failure
+
+       
+  core-service: 
+    build: core-service
+    depends_on:
+      - "config"
+    networks: 
+      - backend 
+    ports: 
+      - 9094:9094 
+    deploy: 
+      replicas: 1
+      update_config:
+        parallelism: 2
+        delay: 10s
+      restart_policy:
+        condition: on-failure
+        
+  master-service: 
+    build: master-service
+    depends_on:
+      - "config"
+    networks: 
+      - backend 
+    ports: 
+      - 9095:9095 
+    deploy: 
+      replicas: 1
+      update_config:
+        parallelism: 2
+        delay: 10s
+      restart_policy:
+        condition: on-failure    
+         
+  gateway-service: 
+    build: gateway-service
+    depends_on:
+      - "config"
+    networks: 
+      - backend
+    ports: 
+      - 9092:9092 
+    deploy:
+      replicas: 1
+      update_config:
+        parallelism: 2
+        delay: 10s
+      restart_policy:
+        condition: on-failure
+        
+  
+  postgres:
+    image: 'sachin/postgres:latest'
+    ports:
+        - '5432:5432'
+    volumes:
+        - postgres-db:/var/lib/postgres
+    networks:
+        - backend
+    deploy:
+      replicas: 1
+      update_config:
+        parallelism: 2
+        delay: 10s
+      restart_policy:
+        condition: on-failure
+networks:
+  frontend: null
+  backend: null
+volumes:
+   postgres-db: 

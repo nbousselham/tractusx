@@ -1,0 +1,13 @@
+package com.csds.service;
+
+
+import com.csds.model.request.OrganizationRequest;
+import com.csds.response.ResponseObject;
+
+public interface OrganizationServices {
+
+	public ResponseObject getAllRoles();
+	public ResponseObject getAllOrgnizationByRole(String role);
+	public ResponseObject getAllComapnies();
+	public ResponseObject getAddAndUpdateOrgnizationDetials(OrganizationRequest organizationRequest);
+}

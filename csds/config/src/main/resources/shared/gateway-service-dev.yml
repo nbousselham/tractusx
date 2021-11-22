@@ -1,0 +1,35 @@
+server:
+  port: 9092
+
+hystrix: 
+  command:
+    default:
+      execution:
+        isolation:
+          thread:
+            timeoutInMilliseconds: 20000
+                
+spring: 
+  jpa: 
+    hibernate:
+      ddl-auto: update
+  datasource: 
+    url: jdbc:postgresql://localhost:5432/csds
+    username: root
+    password: P@ssword21
+    
+  cloud:
+    gateway:
+      default-filters:
+        - DedupeResponseHeader=Access-Control-Allow-Credentials Access-Control-Allow-Origin
+      globalcors:
+        corsConfigurations:
+          '[/**]':
+              allowedOrigins: "*"
+              allowedMethods: "*"
+              allowedHeaders: "*"
+#      routes:
+#        - id: AuthService
+#          uri: lb://CORE-SERVICE
+#          predicates:
+#          - Path=/auth/**

@@ -1,0 +1,6 @@
+/.metadata/
+/common-service/target/**
+/core-service/target/**
+/config/target/**
+/frontend/node_modules/**
+/frontend/dist/**

@@ -1,0 +1,16 @@
+spring: 
+  jackson:
+    serialization: 
+      FAIL_ON_EMPTY_BEANS: false
+  jpa:
+    hibernate:
+      ddl-auto: update
+  datasource: 
+    url: jdbc:postgresql://localhost:5432/csds
+    username: root
+    password: P@ssword21
+
+server:
+  port: 9094
+  servlet:
+    context-path: /core
