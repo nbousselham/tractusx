@@ -14,9 +14,9 @@ spring:
     hibernate:
       ddl-auto: update
   datasource: 
-    url: jdbc:postgresql://postgres:5432/csds
-    username: root
-    password: P@ssword21
+    url: jdbc:postgresql://postgres:5432/postgresdb
+    username: admin
+    password: password@123
     
   cloud:
     gateway:

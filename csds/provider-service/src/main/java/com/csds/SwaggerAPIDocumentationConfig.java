@@ -21,8 +21,12 @@ public class SwaggerAPIDocumentationConfig {
 
 	@Bean
 	public Docket configureControllerPackageAndConvertors() {
-		return new Docket(DocumentationType.SWAGGER_2).select().apis(RequestHandlerSelectors.basePackage("com.csds"))
-				.build().directModelSubstitute(org.joda.time.LocalDate.class, java.sql.Date.class)
-				.directModelSubstitute(org.joda.time.DateTime.class, java.util.Date.class).apiInfo(apiInfo());
+		return new Docket(DocumentationType.SWAGGER_2)
+				.select()
+				.apis(RequestHandlerSelectors.basePackage("com.csds"))
+				.build()
+				.directModelSubstitute(org.joda.time.LocalDate.class, java.sql.Date.class)
+				.directModelSubstitute(org.joda.time.DateTime.class, java.util.Date.class)
+				.apiInfo(apiInfo());
 	}
 }

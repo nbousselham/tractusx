@@ -40,6 +40,7 @@
 		<module>gateway-service</module>
 		<module>core-service</module>
 		<module>provider-service</module>
+		<module>documentation-service</module>
 	</modules>
 
 	 <build>
