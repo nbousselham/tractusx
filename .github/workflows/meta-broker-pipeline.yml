@@ -23,8 +23,9 @@ on:
   workflow_dispatch:
   
 env:
+  prefix: cxtsi
   HELM_EXPERIMENTAL_OCI: 1
-  ACR_NAME: catenaxacr.azurecr.io
+  ACR_NAME: ${{env.prefix}}acr.azurecr.io
   version: 0.1.0
   
 
