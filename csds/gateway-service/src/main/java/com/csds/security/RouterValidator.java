@@ -9,13 +9,13 @@ import org.springframework.stereotype.Component;
 @Component
 public class RouterValidator {
 
-	public static final List<String> openApiEndpoints = List.of("/auth/register", "/auth/login","swagger-ui.html");
+	public static final List<String> openApiEndpoints = List.of("/auth/register", "/auth/login", "swagger-ui.html",
+			"/swagger-resources/**", "/swagger-ui.html", "/v2/api-docs", "/webjars/**");
 
-	public Predicate<ServerHttpRequest> isSecured = request -> openApiEndpoints.stream()
-			.noneMatch(uri -> {
-				return true;
+	public Predicate<ServerHttpRequest> isSecured = request -> openApiEndpoints.stream().noneMatch(uri -> {
+		return true;
 //				return request.getURI().getPath().contains(uri);
-				});
+	});
 
 	public boolean getUserRoleAccess(String requestURL) {
 		return true;

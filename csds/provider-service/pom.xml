@@ -23,6 +23,7 @@
 		<feign.version>11.6</feign.version>
 		<jackson.version>2.12.5</jackson.version>
 		<apache.commons.version>3.12.0</apache.commons.version>
+		<springfox-version>2.5.0</springfox-version>
 	</properties>
 	<dependencies>
 
@@ -41,10 +42,27 @@
 			<artifactId>spring-cloud-starter-bootstrap</artifactId>
 		</dependency>
 
+		<!-- <dependency> <groupId>org.springdoc</groupId> <artifactId>springdoc-openapi-ui</artifactId> 
+			<version>1.5.2</version> </dependency> -->
+
+		<!--SpringFox swagger dependencies -->
 		<dependency>
-			<groupId>org.springdoc</groupId>
-			<artifactId>springdoc-openapi-ui</artifactId>
-			<version>1.5.2</version>
+			<groupId>io.springfox</groupId>
+			<artifactId>springfox-swagger2</artifactId>
+			<version>${springfox-version}</version>
+		</dependency>
+		<dependency>
+			<groupId>io.springfox</groupId>
+			<artifactId>springfox-swagger-ui</artifactId>
+			<version>${springfox-version}</version>
+		</dependency>
+		<dependency>
+			<groupId>com.fasterxml.jackson.core</groupId>
+			<artifactId>jackson-core</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>com.fasterxml.jackson.datatype</groupId>
+			<artifactId>jackson-datatype-joda</artifactId>
 		</dependency>
 
 		<dependency>
@@ -95,7 +113,7 @@
 			<artifactId>spring-boot-starter-test</artifactId>
 			<scope>test</scope>
 		</dependency>
-		
+
 		<dependency>
 			<groupId>com.csds</groupId>
 			<artifactId>common-service</artifactId>

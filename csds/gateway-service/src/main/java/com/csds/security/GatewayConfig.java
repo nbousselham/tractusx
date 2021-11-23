@@ -24,6 +24,10 @@ public class GatewayConfig {
                         .filters(f -> f.filter(filter))
                         .uri("lb://provider-service"))
                 
+                .route("documentation-service", r -> r.path("/documentation/**")
+                        .filters(f -> f.filter(filter))
+                        .uri("lb://documentation-service"))
+                
                 .build();
     }
 

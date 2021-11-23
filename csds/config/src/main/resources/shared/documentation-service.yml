@@ -1,0 +1,8 @@
+server:
+  port: 9093
+  servlet:
+    context-path: /documentation
+    
+swagger: 
+  config: 
+    refreshrate: 10000

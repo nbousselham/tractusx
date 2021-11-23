@@ -13,7 +13,9 @@
 	<artifactId>core-service</artifactId>
 	<packaging>jar</packaging>
 	<name>core-service</name>
-	
+	<properties>
+		<springfox-version>2.5.0</springfox-version>
+	</properties>
 	<dependencies>
 		<dependency>
             <groupId>org.springframework.boot</groupId>
@@ -71,12 +73,32 @@
 			<artifactId>postgresql</artifactId>
 		</dependency>
 		
-		<dependency>
+		<!-- <dependency>
 		    <groupId>org.springdoc</groupId>
 		    <artifactId>springdoc-openapi-ui</artifactId>
 		    <version>1.5.2</version>
-		</dependency>
-
+		</dependency> -->
+		
+		 <!--SpringFox swagger dependencies -->
+        <dependency>
+            <groupId>io.springfox</groupId>
+            <artifactId>springfox-swagger2</artifactId>
+            <version>${springfox-version}</version>
+        </dependency>
+        <dependency>
+            <groupId>io.springfox</groupId>
+            <artifactId>springfox-swagger-ui</artifactId>
+            <version>${springfox-version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-core</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.fasterxml.jackson.datatype</groupId>
+            <artifactId>jackson-datatype-joda</artifactId>
+        </dependency>
+        
 	</dependencies>
 	
 	<build>

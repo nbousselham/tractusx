@@ -1,9 +1,9 @@
-package com.npm.scheduler;
+package com.csds;
 
 import org.springframework.boot.test.context.SpringBootTest;
 
 @SpringBootTest
-class SchedulerApplicationTests {
+class ProviderServiceApplicationTests {
 
 	/*
 	 * @Test void contextLoads() { }
