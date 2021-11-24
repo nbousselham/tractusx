@@ -84,6 +84,7 @@ jobs:
     # depend on them in order to implement workflow dependencies
     name: 00 Infrastructure Determine Target Environment
     runs-on: ubuntu-latest
+    environment: Catena-X dev/int
     outputs:
       workspace: ${{ steps.setvars.outputs.workspace }}
 
