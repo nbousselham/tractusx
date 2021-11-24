@@ -131,6 +131,7 @@ jobs:
     # depend on them in order to implement workflow dependencies
     name: 09 Infrastructure Terraform
     runs-on: ubuntu-latest
+    environment: Catena-X dev/int
     # rely on the first job
     needs: environment
     # rely on successful detection of the workspace, ignore if empty
