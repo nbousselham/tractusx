@@ -4,6 +4,6 @@ spring:
   cloud:
     config:
       enabled: true
-      uri: http://localhost:9090
+      uri: http://csds-config:9090
       fail-fast: true
   

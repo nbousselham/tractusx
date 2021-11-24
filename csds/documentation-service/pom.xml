@@ -10,7 +10,6 @@
   	
 	<groupId>com.csds</groupId>
 	<artifactId>documentation-service</artifactId>
-	<version>0.0.1-SNAPSHOT</version>
 	<name>documentation-service</name>
 	<description>documentation-service</description>
 	

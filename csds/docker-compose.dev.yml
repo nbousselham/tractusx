@@ -42,22 +42,6 @@ services:
       restart_policy:
         condition: on-failure
         
-  master-service: 
-    build: master-service
-    depends_on:
-      - "config"
-    networks: 
-      - backend 
-    ports: 
-      - 9095:9095 
-    deploy: 
-      replicas: 1
-      update_config:
-        parallelism: 2
-        delay: 10s
-      restart_policy:
-        condition: on-failure    
-         
   gateway-service: 
     build: gateway-service
     depends_on:

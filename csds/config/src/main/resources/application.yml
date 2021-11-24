@@ -3,7 +3,7 @@ server:
   
 spring:
   application:
-    name: config
+    name: csds-config
   cloud:
     config:
       server:
