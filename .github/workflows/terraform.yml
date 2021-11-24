@@ -159,6 +159,7 @@ jobs:
       id: tf_init
       working-directory: ./infrastructure/terraform
       run: | 
+          az account subscription list # temp, remove
           terraform init -backend-config="access_key=${{secrets.TFSTATE_STORAGEACCOUNT_KEY}}" -input=false
           echo "::set-output name=WORKSPACE::$(terraform workspace list | grep "${{needs.environment.outputs.workspace}}")"
 
