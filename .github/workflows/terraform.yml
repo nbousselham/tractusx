@@ -61,6 +61,9 @@ on:
       - feature/A1ODT-18
       # ADAPT HERE TO ADD NEW WORKSPACES
 
+env:
+  prefix: cxtsi
+
 ###############################################################
 # Consists of two jobs, the first determines the environment
 # and the second one (doing the real work) only triggers
@@ -219,8 +222,8 @@ jobs:
       uses: azure/aks-set-context@v1
       with:
         creds: '${{ secrets.AZURE_CREDENTIALS }}' # Azure credentials
-        resource-group: 'catenax-${{needs.environment.outputs.workspace}}-rg'
-        cluster-name: 'catenax-${{needs.environment.outputs.workspace}}-aks-services'
+        resource-group: '${{env.prefix}}-${{needs.environment.outputs.workspace}}-rg'
+        cluster-name: '${{env.prefix}}-${{needs.environment.outputs.workspace}}-aks-services'
       id: login
 
     # Deploy cluster issuers 
@@ -243,63 +246,63 @@ jobs:
     - name: Azure Postgres Server Firewall Settings
       working-directory: ./infrastructure/terraform
       run: |
-        az postgres server firewall-rule create -g catenax-${{needs.environment.outputs.workspace}}-rg -s catenax${{needs.environment.outputs.workspace}}database -n "AllowAllWindowsAzureIps" --start-ip-address "0.0.0.0" --end-ip-address "0.0.0.0"
+        az postgres server firewall-rule create -g ${{env.prefix}}-${{needs.environment.outputs.workspace}}-rg -s ${{env.prefix}}${{needs.environment.outputs.workspace}}database -n "AllowAllWindowsAzureIps" --start-ip-address "0.0.0.0" --end-ip-address "0.0.0.0"
 
     # Get Semantics DB
     - name: Azure Try Existing Semantics DB
       id: try_semantics_db
       working-directory: ./infrastructure/terraform
       run: |
-        echo "::set-output name=SEMANTICDB::$(az postgres db list --resource-group catenax-${{needs.environment.outputs.workspace}}-rg --server-name catenax${{needs.environment.outputs.workspace}}database --output json | jq -r '.[] | select(.name=="semantics") | .id')"
+        echo "::set-output name=SEMANTICDB::$(az postgres db list --resource-group ${{env.prefix}}-${{needs.environment.outputs.workspace}}-rg --server-name ${{env.prefix}}${{needs.environment.outputs.workspace}}database --output json | jq -r '.[] | select(.name=="semantics") | .id')"
 
     # Create Semantics DB If Needed 
     - name: Azure Create Semantics DB
       if: ${{steps.try_semantics_db.outputs.SEMANTICDB == '' }}
       working-directory: ./infrastructure/terraform
       run: |
-        az postgres db create --name "semantics" --resource-group catenax-${{needs.environment.outputs.workspace}}-rg --server-name catenax${{needs.environment.outputs.workspace}}database
+        az postgres db create --name "semantics" --resource-group ${{env.prefix}}-${{needs.environment.outputs.workspace}}-rg --server-name ${{env.prefix}}${{needs.environment.outputs.workspace}}database
         
     # Get Partsmasterdata DB
     - name: Azure Try Existing Partsmasterdata DB
       id: try_partsmasterdata_db
       working-directory: ./infrastructure/terraform
       run: |
-        echo "::set-output name=PARTSMASTERDATADB::$(az postgres db list --resource-group catenax-${{needs.environment.outputs.workspace}}-rg --server-name catenax${{needs.environment.outputs.workspace}}database --output json | jq -r '.[] | select(.name=="partsmasterdata") | .id')"
+        echo "::set-output name=PARTSMASTERDATADB::$(az postgres db list --resource-group ${{env.prefix}}-${{needs.environment.outputs.workspace}}-rg --server-name ${{env.prefix}}${{needs.environment.outputs.workspace}}database --output json | jq -r '.[] | select(.name=="partsmasterdata") | .id')"
 
     # Create Partsmasterdata DB If Needed 
     - name: Azure Create Partsmasterdata DB
       if: ${{steps.try_partsmasterdata_db.outputs.PARTSMASTERDATADB == '' }}
       working-directory: ./infrastructure/terraform
       run: |
-        az postgres db create --name "partsmasterdata" --resource-group catenax-${{needs.environment.outputs.workspace}}-rg --server-name catenax${{needs.environment.outputs.workspace}}database
+        az postgres db create --name "partsmasterdata" --resource-group ${{env.prefix}}-${{needs.environment.outputs.workspace}}-rg --server-name ${{env.prefix}}${{needs.environment.outputs.workspace}}database
 
     # Get ProviderConnector DB
     - name: Azure Try Existing ProviderConnector DB
       id: try_providerconnector_db
       working-directory: ./infrastructure/terraform
       run: |
-        echo "::set-output name=PROVIDERCONNECTORDB::$(az postgres db list --resource-group catenax-${{needs.environment.outputs.workspace}}-rg --server-name catenax${{needs.environment.outputs.workspace}}database --output json | jq -r '.[] | select(.name=="providerconnector") | .id')"
+        echo "::set-output name=PROVIDERCONNECTORDB::$(az postgres db list --resource-group ${{env.prefix}}-${{needs.environment.outputs.workspace}}-rg --server-name ${{env.prefix}}${{needs.environment.outputs.workspace}}database --output json | jq -r '.[] | select(.name=="providerconnector") | .id')"
 
     # Create ProviderConnector DB If Needed 
     - name: Azure Create ProviderConnector DB
       if: ${{steps.try_providerconnector_db.outputs.PROVIDERCONNECTORDB == '' }}
       working-directory: ./infrastructure/terraform
       run: |
-        az postgres db create --name "providerconnector" --resource-group catenax-${{needs.environment.outputs.workspace}}-rg --server-name catenax${{needs.environment.outputs.workspace}}database
+        az postgres db create --name "providerconnector" --resource-group ${{env.prefix}}-${{needs.environment.outputs.workspace}}-rg --server-name ${{env.prefix}}${{needs.environment.outputs.workspace}}database
 
     # Get ConsumerConnector DB
     - name: Azure Try Existing ConsumerConnector DB
       id: try_consumerconnector_db
       working-directory: ./infrastructure/terraform
       run: |
-        echo "::set-output name=CONSUMERCONNECTORDB::$(az postgres db list --resource-group catenax-${{needs.environment.outputs.workspace}}-rg --server-name catenax${{needs.environment.outputs.workspace}}database --output json | jq -r '.[] | select(.name=="consumerconnector") | .id')"
+        echo "::set-output name=CONSUMERCONNECTORDB::$(az postgres db list --resource-group ${{env.prefix}}-${{needs.environment.outputs.workspace}}-rg --server-name ${{env.prefix}}${{needs.environment.outputs.workspace}}database --output json | jq -r '.[] | select(.name=="consumerconnector") | .id')"
 
     # Create ProviderConnector DB If Needed 
     - name: Azure Create ConsumerConnector DB
       if: ${{steps.try_consumerconnector_db.outputs.CONSUMERCONNECTORDB == '' }}
       working-directory: ./infrastructure/terraform
       run: |
-        az postgres db create --name "consumerconnector" --resource-group catenax-${{needs.environment.outputs.workspace}}-rg --server-name catenax${{needs.environment.outputs.workspace}}database
+        az postgres db create --name "consumerconnector" --resource-group ${{env.prefix}}-${{needs.environment.outputs.workspace}}-rg --server-name ${{env.prefix}}${{needs.environment.outputs.workspace}}database
 
     # Get Test Data Generator DB - only applicable in non-prod environments
     - name: Azure Try Existing Test Data Generator DB in non-prod environments
@@ -309,7 +312,7 @@ jobs:
       id: try_testdatagenerator_db
       working-directory: ./infrastructure/terraform
       run: |
-        echo "::set-output name=TESTDATACONNECTORDB::$(az postgres db list --resource-group catenax-${{needs.environment.outputs.workspace}}-rg --server-name catenax${{needs.environment.outputs.workspace}}database --output json | jq -r '.[] | select(.name=="tdmdb") | .id')"
+        echo "::set-output name=TESTDATACONNECTORDB::$(az postgres db list --resource-group ${{env.prefix}}-${{needs.environment.outputs.workspace}}-rg --server-name ${{env.prefix}}${{needs.environment.outputs.workspace}}database --output json | jq -r '.[] | select(.name=="tdmdb") | .id')"
     
     # Create Test Data Generator DB If Needed in non-prod environments
     - name: Azure Create Test Data Generator DB
@@ -317,28 +320,28 @@ jobs:
         ${{needs.environment.outputs.workspace}} != "prod" && ${{steps.try_testdatagenerator_db.outputs.TESTDATACONNECTORDB == '' }}
       working-directory: ./infrastructure/terraform
       run: |
-        az postgres db create --name "tdmdb" --resource-group catenax-${{needs.environment.outputs.workspace}}-rg --server-name catenax${{needs.environment.outputs.workspace}}database
+        az postgres db create --name "tdmdb" --resource-group ${{env.prefix}}-${{needs.environment.outputs.workspace}}-rg --server-name ${{env.prefix}}${{needs.environment.outputs.workspace}}database
 
     # Get IAM DB
     - name: Azure Try Existing IAM DB
       id: try_iam_db
       working-directory: ./infrastructure/terraform
       run: |
-        echo "::set-output name=IAMDB::$(az postgres db list --resource-group catenax-${{needs.environment.outputs.workspace}}-rg --server-name catenax${{needs.environment.outputs.workspace}}database --output json | jq -r '.[] | select(.name=="iam") | .id')"
+        echo "::set-output name=IAMDB::$(az postgres db list --resource-group ${{env.prefix}}-${{needs.environment.outputs.workspace}}-rg --server-name ${{env.prefix}}${{needs.environment.outputs.workspace}}database --output json | jq -r '.[] | select(.name=="iam") | .id')"
 
     # Create IAM DB If Needed 
     - name: Azure Create IAM DB
       if: ${{steps.try_consumerconnector_db.outputs.IAMDB == '' }}
       working-directory: ./infrastructure/terraform
       run: |
-        az postgres db create --name "iam" --resource-group catenax-${{needs.environment.outputs.workspace}}-rg --server-name catenax${{needs.environment.outputs.workspace}}database
+        az postgres db create --name "iam" --resource-group ${{env.prefix}}-${{needs.environment.outputs.workspace}}-rg --server-name ${{env.prefix}}${{needs.environment.outputs.workspace}}database
 
     # Get App Registration 
     - name: Azure Try Existing App Registration
       id: try_app
       working-directory: ./infrastructure/terraform
       run: |
-        echo "::set-output name=APPID::$(az ad app list --output json | jq -r '.[] | select(.displayName=="catenax-${{needs.environment.outputs.workspace}}-app") | .appId')"
+        echo "::set-output name=APPID::$(az ad app list --output json | jq -r '.[] | select(.displayName=="${{env.prefix}}-${{needs.environment.outputs.workspace}}-app") | .appId')"
 
     # Create App Registration If Needed 
     - name: Azure App Registration
@@ -346,8 +349,8 @@ jobs:
       if: ${{ steps.try_app.outputs.APPID == '' }}
       working-directory: ./infrastructure/terraform
       run: |
-        az ad app create --display-name catenax-${{needs.environment.outputs.workspace}}-app --available-to-other-tenants true --reply-urls http://localhost:3000 https://catenax${{needs.environment.outputs.workspace}}aksportal.germanywestcentral.cloudapp.azure.com --oauth2-allow-implicit-flow
-        echo "::set-output name=APPID::$(az ad app list --output json | jq -r '.[] | select(.displayName=="catenax-${{needs.environment.outputs.workspace}}-app") | .appId')"
+        az ad app create --display-name ${{env.prefix}}-${{needs.environment.outputs.workspace}}-app --available-to-other-tenants true --reply-urls http://localhost:3000 https://${{env.prefix}}${{needs.environment.outputs.workspace}}aksportal.germanywestcentral.cloudapp.azure.com --oauth2-allow-implicit-flow
+        echo "::set-output name=APPID::$(az ad app list --output json | jq -r '.[] | select(.displayName=="${{env.prefix}}-${{needs.environment.outputs.workspace}}-app") | .appId')"
     
     # Add Microsoft Graph Permissions
     - name: Azure App API Permissions for Microsoft Graph
