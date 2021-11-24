@@ -58,7 +58,7 @@ on:
       # Temporarily: Semantics Dev Space Terraform/Deplyment Features
       - feature/CAX-1-semantics@CXMVP-50-semantic-adapter
       # Onboarding env for data services team
-      - feature/A1ODT-18
+      - dev-feature/A1ODT-18
       # ADAPT HERE TO ADD NEW WORKSPACES
 
 env:
@@ -109,7 +109,7 @@ jobs:
               elif [[ "${{github.ref}}" = refs/heads/feature/CAX-9-onboarding ]]; then
                   echo "Determined ONBOARDING"
                   echo "::set-output name=workspace::dev003"                 
-              elif [[ "${{github.ref}}" = refs/heads/feature/A1ODT-18 ]]; then
+              elif [[ "${{github.ref}}" = refs/heads/dev-feature/A1ODT-18 ]]; then
                   echo "Determined DEV010 ENV"
                   echo "::set-output name=workspace::dev010" 
               else 
