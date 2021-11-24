@@ -118,8 +118,8 @@ jobs:
         uses: azure/docker-login@v1
         with:
           login-server: ${{env.prefix}}acr.azurecr.io
-          username: ${{ secrets.AZURE_REGISTRY_USERNAME }}
-          password: ${{ secrets.AZURE_REGISTRY_PASSWORD }}
+          username: ${{ secrets.DEV_INT_ACR_USER }}
+          password: ${{ secrets.EV_INT_ACR_PASSWORD }}
 
       - name: Build and push docker image for test data generator
         working-directory: ./data/tdm/generator
