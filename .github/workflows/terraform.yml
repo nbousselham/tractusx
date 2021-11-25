@@ -208,7 +208,7 @@ jobs:
         #mv provider.tf_muted provider.tf
         export TF_LOG="DEBUG"
         terraform plan \
-        --var-file=environments/${{needs.environment.outputs.workspace}}.tfvars \
+        -var-file=environments/${{needs.environment.outputs.workspace}}.tfvars \
         -var azure_subscription_id=${{secrets.AZURE_SUBSCRIPTION_ID}} \
         -var azure_client_id=${{secrets.AZURE_AD_CLIENT_ID}} \
         -var azure_client_secret=${{secrets.AZURE_AD_CLIENT_SECRET}} \
