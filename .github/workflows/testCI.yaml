@@ -53,9 +53,7 @@ jobs:
         #with:
          # name: code-coverage-report
           #path: output/test/code-coverage.html
-
-
- steps: 
+steps: 
  # Deploy to App Service
 - name: 'Run Azure webapp deploy action using publish profile credentials'
     uses: azure/webapps-deploy@v1
