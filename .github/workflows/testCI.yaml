@@ -24,8 +24,8 @@ jobs:
     - name: Install dependencies
       run: cd devops-tooling/dashboard/ && npm install
 
-    - name: Run the tests
-      run: cd devops-tooling/dashboard/ && npm run test --if-present
+    #- name: Run the tests
+    #  run: cd devops-tooling/dashboard/ && npm run test --if-present
 
     # Run the Code Coverage
     #- name: Run the tests and generate coverage report
