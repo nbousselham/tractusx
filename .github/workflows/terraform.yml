@@ -63,6 +63,7 @@ on:
 
 env:
   prefix: cxtsi
+  TF_LOG: DEBUG
 
 ###############################################################
 # Consists of two jobs, the first determines the environment
