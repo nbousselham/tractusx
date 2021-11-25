@@ -45,6 +45,7 @@ variable "azure_tenant_id" {
 variable "aks_public_ssh_key" {
   description = "Path to the public ssh key file the kubernetes cluster should employ."
   type = string
+  default = null
 }
 
 variable "aks_admin_group_id" {
@@ -56,16 +57,19 @@ variable "aks_admin_group_id" {
 variable "azure_storage_access_key" {
   description = "Access key to the backend storage"
   type = string
+  default = null
 }
 
 variable "catenax_admin" {
   description = "Default username for catenax admins"
   type = string
+  default = null
 }
 
 variable "catenax_admin_password" {
   description = "Default password for catenax admins"
   type = string
+  default = null
 }
 
 variable "workspace_to_stage_map" {
