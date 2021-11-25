@@ -45,6 +45,7 @@ variable "azure_tenant_id" {
 variable "aks_public_ssh_key" {
   description = "Path to the public ssh key file the kubernetes cluster should employ."
   type = string
+  default = "./ssh.pub"
 }
 
 variable "aks_admin_group_id" {
