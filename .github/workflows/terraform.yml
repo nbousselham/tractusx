@@ -79,14 +79,6 @@ jobs:
   # First job to determine the environment
   ########################################
   # ADAPT HERE TO ADD NEW WORKSPACES
-  debug:
-    name: get variables
-    runs-on: ubuntu-latest
-    steps:
-      - name: check access
-        id: chacc
-        run: |
-          echo ${{ secrets.CATENAX_USER }}
 
   environment:
     # name of the job starts with a "run-level" subordinate to the workflow such that we can
@@ -215,8 +207,7 @@ jobs:
       working-directory: ./infrastructure/terraform
       run: |
         #mv provider.tf_muted provider.tf
-        ls -lahtr
-        echo ${{ secrets.CATENAX_USER }}
+        chmod 0600 ./ssh.pub
         terraform plan --var-file=environments/${{needs.environment.outputs.workspace}}.tfvars -var aks_host=${{steps.tf_config.outputs.AKS_HOST}} -var aks_user=${{steps.tf_config.outputs.AKS_USER}} -var aks_password=${{steps.tf_config.outputs.AKS_PASSWORD}} -var aks_client_key=${{steps.tf_config.outputs.AKS_CLIENT_KEY}} -var aks_client_certificate=${{steps.tf_config.outputs.AKS_CLIENT_CERTIFICATE}} -var aks_cluster_certificate=${{steps.tf_config.outputs.AKS_CLUSTER_CERTIFICATE}} -var azure_subscription_id=${{secrets.AZURE_SUBSCRIPTION_ID}} -var azure_client_id=${{secrets.AZURE_AD_CLIENT_ID}} -var azure_client_secret=${{secrets.AZURE_AD_CLIENT_SECRET}} -var azure_tenant_id=${{secrets.AZURE_AD_TENANT_ID}} -var azure_storage_access_key=${{secrets.TFSTATE_STORAGEACCOUNT_KEY}} -var aks_public_ssh_key=./ssh.pub -var catenax_admin=${{secrets.CATENAX_ADMIN_USER}} -var catenax_admin_password=${{secrets.CATENAX_ADMIN_PASSWORD}} -out .terraform/terraform.plan -input=false
 
     # For debugging purposes, we log the resulting plan
