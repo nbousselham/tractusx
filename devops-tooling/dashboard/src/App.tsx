@@ -4,9 +4,12 @@ import Dashboard from './components/Dashboard/Dashboard';
 
 function App() {
   return (
-    <div>
+    <div className="app">
+      <header className="app__header">
+        DevOps Tooling
+      </header>
       <Dashboard />
-    </div>
+  </div>
   );
 }
 
