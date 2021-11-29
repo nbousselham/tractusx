@@ -1,7 +1,7 @@
 package net.catenax.prs.connector.requests;
 
 import jakarta.validation.Validator;
-import net.catenax.prs.connector.requests.FileRequest.FileRequestBuilder;
+import net.catenax.prs.connector.requests.PartsTreeRequest.PartsTreeRequestBuilder;
 import net.catenax.prs.connector.testing.ValidatorUtils;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
@@ -14,16 +14,16 @@ import static java.util.function.UnaryOperator.identity;
 import static net.catenax.prs.connector.testing.SetOfConstraintViolationsAssertions.assertThat;
 
 
-class FileRequestTest {
+class PartsTreeRequestTest {
 
     private static final String EMPTY = "";
     static Validator validator = ValidatorUtils.createValidator();
 
-    FileRequest sut = RequestMother.generateFileRequest();
+    PartsTreeRequest sut = RequestMother.generatePartsTreeRequest();
 
     @ParameterizedTest(name = "{0}")
     @MethodSource("mutators")
-    void validate(String testName, UnaryOperator<FileRequestBuilder> mutator, String expectedViolationPath) {
+    void validate(String testName, UnaryOperator<PartsTreeRequestBuilder> mutator, String expectedViolationPath) {
         sut = mutator.apply(sut.toBuilder()).build();
         // Act
         var response = validator.validate(sut);
@@ -45,7 +45,7 @@ class FileRequestTest {
     }
 
     private static Arguments args(String testName,
-                                  UnaryOperator<FileRequestBuilder> mutator,
+                                  UnaryOperator<PartsTreeRequestBuilder> mutator,
                                   String expectedViolationPath) {
         return Arguments.of(testName, mutator, expectedViolationPath);
     }

@@ -15,8 +15,8 @@ class RequestMother {
                 .build();
     }
 
-    static FileRequest generateFileRequest() {
-        return FileRequest.builder()
+    static PartsTreeRequest generatePartsTreeRequest() {
+        return PartsTreeRequest.builder()
                 .partsTreeRequest(generateApiRequest())
                 .build();
     }

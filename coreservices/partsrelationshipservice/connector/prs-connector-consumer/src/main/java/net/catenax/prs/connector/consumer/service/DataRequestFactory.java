@@ -19,7 +19,7 @@ import net.catenax.prs.client.model.PartRelationship;
 import net.catenax.prs.connector.constants.PrsConnectorConstants;
 import net.catenax.prs.connector.consumer.configuration.ConsumerConfiguration;
 import net.catenax.prs.connector.consumer.registry.StubRegistryClient;
-import net.catenax.prs.connector.requests.FileRequest;
+import net.catenax.prs.connector.requests.PartsTreeRequest;
 import net.catenax.prs.connector.util.JsonUtil;
 import org.eclipse.dataspaceconnector.schema.azure.AzureBlobStoreSchema;
 import org.eclipse.dataspaceconnector.spi.EdcException;
@@ -167,7 +167,7 @@ public class DataRequestFactory {
         /**
          * The original PRS request received from the client.
          */
-        private FileRequest requestTemplate;
+        private PartsTreeRequest requestTemplate;
         /**
          * the Provider URL used for retrieving the {@code partIds}, or {@code null} for the first retrieval.
          */
