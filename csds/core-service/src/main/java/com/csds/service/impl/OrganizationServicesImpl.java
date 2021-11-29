@@ -67,13 +67,13 @@ public class OrganizationServicesImpl implements OrganizationServices {
 	}
 
 	@Override
-	public ResponseObject getAllComapnies() {
+	public ResponseObject getAllOrganizations() {
 		ResponseObject response = new ResponseObject();
 		List<OrganizationDetails> orgList = organizationRepository.findAll();
 
 		if (orgList != null) {
 			response.setData(orgList);
-			response.setMessage(String.format(ApplicationMessageConstant.SUCCESS_OPERATION, "getAllComapnies"));
+			response.setMessage(String.format(ApplicationMessageConstant.SUCCESS_OPERATION, "getAllOrganizations"));
 			response.setStatus(ApplicationMessageConstant.SUCCESS);
 		} else {
 			response.setMessage(ApplicationMessageConstant.NOT_FOUND);

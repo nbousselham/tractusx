@@ -9,7 +9,7 @@ services:
     ports:
       - 9090:9090
       
-  service-discovery: 
+  csds-service-discovery: 
     build: service-discovery
     depends_on:
       - "config"
@@ -42,6 +42,22 @@ services:
       restart_policy:
         condition: on-failure
         
+  provider-service: 
+    build: provider-service
+    depends_on:
+      - "config"
+    networks: 
+      - backend 
+    ports: 
+      - 9094:9094 
+    deploy: 
+      replicas: 1
+      update_config:
+        parallelism: 2
+        delay: 10s
+      restart_policy:
+        condition: on-failure
+        
   gateway-service: 
     build: gateway-service
     depends_on:
@@ -58,7 +74,6 @@ services:
       restart_policy:
         condition: on-failure
         
-  
   postgres:
     image: 'sachin/postgres:latest'
     ports:
@@ -74,7 +89,7 @@ services:
         delay: 10s
       restart_policy:
         condition: on-failure
-networks:
+networks: 
   frontend: null
   backend: null
 volumes:

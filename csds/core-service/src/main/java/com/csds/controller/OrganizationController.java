@@ -32,18 +32,18 @@ public class OrganizationController {
 		return ResponseEntity.ok(orgService.getAllRoles());
 	}
 
-	@GetMapping(value = "/{role}/orgnizations")
-	public ResponseEntity<ResponseObject> getRognizationByRole(@PathVariable ("role") String role) {
+	@GetMapping(value = "/{role}/organizations")
+	public ResponseEntity<ResponseObject> getOrganizationByRole(@PathVariable ("role") String role) {
 
 		logger.info("Started Organization Controller  for : getCompanyNames");
 		return ResponseEntity.ok(orgService.getAllOrgnizationByRole(role));
 	}
 
-	@GetMapping(value = "/orgnizations")
-	public ResponseEntity<ResponseObject> getCompanyDetails() {
+	@GetMapping(value = "/organizations")
+	public ResponseEntity<ResponseObject> getOrganizationDetails() {
 
-		logger.info("Started Organization Controller  for : getCompanyDetails");
-		return ResponseEntity.ok(orgService.getAllComapnies());
+		logger.info("Started Organization Controller  for : getOrganizationDetails");
+		return ResponseEntity.ok(orgService.getAllOrganizations());
 	}
 
 	@PostMapping(value = "/add-update-details")

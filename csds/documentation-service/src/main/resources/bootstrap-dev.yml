@@ -1,0 +1,9 @@
+spring:
+  application:
+    name: documentation-service
+  cloud:
+    config:
+      enabled: true
+      uri: http://localhost:9090
+      fail-fast: true
+  
