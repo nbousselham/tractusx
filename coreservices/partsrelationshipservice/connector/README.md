@@ -48,14 +48,10 @@ Run integration tests:
 
 Download certificate for the PRS Connector Consumer as explained in the previous section.
 
-Create empty file and keystore required for the Provider Connector filesystem vault (FsVault):
+Create empty file for the Provider Connector filesystem vault (FsVault):
 
 ```bash
 touch ../dev/local/dataspaceconnector-vault.properties
-
-# Creating an empty Java Key Store requires creating a dummy entry, then deleting it. Do not change password as this matches the default configured in EDC.
-keytool -genkey -noprompt -alias alias1  -dname "CN=dummy" -keystore dataspaceconnector-keystore.jks  -storepass test123 -keypass test123 \
-   && keytool -delete -alias alias1 -storepass test123 -keystore dataspaceconnector-keystore.jks
 ```
 
 Copy `dataspace-partitions.json` and `dataspace-deployments.json` from integration tests and modify for local setup:

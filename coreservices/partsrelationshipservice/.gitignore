@@ -50,5 +50,5 @@ terraform-outputs-safe.json
 .flattened-pom.xml
 
 ### Local files ###
-!dev/local/dataspaceconnector-keystore.jks
 dev/local/*
+!dev/local/dataspaceconnector-keystore.jks
