@@ -46,8 +46,6 @@ public class ConnectorSystemTests {
 
     private static final String consumerURI = System.getProperty("ConnectorConsumerURI",
             "https://catenaxdev001akssrv.germanywestcentral.cloudapp.azure.com/prs-connector-consumer");
-    private static final String providerURI = System.getProperty("ConnectorProviderURI",
-            "https://catenaxdev001akssrv.germanywestcentral.cloudapp.azure.com/bmw/mtpdc/connector");
     private static final String VEHICLE_ONEID = "CAXSWPFTJQEVZNZZ";
     private static final String VEHICLE_OBJECTID = "UVVZI9PKX5D37RFUB";
 
@@ -66,8 +64,7 @@ public class ConnectorSystemTests {
 
         // Send query to Consumer connector, to perform file copy on Provider
         Map<String, Object> params = new HashMap<>();
-        params.put("connectorAddress", providerURI);
-        params.put("partsTreeRequest", PartsTreeByObjectIdRequest.builder()
+        params.put("byObjectIdRequest", PartsTreeByObjectIdRequest.builder()
                 .oneIDManufacturer(VEHICLE_ONEID)
                 .objectIDManufacturer(VEHICLE_OBJECTID)
                 .view("AS_BUILT")
@@ -83,6 +80,7 @@ public class ConnectorSystemTests {
                 .when()
                         .post("/api/v0.1/assemblePartsTree")
                 .then()
+
                         .assertThat()
                         .statusCode(HttpStatus.OK.value())
                         .extract().asString();

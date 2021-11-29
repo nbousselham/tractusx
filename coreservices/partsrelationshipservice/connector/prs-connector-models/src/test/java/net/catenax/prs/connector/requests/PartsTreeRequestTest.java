@@ -39,8 +39,8 @@ class PartsTreeRequestTest {
         return Stream.of(
                 args("valid", identity(), null),
 
-                args("partsTreeRequest not null", b -> b.partsTreeRequest(null), "partsTreeRequest"),
-                args("partsTreeRequest valid", b -> b.partsTreeRequest(b.build().getPartsTreeRequest().toBuilder().objectIDManufacturer(null).build()), "partsTreeRequest.objectIDManufacturer")
+                args("byObjectIdRequest not null", b -> b.byObjectIdRequest(null), "byObjectIdRequest"),
+                args("byObjectIdRequest valid", b -> b.byObjectIdRequest(b.build().getByObjectIdRequest().toBuilder().objectIDManufacturer(null).build()), "byObjectIdRequest.objectIDManufacturer")
         );
     }
 

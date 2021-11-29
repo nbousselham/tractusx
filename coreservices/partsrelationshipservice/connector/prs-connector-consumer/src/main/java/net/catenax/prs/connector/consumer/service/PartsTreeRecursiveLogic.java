@@ -75,12 +75,12 @@ public class PartsTreeRecursiveLogic {
      * otherwise empty.
      */
     /* package */ Stream<DataRequest> createInitialPartsTreeRequest(final PartsTreeRequest partsTreeRequest) {
-        final var partId = toPartId(partsTreeRequest.getPartsTreeRequest());
-        final var request = partsTreeRequest.getPartsTreeRequest();
+        final var partId = toPartId(partsTreeRequest.getByObjectIdRequest());
+        final var prsRequest = partsTreeRequest.getByObjectIdRequest();
         final var requestContext = DataRequestFactory.RequestContext.builder()
                 .requestTemplate(partsTreeRequest)
                 .queriedPartId(partId)
-                .depth(request.getDepth())
+                .depth(prsRequest.getDepth())
                 .build();
         return dataRequestFactory.createRequests(requestContext, Stream.of(partId));
     }

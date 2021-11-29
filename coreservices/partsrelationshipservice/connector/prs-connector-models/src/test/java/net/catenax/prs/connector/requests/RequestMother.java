@@ -17,7 +17,7 @@ class RequestMother {
 
     static PartsTreeRequest generatePartsTreeRequest() {
         return PartsTreeRequest.builder()
-                .partsTreeRequest(generateApiRequest())
+                .byObjectIdRequest(generateApiRequest())
                 .build();
     }
 

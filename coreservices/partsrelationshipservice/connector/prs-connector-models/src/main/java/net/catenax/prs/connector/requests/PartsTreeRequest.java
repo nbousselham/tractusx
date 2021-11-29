@@ -27,5 +27,5 @@ public class PartsTreeRequest {
      */
     @Valid
     @NotNull
-    private PartsTreeByObjectIdRequest partsTreeRequest;
+    private PartsTreeByObjectIdRequest byObjectIdRequest;
 }

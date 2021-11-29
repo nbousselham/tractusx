@@ -41,7 +41,7 @@ class PartsTreeRecursiveLogicTest {
 
     final RequestMother generate = new RequestMother();
     PartsTreeByObjectIdRequest request = generate.request().build();
-    PartsTreeRequest partsTreeRequest = PartsTreeRequest.builder().partsTreeRequest(request).build();
+    PartsTreeRequest partsTreeRequest = PartsTreeRequest.builder().byObjectIdRequest(request).build();
     PartId partId = toPartId(request);
     Faker faker = new Faker();
     Monitor monitor = new ConsoleMonitor();

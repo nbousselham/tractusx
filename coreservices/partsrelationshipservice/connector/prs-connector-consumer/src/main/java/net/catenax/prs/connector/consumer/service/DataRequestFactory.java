@@ -122,13 +122,13 @@ public class DataRequestFactory {
             }
         }
 
-        final var newPartsTreeRequest = requestContext.requestTemplate.getPartsTreeRequest().toBuilder()
+        final var newPrsRequest = requestContext.requestTemplate.getByObjectIdRequest().toBuilder()
                 .oneIDManufacturer(partId.getOneIDManufacturer())
                 .objectIDManufacturer(partId.getObjectIDManufacturer())
                 .depth(remainingDepth)
                 .build();
 
-        final var partsTreeRequestAsString = jsonUtil.asString(newPartsTreeRequest);
+        final var prsRequestAsString = jsonUtil.asString(newPrsRequest);
 
         monitor.info(format("Mapped data request to url: %s, previous depth: %d, new depth: %d",
                 providerUrlForPartId,
@@ -149,7 +149,7 @@ public class DataRequestFactory {
                         .property(AzureBlobStoreSchema.ACCOUNT_NAME, configuration.getStorageAccountName())
                         .build())
                 .properties(Map.of(
-                        PrsConnectorConstants.DATA_REQUEST_PRS_REQUEST_PARAMETERS, partsTreeRequestAsString,
+                        PrsConnectorConstants.DATA_REQUEST_PRS_REQUEST_PARAMETERS, prsRequestAsString,
                         PrsConnectorConstants.DATA_REQUEST_PRS_DESTINATION_PATH, PARTIAL_PARTS_TREE_BLOB_NAME
                 ))
                 .managedResources(true)

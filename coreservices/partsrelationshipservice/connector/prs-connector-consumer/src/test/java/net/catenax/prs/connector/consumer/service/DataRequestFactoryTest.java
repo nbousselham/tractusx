@@ -48,7 +48,7 @@ class DataRequestFactoryTest {
     PartsTreeByObjectIdRequest.PartsTreeByObjectIdRequestBuilder prsRequest = generate.request()
             .depth(depth);
     PartsTreeRequest partsTreeRequest = PartsTreeRequest.builder()
-            .partsTreeRequest(prsRequest.build())
+            .byObjectIdRequest(prsRequest.build())
             .build();
     PartId rootPartId = generate.partId();
     PartId partId = generate.partId();
@@ -86,7 +86,7 @@ class DataRequestFactoryTest {
         when(registryClient.getUrl(partId))
                 .thenReturn(Optional.of(connectorAddress));
 
-        PartsTreeByObjectIdRequest expectedPrsRequest = partsTreeRequest.getPartsTreeRequest()
+        PartsTreeByObjectIdRequest expectedPrsRequest = partsTreeRequest.getByObjectIdRequest()
                 .toBuilder()
                 .oneIDManufacturer(partId.getOneIDManufacturer())
                 .objectIDManufacturer(partId.getObjectIDManufacturer())

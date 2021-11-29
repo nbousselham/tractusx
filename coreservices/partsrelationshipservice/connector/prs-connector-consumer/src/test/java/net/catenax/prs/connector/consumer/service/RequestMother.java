@@ -25,7 +25,7 @@ public class RequestMother {
 
     public PartsTreeRequest partsTreeRequest() {
         return PartsTreeRequest.builder()
-                .partsTreeRequest(request().build())
+                .byObjectIdRequest(request().build())
                 .build();
     }
 
