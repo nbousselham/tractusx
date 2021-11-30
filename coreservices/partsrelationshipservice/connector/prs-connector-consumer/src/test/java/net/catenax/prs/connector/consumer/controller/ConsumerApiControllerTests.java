@@ -71,20 +71,20 @@ public class ConsumerApiControllerTests {
     }
 
     @Test
-    public void assemblePartsTree_WhenFailure_ReturnsError() {
+    public void retrievePartsTree_WhenFailure_ReturnsError() {
         // Act
-        var response = controller.assemblePartsTree(partsTreeRequest);
+        var response = controller.retrievePartsTree(partsTreeRequest);
         // Assert
         assertThat(response.getStatus()).isEqualTo(500);
         assertThat(response.getEntity()).isNull();
     }
 
     @Test
-    public void assemblePartsTree_WhenSuccess_ReturnsTransferId() {
+    public void retrievePartsTree_WhenSuccess_ReturnsTransferId() {
         // Arrange
-        when(service.assemblePartsTree(partsTreeRequest)).thenReturn(jobResponse);
+        when(service.retrievePartsTree(partsTreeRequest)).thenReturn(jobResponse);
         // Act
-        var response = controller.assemblePartsTree(partsTreeRequest);
+        var response = controller.retrievePartsTree(partsTreeRequest);
         // Assert
         assertThat(response.getStatus()).isEqualTo(200);
         assertThat(response.getEntity()).isEqualTo(jobResponse.getJobId());
@@ -95,7 +95,7 @@ public class ConsumerApiControllerTests {
         // Arrange
         when(validator.validate(partsTreeRequest)).thenReturn(Set.of(partsTreeRequestViolation));
         // Act
-        var response = controller.assemblePartsTree(partsTreeRequest);
+        var response = controller.retrievePartsTree(partsTreeRequest);
         // Assert
         assertThat(response.getStatus()).isEqualTo(Response.Status.BAD_REQUEST.getStatusCode());
     }

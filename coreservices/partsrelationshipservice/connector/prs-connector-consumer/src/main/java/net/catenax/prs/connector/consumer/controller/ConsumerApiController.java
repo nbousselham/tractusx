@@ -78,14 +78,14 @@ public class ConsumerApiController {
      * @return Response with job id.
      */
     @POST
-    @Path("assemblePartsTree")
+    @Path("retrievePartsTree")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.TEXT_PLAIN)
-    public Response assemblePartsTree(final PartsTreeRequest request) {
+    public Response retrievePartsTree(final PartsTreeRequest request) {
         return middleware.chain()
                 .validate(request)
                 .invoke(() -> {
-                    final var jobInfo = service.assemblePartsTree(request);
+                    final var jobInfo = service.retrievePartsTree(request);
                     return Response.ok(jobInfo.getJobId()).build();
                 });
     }

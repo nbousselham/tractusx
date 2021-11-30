@@ -80,7 +80,7 @@ public class ConsumerService {
      * @param request Request parameters.
      * @return TransferInitiateResponse with process id.
      */
-    public JobInitiateResponse assemblePartsTree(final PartsTreeRequest request) {
+    public JobInitiateResponse retrievePartsTree(final PartsTreeRequest request) {
         monitor.info("Received request");
 
         final String serializedRequest = jsonUtil.asString(request);

@@ -158,7 +158,7 @@ class PartsTreeRecursiveLogicTest {
     void assemblePartialPartTreeBlobs_WithNoInput() {
         // Arrange
         PartRelationshipsWithInfos prsOutput = generatePrsOutput();
-        when(assembler.assemblePartsTrees(partsTreesCaptor.capture()))
+        when(assembler.retrievePartsTrees(partsTreesCaptor.capture()))
                 .thenReturn(prsOutput);
 
         // Act
@@ -186,7 +186,7 @@ class PartsTreeRecursiveLogicTest {
         PartRelationshipsWithInfos prsOutput2 = generatePrsOutput();
         PartRelationshipsWithInfos prsOutput3 = generatePrsOutput();
         PartRelationshipsWithInfos prsOutput4 = generatePrsOutput();
-        when(assembler.assemblePartsTrees(partsTreesCaptor.capture()))
+        when(assembler.retrievePartsTrees(partsTreesCaptor.capture()))
                 .thenReturn(prsOutput4);
         when(blobStoreApi.getBlob(storageAccountName, containerName, blob1))
                 .thenReturn(serialize(prsOutput1));

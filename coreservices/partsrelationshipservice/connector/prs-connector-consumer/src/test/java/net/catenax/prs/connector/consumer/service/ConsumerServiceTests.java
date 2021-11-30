@@ -164,7 +164,7 @@ public class ConsumerServiceTests {
     }
 
     @Test
-    public void assemblePartsTree_WhenPartsTreeRequestValid_ReturnsProcessId() throws JsonProcessingException {
+    public void retrievePartsTree_WhenPartsTreeRequestValid_ReturnsProcessId() throws JsonProcessingException {
         // Arrange
         String serializedRequest = MAPPER.writeValueAsString(partsTreeRequest);
 
@@ -172,7 +172,7 @@ public class ConsumerServiceTests {
                 .thenReturn(okResponse());
 
         // Act
-        var response = service.assemblePartsTree(partsTreeRequest);
+        var response = service.retrievePartsTree(partsTreeRequest);
         // Assert
         assertThat(response).isNotNull();
         // Verify that startJob got called with correct job parameters.

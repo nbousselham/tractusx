@@ -78,7 +78,7 @@ public class ConnectorSystemTests {
                         .contentType("application/json")
                         .body(params)
                 .when()
-                        .post("/api/v0.1/assemblePartsTree")
+                        .post("/api/v0.1/retrievePartsTree")
                 .then()
 
                         .assertThat()

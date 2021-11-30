@@ -139,7 +139,7 @@ public class PartsTreeRecursiveLogic {
         final var partialTrees = completedTransfers.stream()
                 .map(this::downloadPartialPartsTree)
                 .map(payload -> jsonUtil.fromString(new String(payload), PartRelationshipsWithInfos.class));
-        final var assembledTree = assembler.assemblePartsTrees(partialTrees);
+        final var assembledTree = assembler.retrievePartsTrees(partialTrees);
         final var blob = jsonUtil.asString(assembledTree).getBytes(StandardCharsets.UTF_8);
 
         monitor.info(format("Uploading assembled parts tree to %s/%s/%s",
