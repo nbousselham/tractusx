@@ -62,11 +62,11 @@ public class TransferProcessWatchdog {
     private void run() {
         List<TransferProcess> transferProcesses = transferProcessStore.nextForState(IN_PROGRESS.code(), batchSize);
         transferProcesses.stream()
-                .filter(p -> p.getStateTimestamp() > stateTimeout)
-                .forEach(p -> {
-                    p.transitionError("Timeout");
-                    transferProcessStore.update(p);
-                    monitor.info("Timeout for process " + p);
-                });
+            .filter(p -> p.getStateTimestamp() > stateTimeout)
+            .forEach(p -> {
+                p.transitionError("Timeout");
+                transferProcessStore.update(p);
+                monitor.info("Timeout for process " + p);
+            });
     }
 }
