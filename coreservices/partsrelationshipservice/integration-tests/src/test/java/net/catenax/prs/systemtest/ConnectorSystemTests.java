@@ -100,10 +100,6 @@ public class ConnectorSystemTests {
         // Assert
         String result = getUrl(sasUrl);
 
-        // We suspect the connectorSystemTests to be flaky when running right after the deployment workflow.
-        // But it is hard to reproduce, so logging the results, to help when this will happen again.
-        System.out.println(String.format("expectedResult: %s", expectedResult));
-        System.out.println(String.format("Result: %s", result));
         assertThatJson(result)
                 .when(IGNORING_ARRAY_ORDER)
                 .isEqualTo(expectedResult);
