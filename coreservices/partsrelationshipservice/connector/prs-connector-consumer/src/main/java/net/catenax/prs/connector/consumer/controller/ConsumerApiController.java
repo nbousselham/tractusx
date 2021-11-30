@@ -69,8 +69,8 @@ public class ConsumerApiController {
     }
 
     /**
-     * Endpoint to trigger a request, so that parts tree get written into a file.
-     * Consumer will forward the PartsTreeByObjectIdRequest to a provider.
+     * Endpoint to trigger a request, so that parts tree get written into a blob.
+     * Consumer will forward the PartsTreeByObjectIdRequest to providers.
      *
      * @param request Contains a PartsTreeByObjectIdRequest corresponding to prs-request and other
      *                information such that the destination file where the result of the PRS
