@@ -16,6 +16,7 @@ package org.eclipse.dataspaceconnector.transfer.core.transfer;
 
 import lombok.Builder;
 import org.eclipse.dataspaceconnector.spi.monitor.Monitor;
+import org.eclipse.dataspaceconnector.spi.transfer.TransferProcessManager;
 import org.eclipse.dataspaceconnector.spi.transfer.store.TransferProcessStore;
 import org.eclipse.dataspaceconnector.spi.types.domain.transfer.TransferProcess;
 
@@ -28,6 +29,7 @@ import static org.eclipse.dataspaceconnector.spi.types.domain.transfer.TransferP
 
 public class TransferProcessWatchdog {
     private final Monitor monitor;
+    private final TransferProcessManager transferProcessManager;
     private TransferProcessStore transferProcessStore;
     private final int batchSize;
     private final long delayInSeconds;
@@ -36,12 +38,13 @@ public class TransferProcessWatchdog {
     private ScheduledExecutorService executor;
 
     @Builder
-    private TransferProcessWatchdog(Monitor monitor) {
+    private TransferProcessWatchdog(Monitor monitor, TransferProcessManager transferProcessManager) {
         this.monitor = monitor;
+        this.transferProcessManager = transferProcessManager;
         // TODO: make props configurable
         this.batchSize = 5;
         this.delayInSeconds = 1;
-        this.stateTimeout = 10;
+        this.stateTimeout = 20;
     }
 
     public void start(TransferProcessStore processStore) {
@@ -61,9 +64,8 @@ public class TransferProcessWatchdog {
         transferProcesses.stream()
                 .filter(p -> p.getStateTimestamp() > stateTimeout)
                 .forEach(p -> {
-                    p.transitionError("Timeout");
-                    transferProcessStore.update(p);
-                    monitor.info("Timeout for process " + p);
+                    monitor.info("Timeout for process " + p.getId());
+                    transferProcessManager.cancelTransferProcess(p.getId());
                 });
     }
 }
