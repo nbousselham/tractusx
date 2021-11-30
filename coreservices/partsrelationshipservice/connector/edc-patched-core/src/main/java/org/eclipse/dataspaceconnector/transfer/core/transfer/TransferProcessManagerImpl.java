@@ -60,7 +60,6 @@ public class TransferProcessManagerImpl extends TransferProcessObservable implem
     private ResourceManifestGenerator manifestGenerator;
     private ProvisionManager provisionManager;
     private TransferProcessStore transferProcessStore;
-    private Queue<String> processesToCancel;
     private RemoteMessageDispatcherRegistry dispatcherRegistry;
     private DataFlowManager dataFlowManager;
     private Monitor monitor;
@@ -69,7 +68,6 @@ public class TransferProcessManagerImpl extends TransferProcessObservable implem
 
 
     private TransferProcessManagerImpl() {
-        this.processesToCancel = new ConcurrentLinkedQueue<>();
     }
 
     public void start(TransferProcessStore processStore) {
@@ -95,12 +93,6 @@ public class TransferProcessManagerImpl extends TransferProcessObservable implem
     public TransferInitiateResponse initiateProviderRequest(DataRequest dataRequest) {
         return initiateRequest(PROVIDER, dataRequest);
     }
-
-    @Override
-    public void cancelTransferProcess(String processId) {
-        processesToCancel.add(processId);
-    }
-
 
     private TransferInitiateResponse initiateRequest(TransferProcess.Type type, DataRequest dataRequest) {
         // make the request idempotent: if the process exists, return
@@ -135,8 +127,6 @@ public class TransferProcessManagerImpl extends TransferProcessObservable implem
                 if (provisioning + provisioned + sent + finished + deprovisioning + deprovisioned == 0) {
                     Thread.sleep(waitStrategy.waitForMillis());
                 }
-
-                checkProcessesToCancel();
 
                 waitStrategy.success();
             } catch (Error e) {
@@ -254,7 +244,7 @@ public class TransferProcessManagerImpl extends TransferProcessObservable implem
                     transitionToCompleted(process);
                 }
             }
-            transferProcessStore.update(process);
+
         }
         return processesInProgress.size();
     }
@@ -262,6 +252,7 @@ public class TransferProcessManagerImpl extends TransferProcessObservable implem
     private void transitionToCompleted(TransferProcess process) {
         process.transitionCompleted();
         monitor.debug("Process " + process.getId() + " is now " + TransferProcessStates.COMPLETED);
+        transferProcessStore.update(process);
         invokeForEach(listener -> listener.completed(process));
     }
 
@@ -327,17 +318,6 @@ public class TransferProcessManagerImpl extends TransferProcessObservable implem
             transferProcessStore.update(process);
         }
         return processes.size();
-    }
-
-    private void checkProcessesToCancel() {
-        Iterator<String> iterator = processesToCancel.iterator();
-        while (iterator.hasNext()) {
-            TransferProcess p = transferProcessStore.find(iterator.next());
-            p.transitionError("Process cancelled");
-            transferProcessStore.update(p);
-            monitor.info("Cancelling request " + p.getId());
-            iterator.remove();
-        }
     }
 
     private void invokeForEach(Consumer<TransferProcessListener> action) {

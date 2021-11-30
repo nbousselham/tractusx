@@ -64,8 +64,9 @@ public class TransferProcessWatchdog {
         transferProcesses.stream()
                 .filter(p -> p.getStateTimestamp() > stateTimeout)
                 .forEach(p -> {
-                    monitor.info("Timeout for process " + p.getId());
-                    transferProcessManager.cancelTransferProcess(p.getId());
+                    p.transitionError("Timeout");
+                    transferProcessStore.update(p);
+                    monitor.info("Timeout for process " + p);
                 });
     }
 }
