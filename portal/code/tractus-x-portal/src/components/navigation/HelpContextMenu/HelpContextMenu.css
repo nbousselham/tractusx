@@ -1,6 +1,8 @@
 .help-link{
   align-self: flex-end;
+  padding-bottom: 10px;
   text-decoration: none;
+  color: #000;
 }
 
 .help-link__icon{

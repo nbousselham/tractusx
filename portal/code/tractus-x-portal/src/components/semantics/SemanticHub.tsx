@@ -21,7 +21,6 @@ import ErrorMessage from '../ErrorMessage';
 import Loading from '../loading';
 import Pagination from '../navigation/Pagination';
 import ListCountSelector from '../navigation/ListCountSelector';
-import './SemanticHub.css'
 import HelpContextMenu from '../navigation/HelpContextMenu/HelpContextMenu';
 
 const defaultPage = 0;
