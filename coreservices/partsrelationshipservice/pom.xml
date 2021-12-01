@@ -17,10 +17,8 @@
         <module>prs-models</module>
         <module>broker-proxy</module>
         <module>prs-client</module>
-        <module>prs-composite-client</module>
         <module>integration-tests</module>
         <module>broker-proxy-integration-tests</module>
         <module>connector</module>
-        <module>performance-tests</module>
     </modules>
 </project>
