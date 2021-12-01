@@ -19,7 +19,7 @@
 
 	<groupId>net.catenax</groupId>
 	<artifactId>semantics</artifactId>
-	<version>1.0.0</version>
+	<version>1.0.0-SNAPSHOT</version>
 	<name>Catena-X Semantic Layer</name>
 	<description>Root Module of the Catena-X Semantic Layer</description>
 	<packaging>pom</packaging>
@@ -261,14 +261,26 @@
 
 	<repositories>
 		<repository>
-			<id>isst-nexus-public</id>
-			<name>isst-public</name>
-			<url>https://mvn.ids.isst.fraunhofer.de/nexus/repository/ids-public/</url>
-		</repository>
-		<repository>
 			<id>Maven Central</id>
 			<name>maven-central</name>
 			<url>https://repo1.maven.org/maven2/</url>
 		</repository>
+		<repository>
+			<id>isst-nexus-public</id>
+			<name>isst-public</name>
+			<url>https://mvn.ids.isst.fraunhofer.de/nexus/repository/ids-public/</url>
+		</repository>
 	</repositories>
+
+	<distributionManagement>
+     <repository>
+       <id>github</id>
+       <name>Catena-X Maven Repository on Github</name>
+       <url>https://maven.pkg.github.com/catenax/tractusx</url>
+       <snapshots>
+         <enabled>true</enabled>
+       </snapshots>
+     </repository>
+    </distributionManagement>
+
 </project>

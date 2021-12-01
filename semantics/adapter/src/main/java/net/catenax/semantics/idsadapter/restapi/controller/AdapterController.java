@@ -31,7 +31,6 @@ import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import net.catenax.semantics.idsadapter.client.api.ConnectorApi;
 import net.catenax.semantics.idsadapter.restapi.dto.Offer;
-import net.catenax.semantics.idsadapter.restapi.dto.ReceiveRequest;
 import net.catenax.semantics.idsadapter.restapi.dto.Source;
 import net.catenax.semantics.idsadapter.service.IdsService;
 import springfox.documentation.annotations.ApiIgnore;
@@ -100,17 +99,6 @@ public class AdapterController {
             e.printStackTrace(System.err);
             return ResponseEntity.internalServerError().body(e.getMessage());
         }
-    }
-
-    /**
-     * Receive data from some external source
-     * 
-     * @param receiveRequest body
-     * @return receive response
-     */
-    @PostMapping(value = "/receive", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<Object> receiveResource(@RequestBody ReceiveRequest receiveRequest) {
-        return ResponseEntity.ok(idsService.receiveResource(receiveRequest));
     }
 
     /**

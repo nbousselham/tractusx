@@ -3,12 +3,12 @@
     <parent>
         <groupId>net.catenax</groupId>
         <artifactId>semantics</artifactId>
-        <version>1.0.0</version>
+        <version>1.0.0-SNAPSHOT</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
     <groupId>net.catenax.semantics</groupId>
     <artifactId>framework</artifactId>
-    <version>1.0.0</version>
+    <version>1.0.0-SNAPSHOT</version>
     <name>Catena-X Semantic Layer Framework</name>
     <description>Root Module of the Catena-X Semantic Layer Framework</description>
     <packaging>jar</packaging>
