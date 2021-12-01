@@ -1,3 +1,3 @@
 # edc-transfer-process-watchdog
 
-TBD
+This extension starts a watchdog thread that cleans up long-running transfer processes.
