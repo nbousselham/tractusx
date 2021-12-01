@@ -315,6 +315,14 @@ public class ProviderControlPanelService {
 			log.info("Created: \nOffer {}\nCatalog {}\nRule {}\nContract {}\nRepresentation {}\nArtifact {}", offerId,
 					catalogId, ruleIdList, contractId, representationId, artifactId);
 
+			dataOffer.setTitle(offerRequest.getTitle());
+			dataOffer.setDescription(offerRequest.getDescription());
+			dataOffer.setAccessControlUseCase(offerRequest.getAccessControlUseCase());
+			dataOffer.setAccessControlUseCaseType(offerRequest.getAccessControlUseCaseType());
+			dataOffer.setByOrganization(offerRequest.getByOrganization());
+			dataOffer.setByOrganizationRole(offerRequest.getByOrganizationRole());
+			dataOffer.setContractEndsinDays(offerRequest.getContractEndsinDays());
+			dataOffer.setUsageControl(offerRequest.getUsageControl());
 			dataOffer.setOfferIDSdetails(offerIDSdetails);
 
 			return dataOfferMongoRepository.save(dataOffer);
