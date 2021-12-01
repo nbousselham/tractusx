@@ -45,11 +45,11 @@ import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.HttpClients;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
 
 import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import lombok.NoArgsConstructor;
+import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 import net.catenax.semantics.idsadapter.client.api.AgreementsApi;
 import net.catenax.semantics.idsadapter.client.api.ArtifactsApi;
@@ -76,7 +76,6 @@ import net.catenax.semantics.idsadapter.client.model.PagedModelContractView;
 import net.catenax.semantics.idsadapter.client.model.PagedModelOfferedResourceView;
 import net.catenax.semantics.idsadapter.client.model.RepresentationDesc;
 import net.catenax.semantics.idsadapter.client.model.RepresentationView;
-import net.catenax.semantics.idsadapter.config.IdsAdapterConfigProperties;
 import net.catenax.semantics.idsadapter.restapi.dto.Catalog;
 import net.catenax.semantics.idsadapter.restapi.dto.Contract;
 import net.catenax.semantics.idsadapter.restapi.dto.ContractRule;
@@ -89,21 +88,29 @@ import net.catenax.semantics.tools.ResultSetsToXmlSource;
 /**
  * A service that manages the interaction with the connector
  */
-
-@Slf4j
 @NoArgsConstructor
-@AllArgsConstructor
+@RequiredArgsConstructor
+@Slf4j
 public abstract class BaseIdsService {
 
     /** these are clients to the different endpoints of the connector */
+    @NonNull
     protected ContractsApi contractsApi;
+    @NonNull
     protected OfferedResourcesApi offeredResourcesApi;
+    @NonNull
     protected CatalogsApi catalogsApi;
+    @NonNull
     protected RulesApi rulesApi;
+    @NonNull
     protected RepresentationsApi representationsApi;
+    @NonNull
     protected ArtifactsApi artifactsApi;
+    @NonNull
     protected MessagesApi messagesApi;
+    @NonNull
     protected ObjectMapper objectMapper;
+    @NonNull
     protected AgreementsApi agreementsApi;
 
     /** standard access policy */
@@ -292,6 +299,7 @@ public abstract class BaseIdsService {
         Contract contract=getOrCreateContract(offer.getContract(),null);
         if(contract!=null) {
             contractsApi.addResourcesOffers(Collections.singletonList(offer.getUri()), contract.getId());
+            offer.setContract(contract);
         }
 
         for (Map.Entry<String, Representation> representationEntry : offer.getRepresentations().entrySet()) {
@@ -312,7 +320,7 @@ public abstract class BaseIdsService {
                 ArtifactDesc artifactDesc = new ArtifactDesc();
                 artifactDesc.setTitle(path.getKey());
                 artifactDesc.setDescription(source.getDescription());
-                artifactDesc.setAccessUrl(getAdapterUrl()+"/adapter/download?offer="+title+"&representation="+representationEntry.getKey()+"&source="+path.getKey());
+                artifactDesc.setAccessUrl(String.format(source.getCallbackPattern(),getAdapterUrl(),title,representationEntry.getKey(),path.getKey()));
                 ArtifactView artifactView = artifactsApi.create11(artifactDesc);
                 source.setId(getSelfIdFromLinks(artifactView.getLinks()));
                 source.setUri(getHrefFromSelfLinks(artifactView.getLinks()));

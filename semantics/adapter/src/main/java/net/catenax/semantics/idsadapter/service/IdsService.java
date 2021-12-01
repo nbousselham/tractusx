@@ -49,6 +49,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import net.catenax.semantics.idsadapter.client.api.AgreementsApi;
 import net.catenax.semantics.idsadapter.client.api.ArtifactsApi;
@@ -89,7 +90,7 @@ import net.catenax.semantics.tools.ResultSetsToXmlSource;
  * A service that manages the interaction with the connector
  */
 @Service
-@AllArgsConstructor
+@RequiredArgsConstructor
 @Slf4j
 public class IdsService extends BaseIdsService {
 
@@ -98,6 +99,43 @@ public class IdsService extends BaseIdsService {
 
     /** adapter config */
     private final IdsAdapterConfigProperties adapterProperties;
+
+    @Autowired
+    public void setContractsApi(ContractsApi api) {
+        contractsApi=api;
+    }
+    @Autowired
+    public void setOfferedResourcesApi(OfferedResourcesApi api) {
+        offeredResourcesApi=api;
+    }
+    @Autowired
+    public void setCatalogsApi(CatalogsApi api) {
+        catalogsApi=api;
+    }
+    @Autowired
+    public void setRulesApi(RulesApi api) {
+        rulesApi=api;
+    }
+    @Autowired
+    public void setRepresentationsApi(RepresentationsApi api) {
+        representationsApi=api;
+    }
+    @Autowired
+    public void setArtifactsApi(ArtifactsApi api) {
+        artifactsApi=api;
+    }
+    @Autowired
+    public void setMessagesApi(MessagesApi api) {
+        messagesApi=api;
+    }
+    @Autowired
+    public void setObjectMapper(ObjectMapper api) {
+        objectMapper=api;
+    }
+    @Autowired
+    public void setAgreementsApi(AgreementsApi api) {
+        agreementsApi=api;
+    }
 
     /**
      * when the service start it may read its config
