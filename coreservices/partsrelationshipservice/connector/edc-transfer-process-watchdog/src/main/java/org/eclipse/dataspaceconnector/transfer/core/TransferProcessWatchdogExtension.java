@@ -17,7 +17,6 @@ package org.eclipse.dataspaceconnector.transfer.core;
 import org.eclipse.dataspaceconnector.spi.monitor.Monitor;
 import org.eclipse.dataspaceconnector.spi.system.ServiceExtension;
 import org.eclipse.dataspaceconnector.spi.system.ServiceExtensionContext;
-import org.eclipse.dataspaceconnector.spi.transfer.TransferProcessManager;
 import org.eclipse.dataspaceconnector.spi.transfer.store.TransferProcessStore;
 import org.eclipse.dataspaceconnector.transfer.core.transfer.TransferProcessWatchdog;
 
@@ -44,10 +43,11 @@ public class TransferProcessWatchdogExtension implements ServiceExtension {
         monitor = context.getMonitor();
         this.context = context;
 
-        TransferProcessManager transferProcessManager = context.getService(TransferProcessManager.class);
         watchdog = TransferProcessWatchdog.builder()
                         .monitor(monitor)
-                        .transferProcessManager(transferProcessManager)
+                        .delayInSeconds(Long.parseLong(context.getSetting("edc.watchdog.delay", "1")))
+                        .stateTimeout(Long.parseLong(context.getSetting("edc.watchdog.timeout", "30")))
+                        .batchSize(5)
                         .build();
 
         monitor.info("Initialized Core Transfer extension");
