@@ -4,6 +4,7 @@
       <section class="ma-10">
         <div class="data-offers-panel">
           <h2 class="mb-4">Data offers</h2>
+          <div v-for="(dataOffer, index) in dataOffers" :key="index"></div>
           <CxPanel>
             <template v-slot:panel-title>
               <span>No data offers.</span>
@@ -42,7 +43,8 @@
                         dark
                         large
                         @click="dialog = false"
-                        >ADD NEW DATA OFFER</v-btn>
+                        >ADD NEW DATA OFFER</v-btn
+                      >
                     </v-card-actions>
                   </div>
                 </v-card>
@@ -70,6 +72,8 @@
 <script lang="ts">
 import Vue from "vue";
 import CxPanel from "@/components/CxPanel.vue";
+import { GET_DATA_OFFERS } from "@/store/modules/dataoffer/actions/action-types";
+import { FETCH_DATA_OFFERS } from "@/store/modules/dataoffer/getters/getter-types";
 
 export default Vue.extend({
   name: "Dashboard",
@@ -79,8 +83,13 @@ export default Vue.extend({
   data: () => ({
     dialog: false,
   }),
-  mounted() {
-    console.log(process.env);
+  created() {
+    this.$store.dispatch(GET_DATA_OFFERS);
+  },
+  computed: {
+    dataOffers() {
+      return this.$store.getters[FETCH_DATA_OFFERS];
+    },
   },
 });
 </script>

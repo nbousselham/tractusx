@@ -1,0 +1,1 @@
+export const FETCH_DATA_OFFERS = "FETCH_DATA_OFFERS";

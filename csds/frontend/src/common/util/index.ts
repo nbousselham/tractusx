@@ -1,5 +1,6 @@
 /* eslint-disable @typescript-eslint/ban-types */
 import Vue from "vue";
+import { ServiceUrlType } from "@/common/util/DataOfferUtil";
 
 interface QueryObj {
   /* eslint-disable-next-line */
@@ -7,7 +8,8 @@ interface QueryObj {
 }
 
 export default class Util {
-  static API_HOST_URL = process.env.VUE_APP_API_HOST_URL;
+  static PROVIDER_API_HOST_URL = process.env.VUE_APP_PROVIDER_API_HOST_URL;
+  static CORE_API_HOST_URL = process.env.VUE_APP_CORE_API_HOST_URL;
 
   static FORM_DATA_CONFIG_HEADER = {
     headers: {
@@ -39,8 +41,10 @@ export default class Util {
   }
 
   // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
-  static getRestApiUrl(url: string, attr?: object) {
-    return this.buildUrl(this.API_HOST_URL, url, attr);
+  static getRestApiUrl(url: string, serviceType: string, attr?: object) {
+    return serviceType === ServiceUrlType.PROVIDER
+      ? this.buildUrl(this.PROVIDER_API_HOST_URL, url, attr)
+      : this.buildUrl(this.CORE_API_HOST_URL, url, attr);
   }
 
   /**
