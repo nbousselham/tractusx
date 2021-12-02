@@ -1,4 +1,9 @@
 FROM openjdk:11
 ADD target/provider-service-0.0.1.jar provider-service.jar
-EXPOSE 8889
+
+RUN echo -n | openssl s_client -connect 20.79.235.138:8080 | sed -ne '/-BEGIN CERTIFICATE-/,/-END CERTIFICATE-/p' > ~/20.79.235.138.crt
+
+RUN keytool -import -v -trustcacerts -noprompt -alias 20.79.235.138 -file ~/20.79.235.138.crt -keystore $JAVA_HOME/lib/security/cacerts -keypass changeit -storepass changeit
+
+EXPOSE 9095
 ENTRYPOINT ["java","-jar","provider-service.jar"]

@@ -8,6 +8,6 @@ public interface OrganizationServices {
 
 	public ResponseObject getAllRoles();
 	public ResponseObject getAllOrgnizationByRole(String role);
-	public ResponseObject getAllComapnies();
+	public ResponseObject getAllOrganizations();
 	public ResponseObject getAddAndUpdateOrgnizationDetials(OrganizationRequest organizationRequest);
 }
