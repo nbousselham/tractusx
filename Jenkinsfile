@@ -61,21 +61,17 @@ pipeline {
                                   invokerPublisher(disabled: true)]
                     ) {
                         dir("semantics") {
-                            dir("adapter") {
-                                script {
-                                    docker.withRegistry('https://catenaxtsiacr.azurecr.io', 'azure-service-principal') {
-                                        image1 = docker.build('semantics/adapterdev',' -f Dockerfile .')
-                                        image1.push("latest");
-                                    }
-                                } 
-                            }
+                            script {
+                                docker.withRegistry('https://catenaxtsiacr.azurecr.io', 'azure-service-principal') {
+                                    image1 = docker.build('semantics/adapterdev',' -f adapter/Dockerfile .')
+                                    image1.push("latest");
+                                }
+                            } 
 
-                            dir("services") {
-                                script {
-                                    docker.withRegistry('https://catenaxtsiacr.azurecr.io', 'azure-service-principal') {
-                                        image1 = docker.build('semantics/servicesdev',' -f Dockerfile .')
-                                        image1.push("latest");
-                                    }
+                            script {
+                                docker.withRegistry('https://catenaxtsiacr.azurecr.io', 'azure-service-principal') {
+                                    image1 = docker.build('semantics/servicesdev',' -f services/Dockerfile .')
+                                    image1.push("latest");
                                 }
                             }
 
