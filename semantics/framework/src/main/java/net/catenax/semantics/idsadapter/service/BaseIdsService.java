@@ -450,14 +450,14 @@ public abstract class BaseIdsService {
             try {
                 InputStream resourceStream=resource.openStream();
                 javax.xml.transform.Source xml = new StreamSource(resourceStream);
-                return Map.entry("text/xml",xml);
+                return new java.util.AbstractMap.SimpleEntry<>("text/xml",xml);
             } catch (IOException e) {
                 log.error("download & transform error.", e);
             }
         }
 
         log.error("File "+so.getFile()+" could not bee found. Leaving empty.");
-        return Map.entry("text/xml",new DOMSource(DocumentBuilderFactory.newInstance().newDocumentBuilder().newDocument()));
+        return new java.util.AbstractMap.SimpleEntry<>("text/xml",new DOMSource(DocumentBuilderFactory.newInstance().newDocumentBuilder().newDocument()));
     }
 
     /**
@@ -503,7 +503,7 @@ public abstract class BaseIdsService {
         javax.xml.transform.Source source = converter.convert(resultSets);
         fconn.close();
 
-        return Map.entry("text/xml", source);
+        return new java.util.AbstractMap.SimpleEntry<>("text/xml", source);
     }
 
    /**
