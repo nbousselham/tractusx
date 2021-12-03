@@ -395,7 +395,8 @@ export default class Aspect extends React.Component<any, any> {
     };
     const availableOffers: IDropdownOption[] = [
       { key: 'offer-windchill', text: 'Sample PLM offering representing by static files.' },
-      { key: 'offer-tdm', text: 'Test Data from Catena-X.' }
+      { key: 'offer-tdm', text: 'Test Data from Catena-X.' },
+      { key: 'offer-aras', text: 'Live Data From PDM Web Connector.' }
     ];
     const availableRepresentations: IDropdownOption[] = [
       { key: 'material-aspect', text: 'Catena-X Material JSON payload.' },
@@ -406,7 +407,8 @@ export default class Aspect extends React.Component<any, any> {
       { key: 'material-brake', text: 'Sample XML/XSLT-Based Aspect Implementation.' },
       { key: 'bom-brake', text: 'SampleXML/XSLT-Based Aspect Implementation.' },
       { key: 'material-vehicle', text: 'Relational SQL-Based Aspect Implementation.' },
-      { key: 'bom-vehicle', text: 'Relational SQL-Based Aspect Implementation.' }
+      { key: 'bom-vehicle', text: 'Relational SQL-Based Aspect Implementation.' },
+      { key: 'aras-bom', text: 'Aspect Implementation by PDM Web Connector.' },
     ];
 
     let offer=this.state.params.offer
@@ -432,9 +434,14 @@ export default class Aspect extends React.Component<any, any> {
         availableArtifacts = [
           { key: 'bom-vehicle', text: 'Relational SQL-Transformed Traceability Info.' }
         ];    
-      }
-
-    }
+      } 
+     } else if(offer==='offer-aras') {
+        if(representation==='bom-aspect') {
+          availableArtifacts = [
+            { key: 'aras-bom', text: 'Aspect Implementation by PDM Web Connector.' },
+          ];    
+        }     
+     }
 
     let consoleClass={ backgroundColor: '#0052C9', color:'white' };
     let frameStyle  = { backgroundColor: '', color:'black' };
