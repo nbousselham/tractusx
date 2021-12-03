@@ -27,10 +27,10 @@ pipeline {
         CONTAINER_REGISTRY = 'catenax${ENVIRONMENT}acr.azurecr.io'
     }
     withCredentials([
-        usernamePassword(credentialsId: 'azure-service-principal', usernameVariable: 'AZURE_PRINCIPAL', passwordVariable: 'AZURE_PASSWORD')
-        usernamePassword(credentialsId: 'catenax-admin', usernameVariable: 'CATENAX_ADMIN_USER', passwordVariable: 'CATENAX_ADMIN_PASSWORD')
-        usernamePassword(credentialsId: 'catenax-user', usernameVariable: 'CATENAX_USER', passwordVariable: 'CATENAX_PASSWORD')
-        string(credentialsId: 'catenaxtsi-shared-storage', variable: 'STORAGE_ACCOUNT_KEY')
+        usernamePassword(credentialsId: 'azure-service-principal', usernameVariable: 'AZURE_PRINCIPAL', passwordVariable: 'AZURE_PASSWORD'),
+        usernamePassword(credentialsId: 'catenax-admin', usernameVariable: 'CATENAX_ADMIN_USER', passwordVariable: 'CATENAX_ADMIN_PASSWORD'),
+        usernamePassword(credentialsId: 'catenax-user', usernameVariable: 'CATENAX_USER', passwordVariable: 'CATENAX_PASSWORD'),
+        string(credentialsId: 'catenaxtsi-shared-storage', variable: 'STORAGE_ACCOUNT_KEY'),
     ]) {
         stages {
             stage('kubernetes login') {
