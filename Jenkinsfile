@@ -26,21 +26,28 @@ pipeline {
         IMAGE_PULL_POLICY = 'Always'
         CONTAINER_REGISTRY = 'catenax${ENVIRONMENT}acr.azurecr.io'
     }
-    withCredentials([
-        usernamePassword(credentialsId: 'azure-service-principal', usernameVariable: 'AZURE_PRINCIPAL', passwordVariable: 'AZURE_PASSWORD'),
-        usernamePassword(credentialsId: 'catenax-admin', usernameVariable: 'CATENAX_ADMIN_USER', passwordVariable: 'CATENAX_ADMIN_PASSWORD'),
-        usernamePassword(credentialsId: 'catenax-user', usernameVariable: 'CATENAX_USER', passwordVariable: 'CATENAX_PASSWORD'),
-        string(credentialsId: 'catenaxtsi-shared-storage', variable: 'STORAGE_ACCOUNT_KEY'),
-    ]) {
-        stages {
-            stage('kubernetes login') {
+    stages {
+        stage('kubernetes login') {
+            withCredentials([
+                usernamePassword(credentialsId: 'azure-service-principal', usernameVariable: 'AZURE_PRINCIPAL', passwordVariable: 'AZURE_PASSWORD'),
+                usernamePassword(credentialsId: 'catenax-admin', usernameVariable: 'CATENAX_ADMIN_USER', passwordVariable: 'CATENAX_ADMIN_PASSWORD'),
+                usernamePassword(credentialsId: 'catenax-user', usernameVariable: 'CATENAX_USER', passwordVariable: 'CATENAX_PASSWORD'),
+                string(credentialsId: 'catenaxtsi-shared-storage', variable: 'STORAGE_ACCOUNT_KEY'),
+            ]) {
                 sh 'kubectl config set-credentials principal/catenaxtsi-dev-aks-services --username=${AZURE_PRINCIPAL} --password=${AZURE_PASSWORD}'
                 sh 'kubectl config set-cluster catenaxtsi-dev-aks-services --insecure-skip-tls-verify=true --server=catenaxtsidevakssrv-2b3f5bcb.hcp.germanywestcentral.azmk8s.io'
                 sh 'kubectl config set-context default/catenaxtsi-dev-aks-services/principal --user=principal/catenaxtsi-dev-aks-services --namespace=default --cluster=catenaxtsi-dev-aks-services'
                 sh 'kubectl config use-context default/catenaxtsi-dev-aks-services/principal'
             }
-            stage('semantics') {
-                steps {
+        }
+        stage('semantics') {
+            steps {
+                withCredentials([
+                    usernamePassword(credentialsId: 'azure-service-principal', usernameVariable: 'AZURE_PRINCIPAL', passwordVariable: 'AZURE_PASSWORD'),
+                    usernamePassword(credentialsId: 'catenax-admin', usernameVariable: 'CATENAX_ADMIN_USER', passwordVariable: 'CATENAX_ADMIN_PASSWORD'),
+                    usernamePassword(credentialsId: 'catenax-user', usernameVariable: 'CATENAX_USER', passwordVariable: 'CATENAX_PASSWORD'),
+                    string(credentialsId: 'catenaxtsi-shared-storage', variable: 'STORAGE_ACCOUNT_KEY'),
+                ]) {
                     withMaven(
                         maven: 'maven',
                         mavenSettingsConfig: "${MAVEN_SETTINGS}",
@@ -98,9 +105,16 @@ pipeline {
                     }
                 }
             }
+        }
 
-            stage('portal') {
-                    steps {
+        stage('portal') {
+            steps {
+                withCredentials([
+                    usernamePassword(credentialsId: 'azure-service-principal', usernameVariable: 'AZURE_PRINCIPAL', passwordVariable: 'AZURE_PASSWORD'),
+                    usernamePassword(credentialsId: 'catenax-admin', usernameVariable: 'CATENAX_ADMIN_USER', passwordVariable: 'CATENAX_ADMIN_PASSWORD'),
+                    usernamePassword(credentialsId: 'catenax-user', usernameVariable: 'CATENAX_USER', passwordVariable: 'CATENAX_PASSWORD'),
+                    string(credentialsId: 'catenaxtsi-shared-storage', variable: 'STORAGE_ACCOUNT_KEY'),
+                ]) {
                         dir("portal/code/tractus-x-portal") {
                             sh '''
                                 echo -n "REACT_APP_BASIC_SERVICES_AUTHENTICATION=" >.env;
