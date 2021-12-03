@@ -230,6 +230,9 @@ public abstract class BaseIdsService {
         return contract;
     }
 
+    /* name of this service */
+    public abstract String getServiceName();
+
     /**
      * registers a new (re-)source in the ids
      * @param title key of the offer
@@ -299,7 +302,6 @@ public abstract class BaseIdsService {
         Contract contract=getOrCreateContract(offer.getContract(),null);
         if(contract!=null) {
             contractsApi.addResourcesOffers(Collections.singletonList(offer.getUri()), contract.getId());
-            offer.setContract(contract);
         }
 
         for (Map.Entry<String, Representation> representationEntry : offer.getRepresentations().entrySet()) {
@@ -320,7 +322,7 @@ public abstract class BaseIdsService {
                 ArtifactDesc artifactDesc = new ArtifactDesc();
                 artifactDesc.setTitle(path.getKey());
                 artifactDesc.setDescription(source.getDescription());
-                artifactDesc.setAccessUrl(String.format(source.getCallbackPattern(),getAdapterUrl(),title,representationEntry.getKey(),path.getKey()));
+                artifactDesc.setAccessUrl(String.format(source.getCallbackPattern(),getAdapterUrl(),getServiceName(),title,representationEntry.getKey(),path.getKey()));
                 ArtifactView artifactView = artifactsApi.create11(artifactDesc);
                 source.setId(getSelfIdFromLinks(artifactView.getLinks()));
                 source.setUri(getHrefFromSelfLinks(artifactView.getLinks()));
@@ -417,16 +419,20 @@ public abstract class BaseIdsService {
         factory.setAttribute(XMLConstants.ACCESS_EXTERNAL_STYLESHEET, "");
 
 
-        javax.xml.transform.Transformer transformer = factory.newTransformer(xslt);
-        transformer.setParameter("SERVICE_URL",getServiceUrl());
-        transformer.setParameter("ADAPTER_URL",getAdapterUrl());
-        transformer.setParameter("PORTAL_URL",getPortalUrl());
-        transformer.setParameter("CONNECTOR_ID","https://w3id.org/idsa/autogen/connectorEndpoint/a73d2202-cb77-41db-a3a6-05ed251c0b");
+        javax.xml.transform.Transformer transformer = setTransformationParameters(factory.newTransformer(xslt));
         transformer.transform(sourceImpl.getValue(), out);
         if(sourceImpl instanceof StreamSource) {
             ((StreamSource) sourceImpl).getInputStream().close();
         }
         return mediaType;
+    }
+
+    protected  javax.xml.transform.Transformer setTransformationParameters( javax.xml.transform.Transformer transformer ) {
+        transformer.setParameter("SERVICE_URL",getServiceUrl());
+        transformer.setParameter("ADAPTER_URL",getAdapterUrl());
+        transformer.setParameter("PORTAL_URL",getPortalUrl());
+        transformer.setParameter("CONNECTOR_ID","https://w3id.org/idsa/autogen/connectorEndpoint/a73d2202-cb77-41db-a3a6-05ed251c0b");
+        return transformer;
     }
 
     /**
@@ -511,15 +517,28 @@ public abstract class BaseIdsService {
         handleSource(outStream,"application/json",twinSource,new java.util.HashMap());
         outStream.close();
         String result=new String(outStream.toByteArray());
+        return registerTwinDefinitions(twinType, result);
+    }
+
+   /**
+    * registers new twin definitions
+    * @param twinType the type of twins
+    * @param twinSource the twin definitions as a payload
+    * @return the registration response
+    */
+    public String registerTwinDefinitions(String twinType, String twinSource) throws Exception {
         HttpClient httpclient = HttpClients.createDefault();
         HttpPost httppost = new HttpPost(getServiceUrl()+"/twins");
         httppost.addHeader("accept", "application/json");
         httppost.setHeader("Content-type", "application/json");
-        httppost.setEntity(new StringEntity(result));
+        httppost.setEntity(new StringEntity(twinSource));
         log.info("Accessing Twin Registry via "+httppost.getRequestLine());
         HttpResponse response = httpclient.execute(httppost);
         log.info("Received Twin Registry response "+response.getStatusLine());
         String finalResult = IOUtils.toString(response.getEntity().getContent());
+        if(response.getStatusLine().getStatusCode()!=200) {
+            throw new Exception(finalResult); 
+        }
         return finalResult;
     }
 

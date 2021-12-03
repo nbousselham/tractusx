@@ -163,6 +163,11 @@ public class IdsService extends BaseIdsService {
         }
     }
 
+    /** the service name */
+    public String getServiceName() {
+        return "adapter";
+    }
+
     /**
      * get or create a catalog
      * @param title key of the catalogue, must be no-null

@@ -39,8 +39,8 @@ import lombok.Setter;
 @Table(name = "twins")
 public class TwinEntity {
     @Id
-    @GeneratedValue(generator = "uuid")
-    @GenericGenerator(name = "uuid", strategy = "uuid")
+    @GeneratedValue(generator = "reuseuuid")
+    @GenericGenerator(name="reuseuuid", strategy="net.catenax.semantics.tools.OverridableUUIDGenerator")
     private String id;
 
     @Column(columnDefinition="text")

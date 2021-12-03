@@ -9,7 +9,7 @@
 #
 
 #
-# Shell script to build and run a local semantics layer for testing purposes.
+# Shell script to build and run a local semantics adapter for testing purposes.
 #
 # Prerequisites: 
 #   Windows, (git)-bash shell, java 11 (java) and maven (mvn) in the $PATH.
@@ -52,7 +52,7 @@ if [ "$CLEAN_DB" == "y" ]; then
   rm -f ${DB_FILE}*
 fi
 
-CALL_ARGS="-classpath ./src/main/resources;target/semantics-1.0.0.jar \
+CALL_ARGS="-classpath ./src/main/resources;target/adapterApp-1.0.0-SNAPSHOT.jar \
            -Dspring.datasource.url=$H2_URL\
            -Dserver.ssl.enabled=false $DEBUG_OPTIONS\
            org.springframework.boot.loader.JarLauncher" 

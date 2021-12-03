@@ -54,5 +54,5 @@ public class Source {
     /**
      * determines the callback method of the adapter to access this artifact
      */
-    private String callbackPattern="%1$s/adapter/download?offer=%2$s&representation=%3$s&source=%4$s";
+    private String callbackPattern="%1$s/%2$s/download?offer=%3$s&representation=%4$s&source=%5$s";
 }
