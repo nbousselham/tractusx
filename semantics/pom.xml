@@ -241,12 +241,12 @@
     			<version>4.5.13</version>
 			</dependency>
 
-			<!-- International Dataspaces interop -->
+			<!-- International Dataspaces interop 
 			<dependency>
 				<groupId>de.fraunhofer.isst.ids.framework</groupId>
 				<artifactId>messaging</artifactId>
 				<version>${ids-framework.version}</version>
-			</dependency>
+			</dependency>-->
 			<!-- Test -->
 			<dependency>
 				<groupId>org.assertj</groupId>
@@ -271,11 +271,11 @@
 			<name>maven-central</name>
 			<url>https://repo1.maven.org/maven2/</url>
 		</repository>
-		<repository>
+		<!--<repository>
 			<id>isst-nexus-public</id>
 			<name>isst-public</name>
 			<url>https://mvn.ids.isst.fraunhofer.de/nexus/repository/ids-public/</url>
-		</repository>
+		</repository>-->
 	</repositories>
 
 	<distributionManagement>

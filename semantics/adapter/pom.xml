@@ -149,11 +149,11 @@
             <artifactId>jena-arq</artifactId>
         </dependency>
 
-        <!-- International Dataspaces interop -->
+        <!-- International Dataspaces interop 
         <dependency>
             <groupId>de.fraunhofer.isst.ids.framework</groupId>
             <artifactId>messaging</artifactId>
-        </dependency>
+        </dependency>-->
     </dependencies>
 
     <build>
