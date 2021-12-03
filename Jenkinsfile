@@ -61,9 +61,6 @@ pipeline {
                                   invokerPublisher(disabled: true)]
                     ) {
                         dir("semantics") {
-                            sh "mvn clean"
-                            sh "mvn verify"
-                        
                             dir("adapter") {
                                 script {
                                     docker.withRegistry('https://catenaxtsiacr.azurecr.io', 'azure-service-principal') {
