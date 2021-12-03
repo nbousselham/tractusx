@@ -76,20 +76,20 @@ pipeline {
                             sh '''
                                 cat ../infrastructure/manifests/semantics.yaml | envsubst | kubectl apply -n semantics -f -;
                                 sleep 15s
-                                export SOLVER=$(kubectl describe ingress -n semantics cm-acme | sed -n 's/Name:[\w]*\([\S]*\)/\1/p');
+                                export SOLVER=$(kubectl describe ingress -n semantics cm-acme | sed -n "s/Name:[\\w]*\\([\\S]*\\)/\\1/p");
                                 if [[ "${SOLVER}" == "" ]]; then \
                                     echo "Solver clean; Certificate granted"; \
                                 else \
                                     echo "Found a pending solver ${SOLVER} which we need to patch"; \
-                                    kubectl get ingress ${SOLVER} -n semantics -o yaml | sed '/^.*kubernetes\.io\/ingress\.class:.*service.*$/d' | sed "/^spec:$/a\  ingressClassName: service" | kubectl apply -f -; \
+                                    kubectl get ingress ${SOLVER} -n semantics -o yaml | sed "/^.*kubernetes\\.io\\/ingress\\.class:.*service.*$/d" | sed "/^spec:$/a\\  ingressClassName: service" | kubectl apply -f -; \
                                 fi;
                                 sleep 15s
-                                export SOLVER=$(kubectl describe ingress -n semantics cm-acme | sed -n 's/Name:[\w]*\([\S]*\)/\1/p');
+                                export SOLVER=$(kubectl describe ingress -n semantics cm-acme | sed -n "s/Name:[\\w]*\\([\\S]*\\)/\\1/p");
                                 if [[ "${SOLVER}" == "" ]]; then \
                                     echo "Solver clean; Certificate granted"; \
                                 else \
                                     echo "Found a pending solver ${SOLVER} which we need to patch"; \
-                                    kubectl get ingress ${SOLVER} -n semantics -o yaml | sed '/^.*kubernetes\.io\/ingress\.class:.*service.*$/d' | sed "/^spec:$/a\  ingressClassName: service" | kubectl apply -f -; \
+                                    kubectl get ingress ${SOLVER} -n semantics -o yaml | sed "/^.*kubernetes\\.io\\/ingress\\.class:.*service.*$/d" | sed "/^spec:$/a\\  ingressClassName: service" | kubectl apply -f -; \
                                 fi;
                                 kubectl rollout restart deployment semantics -n semantics;
                                 kubectl rollout restart deployment adapter -n semantics;
@@ -127,12 +127,12 @@ pipeline {
 
                             sh '''
                                 cat ../../../infrastructure/manifests/portal.yaml | envsubst | kubectl apply -n portal -f -;
-                                export SOLVER=$(kubectl describe ingress -n portal cm-acme | sed -n 's/Name:[\w]*\([\S]*\)/\1/p');
+                                export SOLVER=$(kubectl describe ingress -n portal cm-acme | sed -n "s/Name:[\\w]*\\([\\S]*\\)/\\1/p");
                                 if [[ "${SOLVER}" == "" ]]; then \
                                     echo "Solver clean; Certificate granted"; \
                                 else \
                                     echo "Found a pending solver ${SOLVER} which we need to patch"; \
-                                    kubectl get ingress ${SOLVER} -n portal -o yaml | sed '/^.*kubernetes\.io\/ingress\.class:.*service.*$/d' | sed "/^spec:$/a\  ingressClassName: service" | kubectl apply -f -; \
+                                    kubectl get ingress ${SOLVER} -n portal -o yaml | sed "/^.*kubernetes\\.io\\/ingress\\.class:.*service.*$/d" | sed "/^spec:$/a\\  ingressClassName: service" | kubectl apply -f -; \
                                 fi;
                                 kubectl rollout restart deployment portal -n portal
                             '''
