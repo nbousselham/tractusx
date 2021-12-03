@@ -63,7 +63,7 @@ public class TwinsApiTest {
 
    @Test
    public void testCreateValidTwinExpect200() throws Exception {
-      final var body = json.from( "valid_twin.json" ).getJson();
+      final String body = json.from( "valid_twin.json" ).getJson();
       this.mockMvc.perform( post( "/api/v1/twins" ).content( body )
                                             .contentType( MediaType.APPLICATION_JSON ) )
                   .andDo( print() )
@@ -73,13 +73,13 @@ public class TwinsApiTest {
 
    @Test
    public void testGetTwinByIdExpect200() throws Exception {
-      final var body = json.from( "valid_twin.json" ).getJson();
-      final var twinsResponse = this.mockMvc.perform( post( "/api/v1/twins" ).content( body )
+      final String body = json.from( "valid_twin.json" ).getJson();
+      final String twinsResponse = this.mockMvc.perform( post( "/api/v1/twins" ).content( body )
                                                                       .contentType( MediaType.APPLICATION_JSON ) )
                                             .andExpect( status().isOk() )
                                             .andExpect( jsonPath( "[0].id" ).exists() )
                                             .andReturn().getResponse().getContentAsString();
-      final var twinId = JsonPath.read( twinsResponse, "[0].id" );
+      final String twinId = JsonPath.read( twinsResponse, "[0].id" );
       this.mockMvc.perform( get( "/api/v1/twins/{twinId}", twinId ) )
                   .andDo( print() )
                   .andExpect( status().isOk() )
@@ -88,15 +88,15 @@ public class TwinsApiTest {
 
    @Test
    public void testGetTwinByLocalIdentifierExpect200() throws Exception {
-      final var body = json.from( "valid_twin_with_real_values.json" ).getJson();
-      final var twinsResponse = this.mockMvc.perform( post( "/api/v1/twins" ).content( body )
+      final String body = json.from( "valid_twin_with_real_values.json" ).getJson();
+      final String twinsResponse = this.mockMvc.perform( post( "/api/v1/twins" ).content( body )
                                                                       .contentType( MediaType.APPLICATION_JSON ) )
                                             .andExpect( status().isOk() )
                                             .andExpect( jsonPath( "[0].id" ).exists() )
                                             .andReturn().getResponse().getContentAsString();
-      final var twinId = JsonPath.read( twinsResponse, "[0].id" );
-      final var key = "VIN";
-      final var value = "WXFFJDKF10DFJA";
+      final String twinId = JsonPath.read( twinsResponse, "[0].id" );
+      final String key = "VIN";
+      final String value = "WXFFJDKF10DFJA";
 
       this.mockMvc
             .perform( get( "/api/v1/twins/?key={key}&value={value}", key, value ) )

@@ -38,7 +38,7 @@ public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
    protected ResponseEntity<Object> handleMethodArgumentNotValid( final MethodArgumentNotValidException ex,
          final HttpHeaders headers,
          final HttpStatus status, final WebRequest request ) {
-      final var path = ((ServletWebRequest) request).getRequest().getRequestURI();
+      final String path = ((ServletWebRequest) request).getRequest().getRequestURI();
       final Map<String, Object> errors = ex.getBindingResult()
                                            .getFieldErrors()
                                            .stream()
