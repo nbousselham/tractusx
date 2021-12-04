@@ -5,8 +5,7 @@
 pipeline {
     agent any
     tools {
-        jdk 'jdk11',
-        maven: 'maven'
+        jdk 'jdk11'
     }
     options {
         buildDiscarder(logRotator(aysToKeepStr: '30',numToKeepStr: '5'))     /*This will keep only the last n builds in Jenkins.*/
@@ -55,7 +54,8 @@ pipeline {
                     string(credentialsId: 'catenaxtsi-shared-storage', variable: 'STORAGE_ACCOUNT_KEY'),
                 ]) {
                     withMaven(
-                        options: [artifactsPublisher(disabled: true),
+                                maven: 'maven',
+                                options: [artifactsPublisher(disabled: true),
                                   findbugsPublisher(disabled: true),
                                   openTasksPublisher(disabled: true),
                                   junitPublisher(disabled: true),
