@@ -39,7 +39,7 @@ pipeline {
                     string(credentialsId: 'catenaxtsi-shared-storage', variable: 'STORAGE_ACCOUNT_KEY'),
                 ]) {
                     sh 'kubectl config set-credentials principal/catenaxtsi-dev-aks-services --username=${AZURE_PRINCIPAL} --password=${AZURE_PASSWORD}'
-                    sh 'kubectl config set-cluster catenaxtsi-dev-aks-services --insecure-skip-tls-verify=true --server=catenaxtsidevakssrv-2b3f5bcb.hcp.germanywestcentral.azmk8s.io'
+                    sh 'kubectl config set-cluster catenaxtsi-dev-aks-services --insecure-skip-tls-verify=true --server=https://catenaxtsidevakssrv-2b3f5bcb.hcp.germanywestcentral.azmk8s.io:443'
                     sh 'kubectl config set-context default/catenaxtsi-dev-aks-services/principal --user=principal/catenaxtsi-dev-aks-services --namespace=default --cluster=catenaxtsi-dev-aks-services'
                     sh 'kubectl config use-context default/catenaxtsi-dev-aks-services/principal'
                 }
