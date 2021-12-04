@@ -4,6 +4,9 @@
 
 pipeline {
     agent any
+    tools {
+        jdk = 'jdk-11.0.13+8'
+    }
     options {
         buildDiscarder(logRotator(daysToKeepStr: '30',numToKeepStr: '5'))     /*This will keep only the last n builds in Jenkins.*/
         disableConcurrentBuilds()                         /*Disallow concurrent executions of the Pipeline*/
@@ -51,7 +54,6 @@ pipeline {
                     string(credentialsId: 'catenaxtsi-shared-storage', variable: 'STORAGE_ACCOUNT_KEY'),
                 ]) {
                     withMaven(
-                        maven: 'maven',
                         options: [artifactsPublisher(disabled: true),
                                   findbugsPublisher(disabled: true),
                                   openTasksPublisher(disabled: true),
