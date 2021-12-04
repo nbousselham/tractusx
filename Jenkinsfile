@@ -5,7 +5,7 @@
 pipeline {
     agent any
     tools {
-        jdk 'jdk-11.0.13+8'
+        jdk 'jdk11'
     }
     options {
         buildDiscarder(logRotator(daysToKeepStr: '30',numToKeepStr: '5'))     /*This will keep only the last n builds in Jenkins.*/
