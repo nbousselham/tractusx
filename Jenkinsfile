@@ -65,12 +65,11 @@ pipeline {
                             }
                         }
                         dir("infrastructure") {
-                            script {
-                                docker.withRegistry('https://catenaxtsiacr.azurecr.io', 'azure-service-principal') {
-                                    docker.pull('catenaxtsiacr/catenax/deploy')
-                                    docker.tag('catenaxtsiacr/catenax/deploy','catenax/deploy')
-                                    sh '''
-                                        docker build --progress=plain --no-cache -f Dockerfile.deploy \
+                            sh '''docker login -u ${AZURE_PRINCIPAL} -p ${AZURE_PASSWORD} https://catenaxtsiacr.azurecr.io'''
+                            sh '''docker pull catenaxtsiacr.azurecr.io/catenax/deploy'''
+                            sh '''docker tag catenaxtsiacr.azurecr.io/catenax/deploy catenax/deploy'''
+                            sh '''
+                                 docker build --progress=plain --no-cache -f Dockerfile.deploy \
                                         --build-arg SERVICE_PRINCIPAL_ID=${AZURE_PRINCIPAL} \
                                         --build-arg SERVICE_PRINCIPAL_SECRET=${AZURE_PASSWORD} \
                                         --build-arg KUBERNETES_TARGET_NAMESPACE=semantics \
@@ -84,9 +83,7 @@ pipeline {
                                         --build-arg TENANT=62c61770-cf81-426f-a4ca-524fbf987ea0 \
                                         --build-arg DEPLOYMENTS=semantics,adapter \
                                         . 
-                                    '''
-                                }
-                            }
+                            '''
                         }
                     }
                 }
@@ -126,11 +123,10 @@ pipeline {
                             }
                         }
                         dir("infrastructure") {
-                            script {
-                                docker.withRegistry('https://catenaxtsiacr.azurecr.io', 'azure-service-principal') {
-                                    docker.pull('catenaxtsiacr/catenax/deploy')
-                                    docker.tag('catenaxtsiacr/catenax/deploy','catenax/deploy')
-                                    sh '''
+                            sh '''docker login -u ${AZURE_PRINCIPAL} -p ${AZURE_PASSWORD} https://catenaxtsiacr.azurecr.io'''
+                            sh '''docker pull catenaxtsiacr.azurecr.io/catenax/deploy'''
+                            sh '''docker tag catenaxtsiacr.azurecr.io/catenax/deploy catenax/deploy'''
+                            sh '''
                                     docker build --progress=plain --no-cache -f Dockerfile.deploy \
                                     --build-arg SERVICE_PRINCIPAL_ID=${AZURE_PRINCIPAL} \
                                     --build-arg SERVICE_PRINCIPAL_SECRET=${AZURE_PASSWORD} \
@@ -145,9 +141,7 @@ pipeline {
                                     --build-arg TENANT=62c61770-cf81-426f-a4ca-524fbf987ea0 \
                                     --build-arg DEPLOYMENTS=portal \
                                     . 
-                                    '''
-                                }
-                            }
+                            '''
                         }
                     }
                 }
