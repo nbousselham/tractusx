@@ -65,24 +65,26 @@ pipeline {
                             }
                         }
                         dir("infrastructure") {
-                            docker.withRegistry('https://catenaxtsiacr.azurecr.io', 'azure-service-principal') {
-                            sh '''
-                                docker build --progress=plain --no-cache -f Dockerfile.deploy \
-                                --build-arg SERVICE_PRINCIPAL_ID=${AZURE_PRINCIPAL} \
-                                --build-arg SERVICE_PRINCIPAL_SECRET=${AZURE_PASSWORD} \
-                                --build-arg KUBERNETES_TARGET_NAMESPACE=semantics \
-                                --build-arg MANIFEST_FILE=manifests/semantics.yaml \
-                                --build-arg CATENAX_ADMIN_USER=${CATENAX_ADMIN_USER} \
-                                --build-arg CATENAX_ADMIN_PASSWORD=${CATENAX_ADMIN_PASSWORD} \
-                                --build-arg CATENAX_USER=${CATENAX_USER} \
-                                --build-arg CATENAX_PASSWORD=${CATENAX_PASSWORD} \
-                                --build-arg WORKSPACE=dev \
-                                --build-arg ENVIRONMENT=tsi \
-                                --build-arg TENANT=62c61770-cf81-426f-a4ca-524fbf987ea0 \
-                                --build-arg DEPLOYMENTS=semantics,adapter \
-                                . 
-                           '''
-                           }
+                            script {
+                                docker.withRegistry('https://catenaxtsiacr.azurecr.io', 'azure-service-principal') {
+                                    sh '''
+                                        docker build --progress=plain --no-cache -f Dockerfile.deploy \
+                                        --build-arg SERVICE_PRINCIPAL_ID=${AZURE_PRINCIPAL} \
+                                        --build-arg SERVICE_PRINCIPAL_SECRET=${AZURE_PASSWORD} \
+                                        --build-arg KUBERNETES_TARGET_NAMESPACE=semantics \
+                                        --build-arg MANIFEST_FILE=manifests/semantics.yaml \
+                                        --build-arg CATENAX_ADMIN_USER=${CATENAX_ADMIN_USER} \
+                                        --build-arg CATENAX_ADMIN_PASSWORD=${CATENAX_ADMIN_PASSWORD} \
+                                        --build-arg CATENAX_USER=${CATENAX_USER} \
+                                        --build-arg CATENAX_PASSWORD=${CATENAX_PASSWORD} \
+                                        --build-arg WORKSPACE=dev \
+                                        --build-arg ENVIRONMENT=tsi \
+                                        --build-arg TENANT=62c61770-cf81-426f-a4ca-524fbf987ea0 \
+                                        --build-arg DEPLOYMENTS=semantics,adapter \
+                                        . 
+                                    '''
+                                }
+                            }
                         }
                     }
                 }
@@ -122,24 +124,26 @@ pipeline {
                             }
                         }
                         dir("infrastructure") {
-                            docker.withRegistry('https://catenaxtsiacr.azurecr.io', 'azure-service-principal') {
-                            sh '''
-                                docker build --progress=plain --no-cache -f Dockerfile.deploy \
-                                --build-arg SERVICE_PRINCIPAL_ID=${AZURE_PRINCIPAL} \
-                                --build-arg SERVICE_PRINCIPAL_SECRET=${AZURE_PASSWORD} \
-                                --build-arg KUBERNETES_TARGET_NAMESPACE=portal \
-                                --build-arg MANIFEST_FILE=manifests/portal.yaml \
-                                --build-arg CATENAX_ADMIN_USER=${CATENAX_ADMIN_USER} \
-                                --build-arg CATENAX_ADMIN_PASSWORD=${CATENAX_ADMIN_PASSWORD} \
-                                --build-arg CATENAX_USER=${CATENAX_USER} \
-                                --build-arg CATENAX_PASSWORD=${CATENAX_PASSWORD} \
-                                --build-arg WORKSPACE=dev \
-                                --build-arg ENVIRONMENT=tsi \
-                                --build-arg TENANT=62c61770-cf81-426f-a4ca-524fbf987ea0 \
-                                --build-arg DEPLOYMENTS=portal \
-                                . 
-                           '''
-                           }
+                            script {
+                                docker.withRegistry('https://catenaxtsiacr.azurecr.io', 'azure-service-principal') {
+                                    sh '''
+                                    docker build --progress=plain --no-cache -f Dockerfile.deploy \
+                                    --build-arg SERVICE_PRINCIPAL_ID=${AZURE_PRINCIPAL} \
+                                    --build-arg SERVICE_PRINCIPAL_SECRET=${AZURE_PASSWORD} \
+                                    --build-arg KUBERNETES_TARGET_NAMESPACE=portal \
+                                    --build-arg MANIFEST_FILE=manifests/portal.yaml \
+                                    --build-arg CATENAX_ADMIN_USER=${CATENAX_ADMIN_USER} \
+                                    --build-arg CATENAX_ADMIN_PASSWORD=${CATENAX_ADMIN_PASSWORD} \
+                                    --build-arg CATENAX_USER=${CATENAX_USER} \
+                                    --build-arg CATENAX_PASSWORD=${CATENAX_PASSWORD} \
+                                    --build-arg WORKSPACE=dev \
+                                    --build-arg ENVIRONMENT=tsi \
+                                    --build-arg TENANT=62c61770-cf81-426f-a4ca-524fbf987ea0 \
+                                    --build-arg DEPLOYMENTS=portal \
+                                    . 
+                                    '''
+                                }
+                            }
                         }
                     }
                 }
