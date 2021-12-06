@@ -1,10 +1,10 @@
 <template>
   <v-list class="pa-0">
-    <v-list-item class="list-item-height">
-      <v-list-item-avatar>
-        <v-btn icon x-large>
-          <v-avatar class="user-avatar" size="49">
-            <span class="white--text text-h7">{{ user.initials }}</span>
+    <v-list-item>
+      <v-list-item-avatar size="50">
+        <v-btn class="user-avatar" icon x-large>
+          <v-avatar size="49">
+            <span class="white--text text-h6">{{ user.initials }}</span>
           </v-avatar>
         </v-btn>
       </v-list-item-avatar>
@@ -74,9 +74,6 @@ export default Vue.extend({
 <style lang="scss" scoped>
 @import "~@/styles/variables";
 
-.list-item-height {
-  max-height: 48px;
-}
 .user-avatar {
   background: $brand-color-green;
 }

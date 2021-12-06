@@ -34,7 +34,13 @@ export default Vue.extend({
 <style lang="scss">
 @import "~@/styles/variables";
 
-.v-main {
-  background: $grey1;
+#app {
+  & .v-app-bar,
+  & .v-toolbar__content {
+    height: 80px !important;
+  }
+  & .v-main {
+    background: $grey1;
+  }
 }
 </style>

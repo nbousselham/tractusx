@@ -4,7 +4,11 @@
       <section class="ma-10">
         <div class="data-offers-panel">
           <h2 class="mb-4">Data offers</h2>
-          <div v-for="(dataOffer, index) in dataOffers" :key="index"></div>
+          <!-- <template>
+            <div v-for="dataOffer in dataOffers" :key="dataOffer['_id']">
+              {{ dataOffer.title }}
+            </div>
+          </template> -->
           <CxPanel>
             <template v-slot:panel-title>
               <span>No data offers.</span>
@@ -54,7 +58,7 @@
         </div>
         <div class="contract-agreement-panel mt-10">
           <h2 class="mb-4">Contract agreements</h2>
-          <h5 class="mb-4 contact-agreement-info">
+          <h5 class="mb-4 contract-agreement-info">
             Contract agreements are automatic processes. You can only discover
             the latest added contracts and their details.
           </h5>
@@ -98,9 +102,11 @@ export default Vue.extend({
 
 #add-data-offer-btn {
   background-color: $brand-color-green;
+  padding: 15px;
 }
-.contact-agreement-info {
+.contract-agreement-info {
   opacity: 0.4;
+  font-size: 14px;
 }
 .dialog-header {
   max-height: 36px;
