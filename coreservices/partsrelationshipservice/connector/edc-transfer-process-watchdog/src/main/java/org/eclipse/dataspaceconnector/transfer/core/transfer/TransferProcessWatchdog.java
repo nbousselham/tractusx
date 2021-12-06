@@ -1,30 +1,22 @@
-/*
- *  Copyright (c) 2020, 2021 Microsoft Corporation
- *
- *  This program and the accompanying materials are made available under the
- *  terms of the Apache License, Version 2.0 which is available at
- *  https://www.apache.org/licenses/LICENSE-2.0
- *
- *  SPDX-License-Identifier: Apache-2.0
- *
- *  Contributors:
- *       Microsoft Corporation - initial API and implementation
- *
- */
+//
+// Copyright (c) 2021 Copyright Holder (Catena-X Consortium)
+//
+// See the AUTHORS file(s) distributed with this work for additional
+// information regarding authorship.
+//
+// See the LICENSE file(s) distributed with this work for
+// additional information regarding license terms.
+//
 
 package org.eclipse.dataspaceconnector.transfer.core.transfer;
 
 import lombok.Builder;
 import org.eclipse.dataspaceconnector.spi.monitor.Monitor;
 import org.eclipse.dataspaceconnector.spi.transfer.store.TransferProcessStore;
-import org.eclipse.dataspaceconnector.spi.types.domain.transfer.TransferProcess;
 
-import java.util.List;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
-
-import static org.eclipse.dataspaceconnector.spi.types.domain.transfer.TransferProcessStates.IN_PROGRESS;
 
 public class TransferProcessWatchdog {
     private final Monitor monitor;
@@ -32,7 +24,6 @@ public class TransferProcessWatchdog {
     private final long delayInSeconds;
     private final long stateTimeout;
 
-    private TransferProcessStore transferProcessStore;
     private ScheduledExecutorService executor;
 
     @Builder
@@ -44,25 +35,19 @@ public class TransferProcessWatchdog {
     }
 
     public void start(TransferProcessStore processStore) {
-        transferProcessStore = processStore;
+        var action = CancelLongRunningProcesses.builder()
+                .monitor(monitor)
+                .stateTimeout(stateTimeout)
+                .batchSize(batchSize)
+                .transferProcessStore(processStore)
+                .build();
         executor = Executors.newSingleThreadScheduledExecutor();
-        executor.scheduleWithFixedDelay(this::run, 0, delayInSeconds, TimeUnit.SECONDS);
+        executor.scheduleWithFixedDelay(action, 0, delayInSeconds, TimeUnit.SECONDS);
     }
 
     public void stop() {
         if (executor != null) {
             executor.shutdownNow();
         }
-    }
-
-    private void run() {
-        List<TransferProcess> transferProcesses = transferProcessStore.nextForState(IN_PROGRESS.code(), batchSize);
-        transferProcesses.stream()
-            .filter(p -> p.getStateTimestamp() > stateTimeout)
-            .forEach(p -> {
-                p.transitionError("Timeout");
-                transferProcessStore.update(p);
-                monitor.info("Timeout for process " + p);
-            });
     }
 }
