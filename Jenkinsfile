@@ -30,21 +30,7 @@ pipeline {
         CONTAINER_REGISTRY = 'catenax${ENVIRONMENT}acr.azurecr.io'
     }
     stages {
-        stage('kubernetes login') {
-            steps {
-                withCredentials([
-                    usernamePassword(credentialsId: 'azure-service-principal', usernameVariable: 'AZURE_PRINCIPAL', passwordVariable: 'AZURE_PASSWORD'),
-                    usernamePassword(credentialsId: 'catenax-admin', usernameVariable: 'CATENAX_ADMIN_USER', passwordVariable: 'CATENAX_ADMIN_PASSWORD'),
-                    usernamePassword(credentialsId: 'catenax-user', usernameVariable: 'CATENAX_USER', passwordVariable: 'CATENAX_PASSWORD'),
-                    string(credentialsId: 'catenaxtsi-shared-storage', variable: 'STORAGE_ACCOUNT_KEY'),
-                ]) {
-                    sh 'kubectl config set-credentials principal/catenaxtsi-dev-aks-services --username=${AZURE_PRINCIPAL} --password=${AZURE_PASSWORD}'
-                    sh 'kubectl config set-cluster catenaxtsi-dev-aks-services --insecure-skip-tls-verify=true --server=https://catenaxtsidevakssrv-2b3f5bcb.hcp.germanywestcentral.azmk8s.io:443'
-                    sh 'kubectl config set-context default/catenaxtsi-dev-aks-services/principal --user=principal/catenaxtsi-dev-aks-services --namespace=default --cluster=catenaxtsi-dev-aks-services'
-                    sh 'kubectl config use-context default/catenaxtsi-dev-aks-services/principal'
-                }
-            }
-        }
+
         stage('semantics') {
             steps {
                 withCredentials([
@@ -77,28 +63,26 @@ pipeline {
                                     image1.push("latest");
                                 }
                             }
-
+                        }
+                        dir("infrastructure") {
+                            docker.withRegistry('https://catenaxtsiacr.azurecr.io', 'azure-service-principal') {
                             sh '''
-                                cat ../infrastructure/manifests/semantics.yaml | envsubst | kubectl apply -n semantics -f -;
-                                sleep 15s
-                                export SOLVER=$(kubectl describe ingress -n semantics cm-acme | sed -n "s/Name:[\\w]*\\([\\S]*\\)/\\1/p");
-                                if [[ "${SOLVER}" == "" ]]; then \
-                                    echo "Solver clean; Certificate granted"; \
-                                else \
-                                    echo "Found a pending solver ${SOLVER} which we need to patch"; \
-                                    kubectl get ingress ${SOLVER} -n semantics -o yaml | sed "/^.*kubernetes\\.io\\/ingress\\.class:.*service.*$/d" | sed "/^spec:$/a\\  ingressClassName: service" | kubectl apply -f -; \
-                                fi;
-                                sleep 15s
-                                export SOLVER=$(kubectl describe ingress -n semantics cm-acme | sed -n "s/Name:[\\w]*\\([\\S]*\\)/\\1/p");
-                                if [[ "${SOLVER}" == "" ]]; then \
-                                    echo "Solver clean; Certificate granted"; \
-                                else \
-                                    echo "Found a pending solver ${SOLVER} which we need to patch"; \
-                                    kubectl get ingress ${SOLVER} -n semantics -o yaml | sed "/^.*kubernetes\\.io\\/ingress\\.class:.*service.*$/d" | sed "/^spec:$/a\\  ingressClassName: service" | kubectl apply -f -; \
-                                fi;
-                                kubectl rollout restart deployment semantics -n semantics;
-                                kubectl rollout restart deployment adapter -n semantics;
+                                docker build --progress=plain --no-cache -f Dockerfile.deploy \
+                                --build-arg SERVICE_PRINCIPAL_ID=${AZURE_PRINCIPAL} \
+                                --build-arg SERVICE_PRINCIPAL_SECRET=${AZURE_PASSWORD} \
+                                --build-arg KUBERNETES_TARGET_NAMESPACE=semantics \
+                                --build-arg MANIFEST_FILE=manifests/semantics.yaml \
+                                --build-arg CATENAX_ADMIN_USER=${CATENAX_ADMIN_USER} \
+                                --build-arg CATENAX_ADMIN_PASSWORD=${CATENAX_ADMIN_PASSWORD} \
+                                --build-arg CATENAX_USER=${CATENAX_USER} \
+                                --build-arg CATENAX_PASSWORD=${CATENAX_PASSWORD} \
+                                --build-arg WORKSPACE=dev \
+                                --build-arg ENVIRONMENT=tsi \
+                                --build-arg TENANT=62c61770-cf81-426f-a4ca-524fbf987ea0 \
+                                --build-arg DEPLOYMENTS=semantics,adapter \
+                                . 
                            '''
+                           }
                         }
                     }
                 }
@@ -136,21 +120,29 @@ pipeline {
                                     image1.push("latest");
                                 }
                             }
-
+                        }
+                        dir("infrastructure") {
+                            docker.withRegistry('https://catenaxtsiacr.azurecr.io', 'azure-service-principal') {
                             sh '''
-                                cat ../../../infrastructure/manifests/portal.yaml | envsubst | kubectl apply -n portal -f -;
-                                export SOLVER=$(kubectl describe ingress -n portal cm-acme | sed -n "s/Name:[\\w]*\\([\\S]*\\)/\\1/p");
-                                if [[ "${SOLVER}" == "" ]]; then \
-                                    echo "Solver clean; Certificate granted"; \
-                                else \
-                                    echo "Found a pending solver ${SOLVER} which we need to patch"; \
-                                    kubectl get ingress ${SOLVER} -n portal -o yaml | sed "/^.*kubernetes\\.io\\/ingress\\.class:.*service.*$/d" | sed "/^spec:$/a\\  ingressClassName: service" | kubectl apply -f -; \
-                                fi;
-                                kubectl rollout restart deployment portal -n portal
-                            '''
+                                docker build --progress=plain --no-cache -f Dockerfile.deploy \
+                                --build-arg SERVICE_PRINCIPAL_ID=${AZURE_PRINCIPAL} \
+                                --build-arg SERVICE_PRINCIPAL_SECRET=${AZURE_PASSWORD} \
+                                --build-arg KUBERNETES_TARGET_NAMESPACE=portal \
+                                --build-arg MANIFEST_FILE=manifests/portal.yaml \
+                                --build-arg CATENAX_ADMIN_USER=${CATENAX_ADMIN_USER} \
+                                --build-arg CATENAX_ADMIN_PASSWORD=${CATENAX_ADMIN_PASSWORD} \
+                                --build-arg CATENAX_USER=${CATENAX_USER} \
+                                --build-arg CATENAX_PASSWORD=${CATENAX_PASSWORD} \
+                                --build-arg WORKSPACE=dev \
+                                --build-arg ENVIRONMENT=tsi \
+                                --build-arg TENANT=62c61770-cf81-426f-a4ca-524fbf987ea0 \
+                                --build-arg DEPLOYMENTS=portal \
+                                . 
+                           '''
+                           }
+                        }
                     }
                 }
-            }
         }
     }
     post {
