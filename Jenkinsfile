@@ -67,6 +67,8 @@ pipeline {
                         dir("infrastructure") {
                             script {
                                 docker.withRegistry('https://catenaxtsiacr.azurecr.io', 'azure-service-principal') {
+                                    docker.pull('catenaxtsiacr/catenax/deploy')
+                                    docker.tag('catenaxtsiacr/catenax/deploy','catenax/deploy')
                                     sh '''
                                         docker build --progress=plain --no-cache -f Dockerfile.deploy \
                                         --build-arg SERVICE_PRINCIPAL_ID=${AZURE_PRINCIPAL} \
@@ -126,6 +128,8 @@ pipeline {
                         dir("infrastructure") {
                             script {
                                 docker.withRegistry('https://catenaxtsiacr.azurecr.io', 'azure-service-principal') {
+                                    docker.pull('catenaxtsiacr/catenax/deploy')
+                                    docker.tag('catenaxtsiacr/catenax/deploy','catenax/deploy')
                                     sh '''
                                     docker build --progress=plain --no-cache -f Dockerfile.deploy \
                                     --build-arg SERVICE_PRINCIPAL_ID=${AZURE_PRINCIPAL} \
