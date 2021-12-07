@@ -117,7 +117,7 @@ pipeline {
                         
                             script {
                                 docker.withRegistry('https://catenaxtsiacr.azurecr.io', 'azure-service-principal') {
-                                    image1 = docker.build('frontend/portaldev',' -f Dockerfile .')
+                                    image1 = docker.build('frontend/portaldev',' -f Dockerfile.develop .')
                                     image1.push("latest");
                                 }
                             }
