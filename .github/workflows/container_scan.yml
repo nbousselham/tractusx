@@ -10,20 +10,34 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v2
 
-      - name: Run Trivy vulnerability scanner in repo mode
+      - name: scan repo
         uses: aquasecurity/trivy-action@master
         with:
           scan-type: 'fs'
           hide-progress: false
+          format: 'template'
+          template: '@/contrib/sarif.tpl'
+          output: 'trivy-results-repo.sarif'
           ignore-unfixed: true
-          format: 'table'
           severity: 'CRITICAL,HIGH'
 
-      - name: Run Trivy vulnerability scanner in IaC mode
+      - name: upload repo scan results
+        uses: github/codeql-action/upload-sarif@v1
+        with:
+          sarif_file: 'trivy-results-repo.sarif'
+
+      - name: scan IaC configs
         uses: aquasecurity/trivy-action@master
         with:
           scan-type: 'config'
           hide-progress: false
-          format: 'table'
+          format: 'template'
+          template: '@/contrib/sarif.tpl'
+          output: 'trivy-results-iac.sarif'
           ignore-unfixed: true
           severity: 'CRITICAL,HIGH'
+
+      - name: upload iac scan results
+        uses: github/codeql-action/upload-sarif@v1
+        with:
+          sarif_file: 'trivy-results-iac.sarif'
