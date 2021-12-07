@@ -12,8 +12,10 @@ import org.mockito.Captor;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.time.Instant;
 import java.util.List;
 
+import static java.time.Instant.now;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.eclipse.dataspaceconnector.spi.types.domain.transfer.TransferProcessStates.ERROR;
 import static org.eclipse.dataspaceconnector.spi.types.domain.transfer.TransferProcessStates.IN_PROGRESS;
@@ -22,7 +24,7 @@ import static org.mockito.Mockito.*;
 @ExtendWith(MockitoExtension.class)
 class CancelLongRunningProcessesTest {
 
-    public static final int STATE_TIMEOUT = 20;
+    public static final long STATE_TIMEOUT = 20;
     public static final int BATCH_SIZE = 5;
 
     Faker faker = new Faker();
@@ -51,11 +53,11 @@ class CancelLongRunningProcessesTest {
         // Arrange
         var p1 = TransferProcess.Builder.newInstance()
                 .id(faker.lorem().characters())
-                .stateTimestamp(STATE_TIMEOUT - faker.number().numberBetween(1, 10))
+                .stateTimestamp(now().toEpochMilli())
                 .build();
         var p2 = TransferProcess.Builder.newInstance()
                 .id(faker.lorem().characters())
-                .stateTimestamp(STATE_TIMEOUT + faker.number().numberBetween(1, 10))
+                .stateTimestamp(now().minusSeconds(STATE_TIMEOUT + 1).toEpochMilli())
                 .build();
 
         when(transferProcessStore.nextForState(IN_PROGRESS.code(), BATCH_SIZE)).thenReturn(List.of(p1, p2));

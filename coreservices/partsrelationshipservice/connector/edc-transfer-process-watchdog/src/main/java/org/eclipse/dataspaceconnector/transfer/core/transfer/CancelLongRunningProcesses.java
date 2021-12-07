@@ -14,7 +14,11 @@ import lombok.Builder;
 import org.eclipse.dataspaceconnector.spi.monitor.Monitor;
 import org.eclipse.dataspaceconnector.spi.transfer.store.TransferProcessStore;
 
+import java.time.Instant;
+
 import static java.lang.String.format;
+import static java.time.Instant.now;
+import static java.time.Instant.ofEpochMilli;
 import static org.eclipse.dataspaceconnector.spi.types.domain.transfer.TransferProcessStates.IN_PROGRESS;
 
 @Builder
@@ -27,8 +31,9 @@ class CancelLongRunningProcesses implements Runnable {
 
     public void run() {
         var transferProcesses = transferProcessStore.nextForState(IN_PROGRESS.code(), batchSize);
+
         transferProcesses.stream()
-            .filter(p -> p.getStateTimestamp() > stateTimeout)
+            .filter(p -> ofEpochMilli(p.getStateTimestamp()).isBefore(now().minusSeconds(stateTimeout)))
             .forEach(p -> {
                 p.transitionError(format("Timeout (%ss)", stateTimeout));
                 transferProcessStore.update(p);
