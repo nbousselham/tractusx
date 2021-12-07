@@ -46,7 +46,7 @@ public class TransferProcessWatchdogIntegrationTest {
 
         StatusChecker statusChecker = mock(StatusChecker.class);
         expect(statusChecker.isComplete(anyObject(TransferProcess.class), eq(emptyList()))).andReturn(false);
-        statusCheckerRegistry.register("XXX", statusChecker);
+        statusCheckerRegistry.register(request.getDestinationType(), statusChecker);
 
         var process = TransferProcess.Builder.newInstance()
                 .id(faker.lorem().characters())
@@ -57,13 +57,13 @@ public class TransferProcessWatchdogIntegrationTest {
 
         // Act
         transferProcessStore.update(process);
-        Thread.sleep(2000);
+        Thread.sleep(1500); // sleep enough time for watchdog to cancel process
 
         // Assert
         assertThat(transferProcessStore.find(process.getId())).usingRecursiveComparison()
                 .ignoringFields("stateTimestamp", "stateCount")
                 .isEqualTo(TransferProcess.Builder.newInstance()
-                        .id("123")
+                        .id(process.getId())
                         .dataRequest(request)
                         .type(CONSUMER)
                         .state(ERROR.code())
