@@ -31,6 +31,17 @@ pipeline {
     }
     stages {
 
+        stage('prepare') {  
+            sh '''
+            docker login -u ${AZURE_PRINCIPAL} -p ${AZURE_PASSWORD} https://catenaxtsiacr.azurecr.io;
+            for IMAGE in $(docker image ls | grep "catenax" | awk -F ' ' '{print $3}' | sort | uniq); do docker image rm -f ${IMAGE}; done;
+            docker container prune -f;
+            docker image prune -f;
+            docker pull catenaxtsiacr.azurecr.io/catenax/deploy;
+            docker tag catenaxtsiacr.azurecr.io/catenax/deploy catenax/deploy;
+            '''
+        }
+
         stage('semantics') {
             steps {
                 withCredentials([
@@ -65,9 +76,6 @@ pipeline {
                             }
                         }
                         dir("infrastructure") {
-                            sh '''docker login -u ${AZURE_PRINCIPAL} -p ${AZURE_PASSWORD} https://catenaxtsiacr.azurecr.io'''
-                            sh '''docker pull catenaxtsiacr.azurecr.io/catenax/deploy'''
-                            sh '''docker tag catenaxtsiacr.azurecr.io/catenax/deploy catenax/deploy'''
                             sh '''
                                  docker build --progress=plain --no-cache -f Dockerfile.deploy \
                                         --build-arg SERVICE_PRINCIPAL_ID=${AZURE_PRINCIPAL} \

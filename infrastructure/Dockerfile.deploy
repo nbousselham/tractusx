@@ -17,7 +17,6 @@ FROM catenax/deploy AS deploy
 # when behind a corporate proxy
 ARG HTTP_PROXY
 ARG HTTPS_PROXY
-ENV MAVEN_OPTS=""
 
 # important credentials for interacting with the target environment
 ARG SERVICE_PRINCIPAL_ID 
@@ -59,9 +58,6 @@ RUN az aks get-credentials --name ${KUBERNETES_SERVICE} --resource-group ${ENVIR
 
 # copy the manifest
 COPY ${MANIFEST_FILE} ${MANIFEST_FILE}
-
-# make it compatible
-RUN dos2unix ${MANIFEST_FILE}
 
 # do the deployment
 RUN cat ${MANIFEST_FILE} | envsubst | kubectl apply -n ${KUBERNETES_TARGET_NAMESPACE} -f -
