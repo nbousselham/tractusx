@@ -13,7 +13,7 @@
 # Compile/Build the jar
 FROM maven:3-jdk-11 AS maven
 
-ARG MAVEN_OPTS ""
+ARG MAVEN_OPTS=""
 
 WORKDIR /app
 
@@ -24,13 +24,17 @@ RUN mvn clean install -Dmaven.javadoc.skip=true -DskipTests -q
 # Deploy the service
 FROM openjdk:11-jre-buster
 
-ARG HTTP_PROXY ""
+ARG HTTP_PROXY=""
 RUN if [[ -n "${HTTP_PROXY}"  ]]; then echo "Acquire::http::Proxy \"${HTTP_PROXY}\"" >> /etc/apt/apt.conf.d/proxy.conf; fi
 RUN if [[ -n "${HTTP_PROXY}" ]]; then echo "Acquire::https::Proxy \"${HTTP_PROXY}\"" >> /etc/apt/apt.conf.d/proxy.conf; fi
 
 RUN apt-get -y upgrade
 RUN apt-get -y update
+
+RUN if [[ -n "${HTTP_PROXY}"  ]]; then rm -f /etc/apt/apt.conf.d/proxy.conf; fi
+
 RUN adduser --system --group spring
+
 
 RUN mkdir -p /adapter
 
