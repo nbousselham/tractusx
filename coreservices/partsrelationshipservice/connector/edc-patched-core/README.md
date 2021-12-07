@@ -50,9 +50,3 @@ of the EDC Connector.
 
 We are in discussions with the EDC team to figure out whether to push these changes upstream or use different functionality.
 
-# Transfer process updates
-
-See issue [#324](https://github.com/eclipse-dataspaceconnector/DataSpaceConnector/issues/324)
-
-The TransferProcessManagerImpl has been patched to not update Transfer Processes in case no changes are available. Apart from preventing unnecessary writes, this change allows separate threads to update the status without having the TransferProcessManager overwriting these changes (see description in the issue).
-
