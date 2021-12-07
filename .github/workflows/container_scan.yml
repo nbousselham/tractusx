@@ -1,13 +1,13 @@
-name: build
+name: container-scan
 on:
   push:
 
 jobs:
-  build:
-    name: Build
+  repo-scan:
+    name: repo vunerability scan
     runs-on: ubuntu-18.04
     steps:      
-      - name: Checkout
+      - name: checkout
         uses: actions/checkout@v2
 
       - name: scan repo
@@ -39,5 +39,30 @@ jobs:
 
       - name: upload iac scan results
         uses: github/codeql-action/upload-sarif@v1
+        if: always() 
+        with:
+          sarif_file: 'trivy-results-iac.sarif'
+
+  iac-scan:
+    name: iac vunerability scan
+    runs-on: ubuntu-18.04
+    steps:      
+      - name: checkout
+        uses: actions/checkout@v2
+
+      - name: scan IaC configs
+        uses: aquasecurity/trivy-action@master
+        with:
+          scan-type: 'config'
+          hide-progress: false
+          format: 'template'
+          template: '@/contrib/sarif.tpl'
+          output: 'trivy-results-iac.sarif'
+          ignore-unfixed: true
+          severity: 'CRITICAL,HIGH'
+
+      - name: upload iac scan results
+        uses: github/codeql-action/upload-sarif@v1
+        if: always() 
         with:
           sarif_file: 'trivy-results-iac.sarif'
