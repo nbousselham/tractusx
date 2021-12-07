@@ -18,7 +18,7 @@ jobs:
           format: 'template'
           template: '@/contrib/sarif.tpl'
           output: 'trivy-results-repo.sarif'
-          # ignore-unfixed: true
+          ignore-unfixed: true
           severity: 'CRITICAL,HIGH'
 
       - name: upload repo scan results
@@ -42,7 +42,7 @@ jobs:
           format: 'template'
           template: '@/contrib/sarif.tpl'
           output: 'trivy-results-iac.sarif'
-          # ignore-unfixed: true
+          ignore-unfixed: true
           severity: 'CRITICAL,HIGH'
 
       - name: upload iac scan results
