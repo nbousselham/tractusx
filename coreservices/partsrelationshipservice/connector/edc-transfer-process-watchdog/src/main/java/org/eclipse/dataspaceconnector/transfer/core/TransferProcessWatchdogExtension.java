@@ -13,6 +13,7 @@ package org.eclipse.dataspaceconnector.transfer.core;
 import org.eclipse.dataspaceconnector.spi.monitor.Monitor;
 import org.eclipse.dataspaceconnector.spi.system.ServiceExtension;
 import org.eclipse.dataspaceconnector.spi.system.ServiceExtensionContext;
+import org.eclipse.dataspaceconnector.spi.transfer.TransferProcessManager;
 import org.eclipse.dataspaceconnector.spi.transfer.store.TransferProcessStore;
 import org.eclipse.dataspaceconnector.transfer.core.transfer.TransferProcessWatchdog;
 
@@ -52,7 +53,8 @@ public class TransferProcessWatchdogExtension implements ServiceExtension {
     @Override
     public void start() {
         var transferProcessStore = context.getService(TransferProcessStore.class);
-        watchdog.start(transferProcessStore);
+        var transferProcessManager = context.getService(TransferProcessManager.class);
+        watchdog.start(transferProcessStore, transferProcessManager);
         monitor.info("Started Transfer Process Watchdog extension");
     }
 

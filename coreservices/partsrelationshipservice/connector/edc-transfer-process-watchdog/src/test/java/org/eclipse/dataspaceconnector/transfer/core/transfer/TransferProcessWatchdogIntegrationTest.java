@@ -2,6 +2,7 @@ package org.eclipse.dataspaceconnector.transfer.core.transfer;
 
 import com.github.javafaker.Faker;
 import org.eclipse.dataspaceconnector.junit.launcher.EdcExtension;
+import org.eclipse.dataspaceconnector.spi.transfer.TransferProcessListener;
 import org.eclipse.dataspaceconnector.spi.transfer.TransferProcessObservable;
 import org.eclipse.dataspaceconnector.spi.transfer.store.TransferProcessStore;
 import org.eclipse.dataspaceconnector.spi.types.domain.metadata.DataEntry;
@@ -14,6 +15,8 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 
 import java.util.Properties;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.TimeUnit;
 
 import static java.util.Collections.emptyList;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -34,7 +37,7 @@ public class TransferProcessWatchdogIntegrationTest {
     }
 
     @Test
-    public void cancelLongRunningProcess(TransferProcessStore transferProcessStore, StatusCheckerRegistry statusCheckerRegistry) throws InterruptedException {
+    public void cancelLongRunningProcess(TransferProcessStore transferProcessStore, TransferProcessObservable transferProcessObservable, StatusCheckerRegistry statusCheckerRegistry) throws InterruptedException {
         // Arrange
         DataRequest request = DataRequest.Builder.newInstance().protocol("ids-rest")
                 .dataEntry(DataEntry.Builder.newInstance().id(faker.lorem().characters()).build())
@@ -55,9 +58,12 @@ public class TransferProcessWatchdogIntegrationTest {
                 .state(IN_PROGRESS.code())
                 .build();
 
+        CountDownLatch latch = new CountDownLatch(1);
+        transferProcessObservable.registerListener(new TestListener(latch));
+
         // Act
         transferProcessStore.update(process);
-        Thread.sleep(1500); // sleep enough time for watchdog to cancel process
+        latch.await(1, TimeUnit.MINUTES);
 
         // Assert
         assertThat(transferProcessStore.find(process.getId())).usingRecursiveComparison()
@@ -67,7 +73,22 @@ public class TransferProcessWatchdogIntegrationTest {
                         .dataRequest(request)
                         .type(CONSUMER)
                         .state(ERROR.code())
-                        .errorDetail("Timeout (1s)")
+                        .errorDetail("Cancelled")
                         .build());
     }
+
+    static class TestListener implements TransferProcessListener {
+
+        private final CountDownLatch latch;
+
+        public TestListener(CountDownLatch latch) {
+            this.latch = latch;
+        }
+
+        @Override
+        public void error(TransferProcess process) {
+            latch.countDown();
+        }
+    }
+
 }
