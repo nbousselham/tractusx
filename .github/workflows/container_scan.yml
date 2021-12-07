@@ -3,29 +3,29 @@ on:
   push:
 
 jobs:
-  repo-scan:
-    name: repo vunerability scan
-    runs-on: ubuntu-18.04
-    steps:      
-      - name: checkout
-        uses: actions/checkout@v2
+  # repo-scan:
+  #   name: repo vunerability scan
+  #   runs-on: ubuntu-18.04
+  #   steps:      
+  #     - name: checkout
+  #       uses: actions/checkout@v2
 
-      - name: scan repo
-        uses: aquasecurity/trivy-action@master
-        with:
-          scan-type: 'fs'
-          hide-progress: false
-          format: 'template'
-          template: '@/contrib/sarif.tpl'
-          output: 'trivy-results-repo.sarif'
-          # ignore-unfixed: true
-          # severity: 'CRITICAL,HIGH'
+  #     - name: scan repo
+  #       uses: aquasecurity/trivy-action@master
+  #       with:
+  #         scan-type: 'fs'
+  #         hide-progress: false
+  #         format: 'template'
+  #         template: '@/contrib/sarif.tpl'
+  #         output: 'trivy-results-repo.sarif'
+  #         # ignore-unfixed: true
+  #         # severity: 'CRITICAL,HIGH'
 
-      - name: upload repo scan results
-        uses: github/codeql-action/upload-sarif@v1
-        if: always() 
-        with:
-          sarif_file: 'trivy-results-repo.sarif'
+  #     - name: upload repo scan results
+  #       uses: github/codeql-action/upload-sarif@v1
+  #       if: always() 
+  #       with:
+  #         sarif_file: 'trivy-results-repo.sarif'
 
   iac-scan:
     name: iac vunerability scan
@@ -39,14 +39,14 @@ jobs:
         with:
           scan-type: 'config'
           hide-progress: false
-          format: 'template'
-          template: '@/contrib/sarif.tpl'
-          output: 'trivy-results-iac.sarif'
+          format: 'table'
+          # template: '@/contrib/sarif.tpl'
+          # output: 'trivy-results-iac.sarif'
           # ignore-unfixed: true
           # severity: 'CRITICAL,HIGH'
 
-      - name: upload iac scan results
-        uses: github/codeql-action/upload-sarif@v1
-        if: always() 
-        with:
-          sarif_file: 'trivy-results-iac.sarif'
+      # - name: upload iac scan results
+      #   uses: github/codeql-action/upload-sarif@v1
+      #   if: always() 
+      #   with:
+      #     sarif_file: 'trivy-results-iac.sarif'
