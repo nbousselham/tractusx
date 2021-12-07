@@ -6,6 +6,7 @@ jobs:
   repo-scan:
     name: repo vunerability scan
     runs-on: ubuntu-18.04
+    continue-on-error: true
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
@@ -28,6 +29,7 @@ jobs:
   iac-scan:
     name: iac vunerability scan
     runs-on: ubuntu-18.04
+    continue-on-error: true
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
