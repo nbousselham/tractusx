@@ -23,25 +23,9 @@ jobs:
 
       - name: upload repo scan results
         uses: github/codeql-action/upload-sarif@v1
-        with:
-          sarif_file: 'trivy-results-repo.sarif'
-
-      - name: scan IaC configs
-        uses: aquasecurity/trivy-action@master
-        with:
-          scan-type: 'config'
-          hide-progress: false
-          format: 'template'
-          template: '@/contrib/sarif.tpl'
-          output: 'trivy-results-iac.sarif'
-          ignore-unfixed: true
-          severity: 'CRITICAL,HIGH'
-
-      - name: upload iac scan results
-        uses: github/codeql-action/upload-sarif@v1
         if: always() 
         with:
-          sarif_file: 'trivy-results-iac.sarif'
+          sarif_file: 'trivy-results-repo.sarif'
 
   iac-scan:
     name: iac vunerability scan
