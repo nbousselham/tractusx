@@ -46,7 +46,7 @@ public class TransferProcessWatchdogExtension implements ServiceExtension {
                         .batchSize(5)
                         .build();
 
-        monitor.info("Initialized Core Transfer extension");
+        monitor.info("Initialized Transfer Process Watchdog extension");
     }
 
     @Override
