@@ -76,6 +76,12 @@
             <scope>test</scope>
         </dependency>
         <dependency>
+            <groupId>org.eclipse.dataspaceconnector</groupId>
+            <artifactId>dataspaceconnector.common.util</artifactId>
+            <version>${edcVersion}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
             <groupId>org.easymock</groupId>
             <artifactId>easymock</artifactId>
             <version>4.2</version>
