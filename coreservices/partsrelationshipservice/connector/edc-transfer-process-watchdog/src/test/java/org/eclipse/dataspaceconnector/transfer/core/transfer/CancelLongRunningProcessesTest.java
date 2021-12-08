@@ -5,6 +5,7 @@ import org.easymock.Capture;
 import org.easymock.EasyMockExtension;
 import org.easymock.Mock;
 import org.eclipse.dataspaceconnector.spi.monitor.Monitor;
+import org.eclipse.dataspaceconnector.spi.transfer.TransferProcessManager;
 import org.eclipse.dataspaceconnector.spi.transfer.store.TransferProcessStore;
 import org.eclipse.dataspaceconnector.spi.types.domain.transfer.TransferProcess;
 import org.junit.jupiter.api.BeforeEach;
@@ -31,6 +32,8 @@ class CancelLongRunningProcessesTest {
     Monitor monitor;
     @Mock
     TransferProcessStore transferProcessStore;
+    @Mock
+    TransferProcessManager transferProcessManager;
 
     Capture<TransferProcess> transferProcessCaptor = Capture.newInstance();
 
@@ -41,6 +44,7 @@ class CancelLongRunningProcessesTest {
         sut = CancelLongRunningProcesses.builder()
                 .monitor(monitor)
                 .transferProcessStore(transferProcessStore)
+                .transferProcessManager(transferProcessManager)
                 .batchSize(BATCH_SIZE)
                 .stateTimeoutInMs(STATE_TIMEOUT_MS)
                 .build();
@@ -59,20 +63,16 @@ class CancelLongRunningProcessesTest {
                 .build();
 
         expect(transferProcessStore.nextForState(IN_PROGRESS.code(), BATCH_SIZE)).andReturn(List.of(p1, p2));
-        transferProcessStore.update(capture(transferProcessCaptor));
         replay(transferProcessStore);
+
+        transferProcessManager.cancelTransferProcess(p2.getId());
+        expectLastCall();
+        replay(transferProcessManager);
 
         // Act
         sut.run();
 
         // Assert
-        var transferProcess = transferProcessCaptor.getValue();
-        assertThat(transferProcess).usingRecursiveComparison().ignoringFields("stateCount", "stateTimestamp").isEqualTo(
-                TransferProcess.Builder.newInstance()
-                    .id(p2.getId())
-                    .state(ERROR.code())
-                    .errorDetail("Timeout")
-                    .build()
-        );
+        verify(transferProcessManager);
     }
 }

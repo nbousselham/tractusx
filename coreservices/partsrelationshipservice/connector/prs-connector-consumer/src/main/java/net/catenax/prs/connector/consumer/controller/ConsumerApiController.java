@@ -22,6 +22,7 @@ import lombok.RequiredArgsConstructor;
 import net.catenax.prs.connector.consumer.middleware.RequestMiddleware;
 import net.catenax.prs.connector.consumer.service.ConsumerService;
 import net.catenax.prs.connector.consumer.service.StatusResponse;
+import net.catenax.prs.connector.job.JobState;
 import net.catenax.prs.connector.parameters.GetStatusParameters;
 import net.catenax.prs.connector.requests.PartsTreeRequest;
 import org.eclipse.dataspaceconnector.spi.monitor.Monitor;
@@ -110,6 +111,9 @@ public class ConsumerApiController {
                     final StatusResponse statusResponse = status.get();
                     if (statusResponse.getSasToken() != null) {
                         return Response.ok(statusResponse.getSasToken()).build();
+                    }
+                    if (statusResponse.getStatus() == JobState.ERROR) {
+                        return Response.serverError().build();
                     }
                     return Response.accepted(statusResponse.getStatus().toString()).build();
                 });

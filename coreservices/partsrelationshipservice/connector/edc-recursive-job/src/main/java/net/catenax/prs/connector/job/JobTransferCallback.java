@@ -35,4 +35,14 @@ class JobTransferCallback implements TransferProcessListener {
     public void completed(final TransferProcess process) {
         jobOrchestrator.transferProcessCompleted(process);
     }
+
+    /**
+     * Callback invoked by the EDC framework when a transfer fails.
+     *
+     * @param process
+     */
+    @Override
+    public void error(TransferProcess process) {
+        jobOrchestrator.transferProcessError(process);
+    }
 }

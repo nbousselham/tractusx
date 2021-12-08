@@ -12,6 +12,7 @@ package org.eclipse.dataspaceconnector.transfer.core.transfer;
 
 import lombok.Builder;
 import org.eclipse.dataspaceconnector.spi.monitor.Monitor;
+import org.eclipse.dataspaceconnector.spi.transfer.TransferProcessManager;
 import org.eclipse.dataspaceconnector.spi.transfer.store.TransferProcessStore;
 
 import java.util.concurrent.Executors;
@@ -34,12 +35,13 @@ public class TransferProcessWatchdog {
         this.stateTimeoutInMs = stateTimeoutInMs;
     }
 
-    public void start(TransferProcessStore processStore) {
+    public void start(TransferProcessStore processStore, TransferProcessManager transferProcessManager) {
         var action = CancelLongRunningProcesses.builder()
                 .monitor(monitor)
                 .stateTimeoutInMs(stateTimeoutInMs)
                 .batchSize(batchSize)
                 .transferProcessStore(processStore)
+                .transferProcessManager(transferProcessManager)
                 .build();
         executor = Executors.newSingleThreadScheduledExecutor();
         executor.scheduleWithFixedDelay(action, 0, delayInMs, TimeUnit.MILLISECONDS);

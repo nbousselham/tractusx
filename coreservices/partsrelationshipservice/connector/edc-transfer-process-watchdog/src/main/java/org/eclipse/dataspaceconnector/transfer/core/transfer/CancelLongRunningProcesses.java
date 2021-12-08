@@ -12,6 +12,7 @@ package org.eclipse.dataspaceconnector.transfer.core.transfer;
 
 import lombok.Builder;
 import org.eclipse.dataspaceconnector.spi.monitor.Monitor;
+import org.eclipse.dataspaceconnector.spi.transfer.TransferProcessManager;
 import org.eclipse.dataspaceconnector.spi.transfer.store.TransferProcessStore;
 
 import static java.time.Instant.now;
@@ -25,16 +26,15 @@ class CancelLongRunningProcesses implements Runnable {
     private final long stateTimeoutInMs;
 
     private final TransferProcessStore transferProcessStore;
+    private final TransferProcessManager transferProcessManager;
 
     public void run() {
         var transferProcesses = transferProcessStore.nextForState(IN_PROGRESS.code(), batchSize);
-
         transferProcesses.stream()
             .filter(p -> ofEpochMilli(p.getStateTimestamp()).isBefore(now().minusMillis(stateTimeoutInMs)))
             .forEach(p -> {
-                p.transitionError("Timeout");
-                transferProcessStore.update(p);
                 monitor.info("Timeout for process " + p);
+                transferProcessManager.cancelTransferProcess(p.getId());
             });
     }
 }

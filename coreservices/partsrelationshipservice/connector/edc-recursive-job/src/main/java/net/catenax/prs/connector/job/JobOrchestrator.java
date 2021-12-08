@@ -154,6 +154,22 @@ public class JobOrchestrator {
         callCompleteHandlerIfFinished(job.getJobId());
     }
 
+    /**
+     * Callback invoked when a transfer fails.
+     *
+     * @param process
+     */
+    /* package */ void transferProcessError(TransferProcess process) {
+        final var jobEntry = jobStore.findByProcessId(process.getId());
+        if (!jobEntry.isPresent()) {
+            monitor.severe("Job not found for transfer " + process.getId());
+            return;
+        }
+        final var job = jobEntry.get();
+        monitor.info("Transfer failed in job " + job.getJobId());
+        jobStore.markJobInError(job.getJobId(), "Transfer failed");
+    }
+
     private void callCompleteHandlerIfFinished(final String jobId) {
         jobStore.find(jobId).ifPresent(job -> {
             if (job.getState() != JobState.TRANSFERS_FINISHED) {
