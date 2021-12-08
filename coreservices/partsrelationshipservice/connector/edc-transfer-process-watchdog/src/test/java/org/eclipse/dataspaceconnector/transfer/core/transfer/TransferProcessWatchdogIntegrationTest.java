@@ -31,7 +31,9 @@ public class TransferProcessWatchdogIntegrationTest {
     @BeforeAll
     public static void setProperties() {
         Properties props = System.getProperties();
-        props.setProperty("edc.watchdog.timeout", "1");
+        // watchdog delay of 100ms with process timeout of 100ms
+        props.setProperty("edc.watchdog.timeout", "100");
+        props.setProperty("edc.watchdog.delay", "100");
     }
 
     @BeforeEach
@@ -53,7 +55,7 @@ public class TransferProcessWatchdogIntegrationTest {
 
         StatusChecker statusChecker = mock(StatusChecker.class);
         expect(statusChecker.isComplete(anyObject(TransferProcess.class), eq(emptyList()))).andAnswer(() -> {
-            Thread.sleep(500); // simulate status checker delay during which the watchdog cancels the process
+            Thread.sleep(150); // simulate status checker delay during which the watchdog cancels the process
             return false;
         });
         replay(statusChecker);
@@ -68,7 +70,7 @@ public class TransferProcessWatchdogIntegrationTest {
 
         // Act
         transferProcessStore.update(process);
-        Thread.sleep(1500); // sleep enough time for watchdog to cancel process
+        Thread.sleep(200); // sleep enough time for watchdog to cancel process
 
         // Assert
         assertThat(transferProcessStore.find(process.getId())).usingRecursiveComparison()
@@ -78,7 +80,7 @@ public class TransferProcessWatchdogIntegrationTest {
                         .dataRequest(request)
                         .type(CONSUMER)
                         .state(ERROR.code())
-                        .errorDetail("Timeout (1s)")
+                        .errorDetail("Timeout")
                         .build());
     }
 }

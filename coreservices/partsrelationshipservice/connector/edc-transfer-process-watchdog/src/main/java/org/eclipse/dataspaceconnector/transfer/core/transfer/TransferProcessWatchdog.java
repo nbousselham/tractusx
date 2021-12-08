@@ -21,28 +21,28 @@ import java.util.concurrent.TimeUnit;
 public class TransferProcessWatchdog {
     private final Monitor monitor;
     private final int batchSize;
-    private final long delayInSeconds;
-    private final long stateTimeout;
+    private final long delayInMs;
+    private final long stateTimeoutInMs;
 
     private ScheduledExecutorService executor;
 
     @Builder
-    private TransferProcessWatchdog(Monitor monitor, int batchSize, long delayInSeconds, long stateTimeout) {
+    private TransferProcessWatchdog(Monitor monitor, int batchSize, long delayInMs, long stateTimeoutInMs) {
         this.monitor = monitor;
         this.batchSize = batchSize;
-        this.delayInSeconds = delayInSeconds;
-        this.stateTimeout = stateTimeout;
+        this.delayInMs = delayInMs;
+        this.stateTimeoutInMs = stateTimeoutInMs;
     }
 
     public void start(TransferProcessStore processStore) {
         var action = CancelLongRunningProcesses.builder()
                 .monitor(monitor)
-                .stateTimeout(stateTimeout)
+                .stateTimeoutInMs(stateTimeoutInMs)
                 .batchSize(batchSize)
                 .transferProcessStore(processStore)
                 .build();
         executor = Executors.newSingleThreadScheduledExecutor();
-        executor.scheduleWithFixedDelay(action, 0, delayInSeconds, TimeUnit.SECONDS);
+        executor.scheduleWithFixedDelay(action, 0, delayInMs, TimeUnit.MILLISECONDS);
     }
 
     public void stop() {
