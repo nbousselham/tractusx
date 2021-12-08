@@ -1,15 +1,17 @@
 import Vue from "vue";
 import VueRouter, { RouteConfig } from "vue-router";
-import Dashboard from "@/views/Dashboard.vue";
+import { protectedRoutes } from "./protected";
 
 Vue.use(VueRouter);
 
 const routes: Array<RouteConfig> = [
   {
-    path: "/",
-    name: "Dashboard",
-    component: Dashboard,
+    path: "",
+    redirect: {
+      name: "dashboard",
+    },
   },
+  ...protectedRoutes,
 ];
 
 const router = new VueRouter({

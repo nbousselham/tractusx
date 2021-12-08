@@ -7,6 +7,7 @@ import { dataOfferState } from "./iDataOfferStates";
 const DataOfferState: Module<dataOfferState, Record<string, never>> = {
   state: {
     dataOffersList: [],
+    isDataOffersLoading: false,
   },
   actions,
   getters,

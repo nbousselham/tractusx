@@ -1,1 +1,2 @@
 export const FETCH_DATA_OFFERS = "FETCH_DATA_OFFERS";
+export const IS_OFFER_LOADING = "IS_OFFER_LOADING";

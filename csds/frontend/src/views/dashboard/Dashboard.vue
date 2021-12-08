@@ -4,12 +4,19 @@
       <section class="ma-10">
         <div class="data-offers-panel">
           <h2 class="mb-4">Data offers</h2>
-          <!-- <template>
-            <div v-for="dataOffer in dataOffers" :key="dataOffer['_id']">
-              {{ dataOffer.title }}
-            </div>
-          </template> -->
-          <CxPanel>
+          <template v-if="dataOffers && !isDataOffersLoading">
+            <DataOffersList :dataOffers="dataOffers" />
+          </template>
+          <template v-else-if="isDataOffersLoading">
+            <v-skeleton-loader
+              type="table-tbody"
+              transition="scale-transition"
+              :loading="isDataOffersLoading"
+              max-height="390"
+            >
+            </v-skeleton-loader>
+          </template>
+          <CxPanel v-else>
             <template v-slot:panel-title>
               <span>No data offers.</span>
             </template>
@@ -77,12 +84,18 @@
 import Vue from "vue";
 import CxPanel from "@/components/CxPanel.vue";
 import { GET_DATA_OFFERS } from "@/store/modules/dataoffer/actions/action-types";
-import { FETCH_DATA_OFFERS } from "@/store/modules/dataoffer/getters/getter-types";
+import {
+  FETCH_DATA_OFFERS,
+  IS_OFFER_LOADING,
+} from "@/store/modules/dataoffer/getters/getter-types";
+import DataOffersList from "../dataoffer/DataOffersList.vue";
+import { iDataOffers } from "@/common/interfaces/dataOffers/IDataOffers";
 
 export default Vue.extend({
   name: "Dashboard",
   components: {
     CxPanel,
+    DataOffersList,
   },
   data: () => ({
     dialog: false,
@@ -91,8 +104,11 @@ export default Vue.extend({
     this.$store.dispatch(GET_DATA_OFFERS);
   },
   computed: {
-    dataOffers() {
+    dataOffers(): iDataOffers {
       return this.$store.getters[FETCH_DATA_OFFERS];
+    },
+    isDataOffersLoading(): boolean {
+      return this.$store.getters[IS_OFFER_LOADING];
     },
   },
 });

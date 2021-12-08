@@ -1,3 +1,5 @@
+import { iDataOffers } from "@/common/interfaces/dataOffers/IDataOffers";
 export interface dataOfferState {
-  dataOffersList: Array<unknown>;
+  dataOffersList: Array<iDataOffers>;
+  isDataOffersLoading: boolean;
 }

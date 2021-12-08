@@ -4,5 +4,8 @@
 
 html, body, #app {
   font-family: $catenax-font, sans-serif;
+}
+* {
+  background-repeat: no-repeat;
   box-sizing: border-box;
 }
