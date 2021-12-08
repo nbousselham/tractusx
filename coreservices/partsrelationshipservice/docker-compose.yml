@@ -111,6 +111,7 @@ services:
       edc.vault.tenantid: ${edc_vault_tenantid}
       edc.vault.certificate: /devlocal/cert.pfx
       edc.vault.name: ${edc_vault_name}
+      edc.watchdog.timeout: 10000 # 10s timeout
       edc.storage.account.name: ${edc_storage_account_name}
       prs.dataspace.partitions: /files/dataspace-partitions.json
       prs.dataspace.partition.deployments: /files/dataspace-deployments.json
@@ -126,7 +127,7 @@ services:
       - connector
     container_name: connector-test
     image: adoptopenjdk:11-jre-hotspot
-    command: dev-files/connector-integration-test.sh
+    command: dev-files/${IT_SCRIPT}
     volumes:
       - ./dev:/dev-files
 
