@@ -161,7 +161,7 @@ public class JobOrchestrator {
      */
     /* package */ void transferProcessError(TransferProcess process) {
         final var jobEntry = jobStore.findByProcessId(process.getId());
-        if (!jobEntry.isPresent()) {
+        if (jobEntry.isEmpty()) {
             monitor.severe("Job not found for transfer " + process.getId());
             return;
         }

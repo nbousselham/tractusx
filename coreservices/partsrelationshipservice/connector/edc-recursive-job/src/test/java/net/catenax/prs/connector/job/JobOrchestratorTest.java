@@ -342,6 +342,35 @@ class JobOrchestratorTest {
         verifyNoInteractions(processManager);
     }
 
+    @Test
+    void transferProcessFailed_WhenJobFound_MarksInError() {
+        // Arrange
+        when(jobStore.findByProcessId(transfer.getId()))
+                .thenReturn(Optional.of(job));
+
+        // Act
+        callTransferProcessFailedViaCallback();
+
+        // Assert
+        verify(jobStore).markJobInError(job.getJobId(), "Transfer failed");
+        verifyNoMoreInteractions(jobStore);
+        verifyNoInteractions(processManager);
+    }
+
+    @Test
+    void transferProcessFailed_WhenJobNotFound_Ignores() {
+        // Arrange
+        when(jobStore.findByProcessId(transfer.getId()))
+                .thenReturn(Optional.empty());
+
+        // Act
+        callTransferProcessFailedViaCallback();
+
+        // Assert
+        verifyNoMoreInteractions(jobStore);
+        verifyNoInteractions(processManager);
+    }
+
     private Object byCompletingJob() {
         job = job.toBuilder().transitionTransfersFinished().build();
         lenient().when(jobStore.find(job.getJobId()))
@@ -372,5 +401,10 @@ class JobOrchestratorTest {
     private void callTransferProcessCompletedViaCallback() {
         verify(transferProcessObservable).registerListener(callbackCaptor.capture());
         callbackCaptor.getValue().completed(transfer);
+    }
+
+    private void callTransferProcessFailedViaCallback() {
+        verify(transferProcessObservable).registerListener(callbackCaptor.capture());
+        callbackCaptor.getValue().error(transfer);
     }
 }

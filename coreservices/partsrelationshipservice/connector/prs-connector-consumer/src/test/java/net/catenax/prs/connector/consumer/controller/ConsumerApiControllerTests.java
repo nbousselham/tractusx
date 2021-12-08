@@ -122,23 +122,22 @@ public class ConsumerApiControllerTests {
     }
 
     @Test
-    public void getStatus_WhenSuccess_ReturnsStatus() {
+    public void getStatus_WhenError_ReturnsStatus() {
         // Arrange
         when(service.getStatus(parameters.getRequestId())).thenReturn(Optional.of(
-                StatusResponse.builder().status(jobStatus).build()));
+                StatusResponse.builder().status(JobState.ERROR).build()));
         // Act
         var response = controller.getStatus(parameters);
         // Assert
-        assertThat(response.getEntity()).isEqualTo(jobStatus.name());
-        assertThat(response.getStatus()).isEqualTo(Response.Status.ACCEPTED.getStatusCode());
+        assertThat(response.getStatus()).isEqualTo(Response.Status.INTERNAL_SERVER_ERROR.getStatusCode());
     }
 
     @ParameterizedTest
     @EnumSource(
             value = JobState.class,
-            names = {"COMPLETED"},
+            names = {"COMPLETED", "ERROR"},
             mode = EnumSource.Mode.EXCLUDE)
-    public void getStatus_WhenNotCompleted_ReturnsStatus(JobState jobStatus) {
+    public void getStatus_WhenNotCompletedNorError_ReturnsStatus(JobState jobStatus) {
         // Arrange
         when(service.getStatus(parameters.getRequestId())).thenReturn(Optional.of(
                 StatusResponse.builder().status(jobStatus).build()));
