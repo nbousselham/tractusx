@@ -2,6 +2,7 @@ package org.eclipse.dataspaceconnector.transfer.core.transfer;
 
 import com.github.javafaker.Faker;
 import org.eclipse.dataspaceconnector.junit.launcher.EdcExtension;
+import org.eclipse.dataspaceconnector.spi.transfer.TransferWaitStrategy;
 import org.eclipse.dataspaceconnector.spi.transfer.store.TransferProcessStore;
 import org.eclipse.dataspaceconnector.spi.types.domain.metadata.DataEntry;
 import org.eclipse.dataspaceconnector.spi.types.domain.transfer.DataRequest;
@@ -9,6 +10,7 @@ import org.eclipse.dataspaceconnector.spi.types.domain.transfer.StatusChecker;
 import org.eclipse.dataspaceconnector.spi.types.domain.transfer.StatusCheckerRegistry;
 import org.eclipse.dataspaceconnector.spi.types.domain.transfer.TransferProcess;
 import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 
@@ -32,6 +34,12 @@ public class TransferProcessWatchdogIntegrationTest {
         props.setProperty("edc.watchdog.timeout", "1");
     }
 
+    @BeforeEach
+    protected void before(EdcExtension extension) {
+        // register a wait strategy of 1ms to speed up the interval between transfer manager iterations
+        extension.registerServiceMock(TransferWaitStrategy.class, () -> 1);
+    }
+
     @Test
     public void cancelLongRunningProcess(TransferProcessStore transferProcessStore, StatusCheckerRegistry statusCheckerRegistry) throws InterruptedException {
         // Arrange
@@ -44,7 +52,11 @@ public class TransferProcessWatchdogIntegrationTest {
                 .build();
 
         StatusChecker statusChecker = mock(StatusChecker.class);
-        expect(statusChecker.isComplete(anyObject(TransferProcess.class), eq(emptyList()))).andReturn(false);
+        expect(statusChecker.isComplete(anyObject(TransferProcess.class), eq(emptyList()))).andAnswer(() -> {
+            Thread.sleep(500); // simulate status checker delay during which the watchdog cancels the process
+            return false;
+        });
+        replay(statusChecker);
         statusCheckerRegistry.register(request.getDestinationType(), statusChecker);
 
         var process = TransferProcess.Builder.newInstance()
