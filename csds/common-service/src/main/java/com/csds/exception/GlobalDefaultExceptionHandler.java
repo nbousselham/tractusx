@@ -19,7 +19,7 @@ public class GlobalDefaultExceptionHandler extends ResponseEntityExceptionHandle
 	public static final String DEFAULT_ERROR_VIEW = "error";
 
 	@ExceptionHandler(Exception.class)
-	public ResponseEntity<ResponseObject> handleException(ServiceException ex, WebRequest request) {
+	public ResponseEntity<ResponseObject> handleAllException(Exception ex, WebRequest request) {
 		ResponseObject response = new ResponseObject();
 		response.setStatus(ApplicationMessageConstant.FAILED);
 		response.setMessage("Internal server error while processing request");

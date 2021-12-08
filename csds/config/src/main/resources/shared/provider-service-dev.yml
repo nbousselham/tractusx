@@ -8,7 +8,7 @@ connector:
   username: admin
   password: password
   provider:
-    baseUrl: https://localhost:8080/api/
+    baseUrl: https://20.79.226.28:8080/api/
     
 spring:
   data:

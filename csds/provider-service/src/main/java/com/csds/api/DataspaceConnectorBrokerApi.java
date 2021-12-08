@@ -2,6 +2,7 @@ package com.csds.api;
 
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import java.net.URI;
@@ -19,5 +20,8 @@ public interface DataspaceConnectorBrokerApi {
 
     @PostMapping(path = "/ids/resource/unavailable")
     void removeResource(URI baseUrl, @RequestParam("resourceId") String resourceId, @RequestParam("recipient") String brokerUrl);
+    
+    @PostMapping(path = "/ids/search")
+    String searchResource(URI baseUrl, @RequestParam("recipient") String resourceId, @RequestBody String body);
 
 }

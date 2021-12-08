@@ -292,6 +292,10 @@ public class ProviderControlPanelService {
 				var artifactDescription = getArtifactDescription(offerRequest, file);
 				artifactsApi.updateArtifact(connectorProviderBaseUrl, artifactId, artifactDescription);
 				ObjectId id = saveFileInMongoDB(offerRequest, file);
+				
+				String fileName=file.getOriginalFilename();
+				dataOffer.setFileName(fileName);
+				
 				dataOffer.setFileId(id.toString());
 			}
 
@@ -311,8 +315,13 @@ public class ProviderControlPanelService {
 			offerIDSdetails.put("representationSelfHref", representationSelfHref);
 			offerIDSdetails.put("artifactId", artifactId);
 			offerIDSdetails.put("artifactSelfHref", artifactSelfHref);
-
-			log.info("Created: \nOffer {}\nCatalog {}\nRule {}\nContract {}\nRepresentation {}\nArtifact {}", offerId,
+			
+			log.info("Updated details: \n-------------------Offer: {}\n"
+					+ "-------------------Catalog: {}\n"
+					+ "-------------------Rule: {}\n"
+					+ "-------------------Contract: {}\n"
+					+ "-------------------Representation: {}\n"
+					+ "-------------------Artifact: {}", offerId,
 					catalogId, ruleIdList, contractId, representationId, artifactId);
 
 			dataOffer.setTitle(offerRequest.getTitle());
@@ -337,7 +346,9 @@ public class ProviderControlPanelService {
 
 		ObjectId id = saveFileInMongoDB(offerRequest, file);
 
-		DataOfferEntity dataOfferEntity = DataOfferEntity.builder().title(offerRequest.getTitle()).fileId(id.toString())
+		String fileName=file.getOriginalFilename();
+		
+		DataOfferEntity dataOfferEntity = DataOfferEntity.builder().title(offerRequest.getTitle()).fileName(fileName).fileId(id.toString())
 				.description(offerRequest.getDescription()).accessControlUseCase(offerRequest.getAccessControlUseCase())
 				.accessControlUseCaseType(offerRequest.getAccessControlUseCaseType())
 				.byOrganization(offerRequest.getByOrganization())
