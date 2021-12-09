@@ -6,30 +6,5 @@
     "- OneIDs: A list of OneIDs used in the dataspace partition. Used by the stub registry client to resolve partitions for query."
   ],
   "partitions": [
-    {
-      "key": "bmw",
-      "OneIDs": [
-        "CAXSWPFTJQEVZNZZ",
-        "CAXSZJVJEBYWYYZZ"
-      ]
-    },
-    {
-      "key": "zf",
-      "OneIDs": [
-        "CAXSJRTGOPVESVZZ"
-      ]
-    },
-    {
-      "key": "basf",
-      "OneIDs": [
-        "CAXLBRHHQAJAIOZZ"
-      ]
-    },
-    {
-      "key": "henkel",
-      "OneIDs": [
-        "CAXLHNJURNRLPCZZ"
-      ]
-    }
   ]
 }
