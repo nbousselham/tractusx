@@ -82,7 +82,7 @@ class CancelLongRunningProcessesTest {
                     TransferProcess.Builder.newInstance()
                         .id(activeProcessInTimeout.getId())
                         .state(ERROR.code())
-                        .errorDetail("Timed out waiting for process to complete after > 20s")
+                        .errorDetail("Timed out waiting for process to complete after > 20000ms")
                         .build()
                 );
     }

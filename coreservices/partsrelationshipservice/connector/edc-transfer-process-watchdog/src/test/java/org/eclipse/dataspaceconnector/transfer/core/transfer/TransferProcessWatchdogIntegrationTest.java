@@ -18,6 +18,7 @@ import java.util.Properties;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.easymock.EasyMock.*;
+import static org.awaitility.Awaitility.await;
 import static org.eclipse.dataspaceconnector.spi.types.domain.transfer.TransferProcess.Type.CONSUMER;
 import static org.eclipse.dataspaceconnector.spi.types.domain.transfer.TransferProcessStates.ERROR;
 import static org.eclipse.dataspaceconnector.spi.types.domain.transfer.TransferProcessStates.IN_PROGRESS;
@@ -72,17 +73,18 @@ public class TransferProcessWatchdogIntegrationTest {
 
         // Act
         transferProcessStore.update(process);
-        Thread.sleep(200); // sleep enough time for watchdog to cancel process
 
         // Assert
-        assertThat(transferProcessStore.find(process.getId())).usingRecursiveComparison()
-                .ignoringFields("stateTimestamp", "stateCount")
-                .isEqualTo(TransferProcess.Builder.newInstance()
-                        .id(process.getId())
-                        .dataRequest(request)
-                        .type(CONSUMER)
-                        .state(ERROR.code())
-                        .errorDetail("Timeout")
-                        .build());
+        await().untilAsserted(() -> {
+            assertThat(transferProcessStore.find(process.getId())).usingRecursiveComparison()
+                    .ignoringFields("stateTimestamp", "stateCount")
+                    .isEqualTo(TransferProcess.Builder.newInstance()
+                            .id(process.getId())
+                            .dataRequest(request)
+                            .type(CONSUMER)
+                            .state(ERROR.code())
+                            .errorDetail("Timed out waiting for process to complete after > 100ms")
+                            .build());
+        });
     }
 }

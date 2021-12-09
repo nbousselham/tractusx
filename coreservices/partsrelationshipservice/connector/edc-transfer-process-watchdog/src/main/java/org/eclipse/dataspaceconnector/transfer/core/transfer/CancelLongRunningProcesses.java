@@ -38,7 +38,7 @@ class CancelLongRunningProcesses implements Runnable {
         transferProcesses.stream()
             .filter(p -> ofEpochMilli(p.getStateTimestamp()).isBefore(now(clock).minus(stateTimeout)))
             .forEach(p -> {
-                p.transitionError("Timed out waiting for process to complete after > " + stateTimeout.toSeconds() + "s");
+                p.transitionError("Timed out waiting for process to complete after > " + stateTimeout.toMillis() + "ms");
                 transferProcessStore.update(p);
                 monitor.info("Timeout for process " + p);
             });
