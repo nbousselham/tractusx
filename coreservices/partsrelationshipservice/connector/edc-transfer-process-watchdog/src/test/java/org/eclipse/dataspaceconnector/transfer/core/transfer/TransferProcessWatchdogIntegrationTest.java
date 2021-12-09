@@ -57,10 +57,7 @@ public class TransferProcessWatchdogIntegrationTest {
                 .build();
 
         StatusChecker statusChecker = mock(StatusChecker.class);
-        expect(statusChecker.isComplete(anyObject(), anyObject())).andAnswer(() -> {
-            Thread.sleep(150); // simulate status checker delay during which the watchdog cancels the process
-            return false;
-        });
+        expect(statusChecker.isComplete(anyObject(), anyObject())).andReturn(false);
         replay(statusChecker);
         statusCheckerRegistry.register(request.getDestinationType(), statusChecker);
 
