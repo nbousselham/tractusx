@@ -35,11 +35,6 @@ public class TransferProcessWatchdogExtension implements ServiceExtension {
     }
 
     @Override
-    public LoadPhase phase() {
-        return LoadPhase.PRIMORDIAL;
-    }
-
-    @Override
     public void initialize(ServiceExtensionContext context) {
         monitor = context.getMonitor();
         this.context = context;
