@@ -20,7 +20,10 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
-public class TransferProcessWatchdog {
+/**
+ * TransferProcess watchdog thread that cancels long running transfer processes after a timeout
+ */
+public final class TransferProcessWatchdog {
     private final Monitor monitor;
     private final int batchSize;
     private final Duration delay;
@@ -28,6 +31,12 @@ public class TransferProcessWatchdog {
 
     private ScheduledExecutorService executor;
 
+    /**
+     * @param monitor The monitor
+     * @param batchSize Transfer process batch size for each iteration
+     * @param delayInMs Delay in milliseconds
+     * @param stateTimeoutInMs Timeout in milliseconds
+     */
     @Builder
     private TransferProcessWatchdog(Monitor monitor, int batchSize, long delayInMs, long stateTimeoutInMs) {
         this.monitor = monitor;
@@ -36,6 +45,10 @@ public class TransferProcessWatchdog {
         this.stateTimeout = Duration.of(stateTimeoutInMs, ChronoUnit.MILLIS);
     }
 
+    /**
+     * Starts the watchdog thread
+     * @param processStore Process store
+     */
     public void start(TransferProcessStore processStore) {
         var action = CancelLongRunningProcesses.builder()
                 .monitor(monitor)
@@ -47,6 +60,9 @@ public class TransferProcessWatchdog {
         executor.scheduleWithFixedDelay(action, 0, delay.toMillis(), TimeUnit.MILLISECONDS);
     }
 
+    /**
+     * Stop the watchdog thread
+     */
     public void stop() {
         if (executor != null) {
             executor.shutdownNow();

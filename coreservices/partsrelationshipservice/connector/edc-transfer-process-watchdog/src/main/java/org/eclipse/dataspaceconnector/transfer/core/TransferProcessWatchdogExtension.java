@@ -18,7 +18,12 @@ import org.eclipse.dataspaceconnector.transfer.core.transfer.TransferProcessWatc
 
 import java.util.Set;
 
+/**
+ * TransferProcessWatchdog extension
+ */
 public class TransferProcessWatchdogExtension implements ServiceExtension {
+
+    private static final int BATCH_SIZE = 5;
 
     private Monitor monitor;
     private ServiceExtensionContext context;
@@ -43,7 +48,7 @@ public class TransferProcessWatchdogExtension implements ServiceExtension {
                         .monitor(monitor)
                         .delayInMs(Long.parseLong(context.getSetting("edc.watchdog.delay", "1000")))
                         .stateTimeoutInMs(Long.parseLong(context.getSetting("edc.watchdog.timeout", "60000")))
-                        .batchSize(5)
+                        .batchSize(BATCH_SIZE)
                         .build();
 
         monitor.info("Initialized Transfer Process Watchdog extension");

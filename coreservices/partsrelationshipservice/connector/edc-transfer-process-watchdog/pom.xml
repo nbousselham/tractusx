@@ -12,11 +12,6 @@
     <groupId>net.catenax.prs</groupId>
     <artifactId>edc-transfer-process-watchdog</artifactId>
 
-    <properties>
-        <checkstyle.skip>true</checkstyle.skip>
-        <pmd.skip>true</pmd.skip>
-    </properties>
-
     <name>EDC Transfer Process Watchdog</name>
     <description>Module to clean up hanging transfer processes</description>
 
