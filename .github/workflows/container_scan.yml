@@ -1,6 +1,11 @@
 name: container-scan
 on:
+  pull_request:
+    branches:
+      - main
   push:
+    branches-ignore:
+      - master
 
 jobs:
   repo-scan:
@@ -16,10 +21,11 @@ jobs:
         with:
           scan-type: 'fs'
           ignore-unfixed: true
-          format: 'table'
-          # template: '@/contrib/sarif.tpl'
-          # output: 'trivy-results.sarif'
-          # severity: 'CRITICAL'
+          format: 'template'
+          template: '@/contrib/sarif.tpl'
+          output: 'trivy-results.sarif'
+          severity: 'CRITICAL'
+          exit-code: '1'
 
       - name: Upload Trivy scan results to GitHub Security tab
         uses: github/codeql-action/upload-sarif@v1
@@ -28,7 +34,7 @@ jobs:
           sarif_file: 'trivy-results.sarif'
 
   iac-scan:
-    name: iac vunerability scan
+    name: iac configuration scan
     runs-on: ubuntu-18.04
     continue-on-error: true
     steps:
@@ -40,14 +46,15 @@ jobs:
         with:
           scan-type: 'config'
           hide-progress: false
-          format: 'table'
-          # template: '@/contrib/sarif.tpl'
-          # output: 'trivy-results.sarif'
+          format: 'json'
+          output: 'iac-results.json'
           ignore-unfixed: true
-          # severity: 'CRITICAL,HIGH'
+          severity: 'CRITICAL'
+          exit-code: '1'
 
-      - name: Upload Trivy scan results to GitHub Security tab
-        uses: github/codeql-action/upload-sarif@v1
+      - name: Upload iac scan results to artifacts
         if: always()
+        uses: actions/upload-artifact@v2
         with:
-          sarif_file: 'trivy-results.sarif'
+          name: iac_configuration_scan
+          path: iac-results
