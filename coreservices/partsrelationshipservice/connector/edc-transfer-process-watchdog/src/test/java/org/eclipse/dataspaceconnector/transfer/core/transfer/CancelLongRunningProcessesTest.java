@@ -11,9 +11,11 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 
+import java.time.Duration;
 import java.util.List;
 
 import static java.time.Instant.now;
+import static java.time.temporal.ChronoUnit.SECONDS;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.easymock.EasyMock.*;
 import static org.eclipse.dataspaceconnector.spi.types.domain.transfer.TransferProcessStates.ERROR;
@@ -22,7 +24,7 @@ import static org.eclipse.dataspaceconnector.spi.types.domain.transfer.TransferP
 @ExtendWith(EasyMockExtension.class)
 class CancelLongRunningProcessesTest {
 
-    public static final long STATE_TIMEOUT_MS = 20000;
+    public static final Duration STATE_TIMEOUT_MS = Duration.of(20, SECONDS);
     public static final int BATCH_SIZE = 5;
 
     Faker faker = new Faker();
@@ -42,23 +44,23 @@ class CancelLongRunningProcessesTest {
                 .monitor(monitor)
                 .transferProcessStore(transferProcessStore)
                 .batchSize(BATCH_SIZE)
-                .stateTimeoutInMs(STATE_TIMEOUT_MS)
+                .stateTimeout(STATE_TIMEOUT_MS)
                 .build();
     }
 
     @Test
-    public void run() {
+    public void run_shouldCancelProcessInTimeout() {
         // Arrange
-        var p1 = TransferProcess.Builder.newInstance()
+        var activeProcessNotInTimeout = TransferProcess.Builder.newInstance()
                 .id(faker.lorem().characters())
                 .stateTimestamp(now().toEpochMilli())
                 .build();
-        var p2 = TransferProcess.Builder.newInstance()
+        var activeProcessInTimeout = TransferProcess.Builder.newInstance()
                 .id(faker.lorem().characters())
-                .stateTimestamp(now().minusSeconds(STATE_TIMEOUT_MS + 1).toEpochMilli())
+                .stateTimestamp(now().minus(STATE_TIMEOUT_MS).toEpochMilli())
                 .build();
 
-        expect(transferProcessStore.nextForState(IN_PROGRESS.code(), BATCH_SIZE)).andReturn(List.of(p1, p2));
+        expect(transferProcessStore.nextForState(IN_PROGRESS.code(), BATCH_SIZE)).andReturn(List.of(activeProcessNotInTimeout, activeProcessInTimeout));
         transferProcessStore.update(capture(transferProcessCaptor));
         replay(transferProcessStore);
 
@@ -67,12 +69,15 @@ class CancelLongRunningProcessesTest {
 
         // Assert
         var transferProcess = transferProcessCaptor.getValue();
-        assertThat(transferProcess).usingRecursiveComparison().ignoringFields("stateCount", "stateTimestamp").isEqualTo(
-                TransferProcess.Builder.newInstance()
-                    .id(p2.getId())
-                    .state(ERROR.code())
-                    .errorDetail("Timeout")
-                    .build()
-        );
+        assertThat(transferProcess)
+                .usingRecursiveComparison()
+                .ignoringFields("stateCount", "stateTimestamp")
+                .isEqualTo(
+                    TransferProcess.Builder.newInstance()
+                        .id(activeProcessInTimeout.getId())
+                        .state(ERROR.code())
+                        .errorDetail("Timed out waiting for process to complete after > 20s")
+                        .build()
+                );
     }
 }

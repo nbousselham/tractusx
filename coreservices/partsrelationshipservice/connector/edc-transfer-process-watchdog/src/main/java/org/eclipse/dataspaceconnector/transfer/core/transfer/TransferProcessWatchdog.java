@@ -14,6 +14,8 @@ import lombok.Builder;
 import org.eclipse.dataspaceconnector.spi.monitor.Monitor;
 import org.eclipse.dataspaceconnector.spi.transfer.store.TransferProcessStore;
 
+import java.time.Duration;
+import java.time.temporal.ChronoUnit;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
@@ -21,8 +23,8 @@ import java.util.concurrent.TimeUnit;
 public class TransferProcessWatchdog {
     private final Monitor monitor;
     private final int batchSize;
-    private final long delayInMs;
-    private final long stateTimeoutInMs;
+    private final Duration delay;
+    private final Duration stateTimeout;
 
     private ScheduledExecutorService executor;
 
@@ -30,19 +32,19 @@ public class TransferProcessWatchdog {
     private TransferProcessWatchdog(Monitor monitor, int batchSize, long delayInMs, long stateTimeoutInMs) {
         this.monitor = monitor;
         this.batchSize = batchSize;
-        this.delayInMs = delayInMs;
-        this.stateTimeoutInMs = stateTimeoutInMs;
+        this.delay = Duration.of(delayInMs, ChronoUnit.MILLIS);
+        this.stateTimeout = Duration.of(stateTimeoutInMs, ChronoUnit.MILLIS);
     }
 
     public void start(TransferProcessStore processStore) {
         var action = CancelLongRunningProcesses.builder()
                 .monitor(monitor)
-                .stateTimeoutInMs(stateTimeoutInMs)
+                .stateTimeout(stateTimeout)
                 .batchSize(batchSize)
                 .transferProcessStore(processStore)
                 .build();
         executor = Executors.newSingleThreadScheduledExecutor();
-        executor.scheduleWithFixedDelay(action, 0, delayInMs, TimeUnit.MILLISECONDS);
+        executor.scheduleWithFixedDelay(action, 0, delay.toMillis(), TimeUnit.MILLISECONDS);
     }
 
     public void stop() {
