@@ -16,7 +16,6 @@ import org.junit.jupiter.api.extension.ExtendWith;
 
 import java.util.Properties;
 
-import static java.util.Collections.emptyList;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.easymock.EasyMock.*;
 import static org.eclipse.dataspaceconnector.spi.types.domain.transfer.TransferProcess.Type.CONSUMER;
@@ -25,6 +24,8 @@ import static org.eclipse.dataspaceconnector.spi.types.domain.transfer.TransferP
 
 @ExtendWith(EdcExtension.class)
 public class TransferProcessWatchdogIntegrationTest {
+
+    public static final String IDS_REST = "ids-rest";
 
     Faker faker = new Faker();
 
@@ -45,7 +46,8 @@ public class TransferProcessWatchdogIntegrationTest {
     @Test
     public void cancelLongRunningProcess(TransferProcessStore transferProcessStore, StatusCheckerRegistry statusCheckerRegistry) throws InterruptedException {
         // Arrange
-        DataRequest request = DataRequest.Builder.newInstance().protocol("ids-rest")
+        DataRequest request = DataRequest.Builder.newInstance()
+                .protocol(IDS_REST)
                 .dataEntry(DataEntry.Builder.newInstance().id(faker.lorem().characters()).build())
                 .connectorId(faker.lorem().characters())
                 .connectorAddress(faker.internet().url())
@@ -54,7 +56,7 @@ public class TransferProcessWatchdogIntegrationTest {
                 .build();
 
         StatusChecker statusChecker = mock(StatusChecker.class);
-        expect(statusChecker.isComplete(anyObject(TransferProcess.class), eq(emptyList()))).andAnswer(() -> {
+        expect(statusChecker.isComplete(anyObject(), anyObject())).andAnswer(() -> {
             Thread.sleep(150); // simulate status checker delay during which the watchdog cancels the process
             return false;
         });
