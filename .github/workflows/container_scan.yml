@@ -57,4 +57,4 @@ jobs:
         uses: actions/upload-artifact@v2
         with:
           name: iac_configuration_scan
-          path: iac-results
+          path: 'iac-results.json'
