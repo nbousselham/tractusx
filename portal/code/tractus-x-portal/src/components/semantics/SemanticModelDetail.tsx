@@ -107,10 +107,6 @@ const SemanticModelDetail = (props) => {
             <Icon className='fgblack fs20 mt2 mr7' iconName='Code' />
             <span>Example Payload JSON</span>
           </a>
-          <a className='detail-link'href={openApiUrl} target="_blank">
-            <Icon className='fgblack fs20 mt2 mr7' iconName='DataManagementSettings' />
-            <span>Open API</span>
-          </a>
         </div>
         <div className="df aife">
           <TextField onChange={changeOpenApiBaseUrl} errorMessage={payloadError} className="mr10 w50-40" label="Enter a base URL to change the default URL" />
