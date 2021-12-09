@@ -14,6 +14,7 @@ import lombok.Builder;
 import org.eclipse.dataspaceconnector.spi.monitor.Monitor;
 import org.eclipse.dataspaceconnector.spi.transfer.store.TransferProcessStore;
 
+import java.time.Clock;
 import java.time.Duration;
 
 import static java.time.Instant.now;
@@ -26,13 +27,16 @@ class CancelLongRunningProcesses implements Runnable {
     private final int batchSize;
     private final Duration stateTimeout;
 
+    @Builder.Default
+    private Clock clock = Clock.systemUTC();
+
     private final TransferProcessStore transferProcessStore;
 
     public void run() {
         var transferProcesses = transferProcessStore.nextForState(IN_PROGRESS.code(), batchSize);
 
         transferProcesses.stream()
-            .filter(p -> ofEpochMilli(p.getStateTimestamp()).isBefore(now().minus(stateTimeout)))
+            .filter(p -> ofEpochMilli(p.getStateTimestamp()).isBefore(now(clock).minus(stateTimeout)))
             .forEach(p -> {
                 p.transitionError("Timed out waiting for process to complete after > " + stateTimeout.toSeconds() + "s");
                 transferProcessStore.update(p);

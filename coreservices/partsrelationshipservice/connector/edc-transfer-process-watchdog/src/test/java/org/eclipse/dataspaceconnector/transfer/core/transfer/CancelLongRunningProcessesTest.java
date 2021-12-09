@@ -11,7 +11,10 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 
+import java.time.Clock;
 import java.time.Duration;
+import java.time.Instant;
+import java.time.ZoneOffset;
 import java.util.List;
 
 import static java.time.Instant.now;
@@ -36,6 +39,8 @@ class CancelLongRunningProcessesTest {
 
     Capture<TransferProcess> transferProcessCaptor = Capture.newInstance();
 
+    Clock clock = Clock.fixed(Instant.now(), ZoneOffset.UTC);
+
     CancelLongRunningProcesses sut;
 
     @BeforeEach
@@ -45,6 +50,7 @@ class CancelLongRunningProcessesTest {
                 .transferProcessStore(transferProcessStore)
                 .batchSize(BATCH_SIZE)
                 .stateTimeout(STATE_TIMEOUT_MS)
+                .clock(clock)
                 .build();
     }
 
@@ -53,11 +59,11 @@ class CancelLongRunningProcessesTest {
         // Arrange
         var activeProcessNotInTimeout = TransferProcess.Builder.newInstance()
                 .id(faker.lorem().characters())
-                .stateTimestamp(now().toEpochMilli())
+                .stateTimestamp(now(clock).toEpochMilli())
                 .build();
         var activeProcessInTimeout = TransferProcess.Builder.newInstance()
                 .id(faker.lorem().characters())
-                .stateTimestamp(now().minus(STATE_TIMEOUT_MS).toEpochMilli())
+                .stateTimestamp(now(clock).minus(STATE_TIMEOUT_MS).toEpochMilli())
                 .build();
 
         expect(transferProcessStore.nextForState(IN_PROGRESS.code(), BATCH_SIZE)).andReturn(List.of(activeProcessNotInTimeout, activeProcessInTimeout));
