@@ -61,6 +61,7 @@ const SemanticModelDetail = (props) => {
   }
 
   const onOpenApiClick = () => {
+    // needs to be adjusted
     fetch(openApiUrl)
       .then(res => res.json())
       .then(
