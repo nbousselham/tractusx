@@ -368,28 +368,28 @@ jobs:
 
     # Get IAM DB for KeyCloak instance 1
     - name: Azure Try Existing IAM1 DB
-      id: try_iam_db
+      id: try_iam1_db
       working-directory: ./infrastructure/terraform
       run: |
         echo "::set-output name=IAMDB1::$(az postgres db list --resource-group ${{env.prefix}}-${{needs.environment.outputs.workspace}}-rg --server-name ${{env.prefix}}${{needs.environment.outputs.workspace}}database --output json | jq -r '.[] | select(.name=="iam1") | .id')"
 
     # Create IAM DB If Needed 
     - name: Azure Create IAM1 DB
-      if: ${{steps.try_consumerconnector_db.outputs.IAMDB1 == '' }}
+      if: ${{steps.try_iam1_db.outputs.IAMDB1 == '' }}
       working-directory: ./infrastructure/terraform
       run: |
         az postgres db create --name "iam1" --resource-group ${{env.prefix}}-${{needs.environment.outputs.workspace}}-rg --server-name ${{env.prefix}}${{needs.environment.outputs.workspace}}database
 
     # Get IAM DB for KeyCloak instance 2
     - name: Azure Try Existing IAM2 DB
-      id: try_iam_db
+      id: try_iam2_db
       working-directory: ./infrastructure/terraform
       run: |
         echo "::set-output name=IAMDB2::$(az postgres db list --resource-group ${{env.prefix}}-${{needs.environment.outputs.workspace}}-rg --server-name ${{env.prefix}}${{needs.environment.outputs.workspace}}database --output json | jq -r '.[] | select(.name=="iam2") | .id')"
 
     # Create IAM DB If Needed 
     - name: Azure Create IAM2 DB
-      if: ${{steps.try_consumerconnector_db.outputs.IAMDB2 == '' }}
+      if: ${{steps.try_iam2_db.outputs.IAMDB2 == '' }}
       working-directory: ./infrastructure/terraform
       run: |
         az postgres db create --name "iam2" --resource-group ${{env.prefix}}-${{needs.environment.outputs.workspace}}-rg --server-name ${{env.prefix}}${{needs.environment.outputs.workspace}}database
