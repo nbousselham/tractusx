@@ -15,10 +15,14 @@ import java.time.Clock;
 import java.time.Duration;
 import java.time.Instant;
 import java.time.ZoneOffset;
+import java.util.Date;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 import static java.time.Instant.now;
+import static java.time.temporal.ChronoUnit.MILLIS;
 import static java.time.temporal.ChronoUnit.SECONDS;
+import static java.util.concurrent.TimeUnit.MILLISECONDS;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.easymock.EasyMock.*;
 import static org.eclipse.dataspaceconnector.spi.types.domain.transfer.TransferProcessStates.ERROR;
@@ -63,7 +67,7 @@ class CancelLongRunningProcessesTest {
                 .build();
         var activeProcessInTimeout = TransferProcess.Builder.newInstance()
                 .id(faker.lorem().characters())
-                .stateTimestamp(now(clock).minus(STATE_TIMEOUT_MS).toEpochMilli())
+                .stateTimestamp(faker.date().past(1000, MILLISECONDS, Date.from(now(clock).minus(STATE_TIMEOUT_MS))).getTime())
                 .build();
 
         expect(transferProcessStore.nextForState(IN_PROGRESS.code(), BATCH_SIZE)).andReturn(List.of(activeProcessNotInTimeout, activeProcessInTimeout));
