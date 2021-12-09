@@ -15,20 +15,17 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 
 import java.util.Properties;
-import java.util.concurrent.TimeUnit;
 
 import static java.util.concurrent.TimeUnit.SECONDS;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.easymock.EasyMock.*;
 import static org.awaitility.Awaitility.await;
+import static org.easymock.EasyMock.*;
 import static org.eclipse.dataspaceconnector.spi.types.domain.transfer.TransferProcess.Type.CONSUMER;
 import static org.eclipse.dataspaceconnector.spi.types.domain.transfer.TransferProcessStates.ERROR;
 import static org.eclipse.dataspaceconnector.spi.types.domain.transfer.TransferProcessStates.IN_PROGRESS;
 
 @ExtendWith(EdcExtension.class)
 public class TransferProcessWatchdogIntegrationTest {
-
-    public static final String IDS_REST = "ids-rest";
 
     Faker faker = new Faker();
 
@@ -50,7 +47,7 @@ public class TransferProcessWatchdogIntegrationTest {
     public void cancelLongRunningProcess(TransferProcessStore transferProcessStore, StatusCheckerRegistry statusCheckerRegistry) throws InterruptedException {
         // Arrange
         DataRequest request = DataRequest.Builder.newInstance()
-                .protocol(IDS_REST)
+                .protocol(faker.lorem().word())
                 .dataEntry(DataEntry.Builder.newInstance().id(faker.lorem().characters()).build())
                 .connectorId(faker.lorem().characters())
                 .connectorAddress(faker.internet().url())
