@@ -13,38 +13,38 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: iam
+  name: iam2
   namespace: iam
   labels:
-    app: iam
+    app: iam2
 spec:
   ports:
   - name: http
     port: 8080
     targetPort: 8080
   selector:
-    app: iam
+    app: iam2
   type: ClusterIP
 ---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: iam
+  name: iam2
   namespace: iam
   labels:
-    app: iam
+    app: iam2
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: iam
+      app: iam2
   template:
     metadata:
       labels:
-        app: iam
+        app: iam2
     spec:
       containers:
-      - name: iam
+      - name: iam2
         image: quay.io/keycloak/keycloak:15.0.2
         env:
         - name: KEYCLOAK_USER
@@ -58,7 +58,7 @@ spec:
         - name: DB_ADDR
           value: "${DB_HOST}.postgres.database.azure.com"
         - name: DB_DATABASE
-          value: "iam"
+          value: "iam2"
         - name: DB_USER
           value: "${DB_USER}@${DB_HOST}"
         - name: DB_PASSWORD
