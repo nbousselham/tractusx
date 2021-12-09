@@ -15,7 +15,9 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 
 import java.util.Properties;
+import java.util.concurrent.TimeUnit;
 
+import static java.util.concurrent.TimeUnit.SECONDS;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.easymock.EasyMock.*;
 import static org.awaitility.Awaitility.await;
@@ -72,16 +74,18 @@ public class TransferProcessWatchdogIntegrationTest {
         transferProcessStore.update(process);
 
         // Assert
-        await().untilAsserted(() -> {
-            assertThat(transferProcessStore.find(process.getId())).usingRecursiveComparison()
-                    .ignoringFields("stateTimestamp", "stateCount")
-                    .isEqualTo(TransferProcess.Builder.newInstance()
-                            .id(process.getId())
-                            .dataRequest(request)
-                            .type(CONSUMER)
-                            .state(ERROR.code())
-                            .errorDetail("Timed out waiting for process to complete after > 100ms")
-                            .build());
+        await()
+            .atMost(1, SECONDS)
+            .untilAsserted(() -> {
+                assertThat(transferProcessStore.find(process.getId())).usingRecursiveComparison()
+                        .ignoringFields("stateTimestamp", "stateCount")
+                        .isEqualTo(TransferProcess.Builder.newInstance()
+                                .id(process.getId())
+                                .dataRequest(request)
+                                .type(CONSUMER)
+                                .state(ERROR.code())
+                                .errorDetail("Timed out waiting for process to complete after > 100ms")
+                                .build());
         });
     }
 }
