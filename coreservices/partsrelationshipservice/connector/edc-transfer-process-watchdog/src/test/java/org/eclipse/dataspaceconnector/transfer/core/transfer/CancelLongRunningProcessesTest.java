@@ -17,10 +17,8 @@ import java.time.Instant;
 import java.time.ZoneOffset;
 import java.util.Date;
 import java.util.List;
-import java.util.concurrent.TimeUnit;
 
 import static java.time.Instant.now;
-import static java.time.temporal.ChronoUnit.MILLIS;
 import static java.time.temporal.ChronoUnit.SECONDS;
 import static java.util.concurrent.TimeUnit.MILLISECONDS;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -87,7 +85,7 @@ class CancelLongRunningProcessesTest {
                     TransferProcess.Builder.newInstance()
                         .id(activeProcessInTimeout.getId())
                         .state(ERROR.code())
-                        .errorDetail("Timed out waiting for process to complete after > 20000ms")
+                        .errorDetail("Timed out waiting for process to complete after > " + STATE_TIMEOUT_MS + "ms")
                         .build()
                 );
     }
