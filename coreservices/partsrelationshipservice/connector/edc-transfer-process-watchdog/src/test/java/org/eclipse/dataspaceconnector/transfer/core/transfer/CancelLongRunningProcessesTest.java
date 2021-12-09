@@ -68,6 +68,7 @@ class CancelLongRunningProcessesTest {
 
         expect(transferProcessStore.nextForState(IN_PROGRESS.code(), BATCH_SIZE)).andReturn(List.of(activeProcessNotInTimeout, activeProcessInTimeout));
         transferProcessStore.update(capture(transferProcessCaptor));
+        expectLastCall();
         replay(transferProcessStore);
 
         // Act
