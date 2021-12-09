@@ -16,9 +16,9 @@ jobs:
         with:
           scan-type: 'fs'
           ignore-unfixed: true
-          format: 'template'
-          template: '@/contrib/sarif.tpl'
-          output: 'trivy-results.sarif'
+          format: 'table'
+          # template: '@/contrib/sarif.tpl'
+          # output: 'trivy-results.sarif'
           # severity: 'CRITICAL'
 
       - name: Upload Trivy scan results to GitHub Security tab
@@ -40,9 +40,9 @@ jobs:
         with:
           scan-type: 'config'
           hide-progress: false
-          format: 'template'
-          template: '@/contrib/sarif.tpl'
-          output: 'trivy-results.sarif'
+          format: 'table'
+          # template: '@/contrib/sarif.tpl'
+          # output: 'trivy-results.sarif'
           ignore-unfixed: true
           # severity: 'CRITICAL,HIGH'
 
