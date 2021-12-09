@@ -65,7 +65,10 @@ on:
       - feature/A1ODT-60
       # Onboarding env for GPDM
       - feature/A1ODT-11
+      # Onboarding env for GPDM
+      - feature/CAX-12-devops@CPLP-127-two-keycloak-instances     
       # ADAPT HERE TO ADD NEW WORKSPACES
+
 
 env:
   prefix: cxtsi
@@ -115,7 +118,10 @@ jobs:
                   echo "::set-output name=workspace::dev042"
               elif [[ "${{github.ref}}" == refs/heads/feature/CAX-9-onboarding ]]; then
                   echo "Determined ONBOARDING"
-                  echo "::set-output name=workspace::dev003"                 
+                  echo "::set-output name=workspace::dev003" 
+              elif [[ "${{github.ref}}" == refs/heads/feature/CAX-12-devops@CPLP-127-two-keycloak-instances ]]; then
+                  echo "Determined ONBOARDING"
+                  echo "::set-output name=workspace::dev003"                                                              
               elif [[ "${{github.ref}}" == refs/heads/feature/A1ODT-18 ]]; then
                   echo "Determined DEV010 ENV"
                   echo "::set-output name=workspace::dev010"  
@@ -360,19 +366,33 @@ jobs:
       run: |
         az postgres db create --name "tdmdb" --resource-group ${{env.prefix}}-${{needs.environment.outputs.workspace}}-rg --server-name ${{env.prefix}}${{needs.environment.outputs.workspace}}database
 
-    # Get IAM DB
-    - name: Azure Try Existing IAM DB
+    # Get IAM DB for KeyCloak instance 1
+    - name: Azure Try Existing IAM1 DB
       id: try_iam_db
       working-directory: ./infrastructure/terraform
       run: |
-        echo "::set-output name=IAMDB::$(az postgres db list --resource-group ${{env.prefix}}-${{needs.environment.outputs.workspace}}-rg --server-name ${{env.prefix}}${{needs.environment.outputs.workspace}}database --output json | jq -r '.[] | select(.name=="iam") | .id')"
+        echo "::set-output name=IAMDB1::$(az postgres db list --resource-group ${{env.prefix}}-${{needs.environment.outputs.workspace}}-rg --server-name ${{env.prefix}}${{needs.environment.outputs.workspace}}database --output json | jq -r '.[] | select(.name=="iam1") | .id')"
 
     # Create IAM DB If Needed 
-    - name: Azure Create IAM DB
-      if: ${{steps.try_consumerconnector_db.outputs.IAMDB == '' }}
+    - name: Azure Create IAM1 DB
+      if: ${{steps.try_consumerconnector_db.outputs.IAMDB1 == '' }}
       working-directory: ./infrastructure/terraform
       run: |
-        az postgres db create --name "iam" --resource-group ${{env.prefix}}-${{needs.environment.outputs.workspace}}-rg --server-name ${{env.prefix}}${{needs.environment.outputs.workspace}}database
+        az postgres db create --name "iam1" --resource-group ${{env.prefix}}-${{needs.environment.outputs.workspace}}-rg --server-name ${{env.prefix}}${{needs.environment.outputs.workspace}}database
+
+    # Get IAM DB for KeyCloak instance 2
+    - name: Azure Try Existing IAM2 DB
+      id: try_iam_db
+      working-directory: ./infrastructure/terraform
+      run: |
+        echo "::set-output name=IAMDB2::$(az postgres db list --resource-group ${{env.prefix}}-${{needs.environment.outputs.workspace}}-rg --server-name ${{env.prefix}}${{needs.environment.outputs.workspace}}database --output json | jq -r '.[] | select(.name=="iam2") | .id')"
+
+    # Create IAM DB If Needed 
+    - name: Azure Create IAM2 DB
+      if: ${{steps.try_consumerconnector_db.outputs.IAMDB2 == '' }}
+      working-directory: ./infrastructure/terraform
+      run: |
+        az postgres db create --name "iam2" --resource-group ${{env.prefix}}-${{needs.environment.outputs.workspace}}-rg --server-name ${{env.prefix}}${{needs.environment.outputs.workspace}}database
 
     # Get App Registration 
     - name: Azure Try Existing App Registration
