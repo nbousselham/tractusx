@@ -44,7 +44,7 @@ class CancelLongRunningProcesses implements Runnable {
                  * At the moment EDC offers no capabilities of preventing this in any way. Issue #330 (https://github.com/eclipse-dataspaceconnector/DataSpaceConnector/issues/330)
                  * will rework TransferProcessManagerImpl to prevent such situations.
                  *
-                 * The consequences of this race condition are not too critical in this case though. If a process happens to finish at the same time as its timeout
+                 * The consequences of this race condition are mild though. If a process happens to finish at the same time as its timeout
                  * the resulting state of the process (COMPLETED vs ERROR) will be determined by the thread that manages to update the process last.
                  */
                 transferProcessStore.update(p);
