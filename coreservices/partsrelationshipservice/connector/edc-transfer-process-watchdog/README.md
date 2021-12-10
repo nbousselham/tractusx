@@ -1,6 +1,8 @@
 # edc-transfer-process-watchdog
 
-This extension starts a watchdog thread that cleans up long-running transfer processes. Processes in state `IN_PROGRESS` are tracked and moved to state `ERROR` after a timeout expires. This prevents the consumer connector to poll for the results of providers indefinitely, when the provider fails to provide one.
+This extension starts a watchdog thread that cleans up long-running consumer transfer processes. Processes in state `IN_PROGRESS` are tracked and moved to state `ERROR` after a timeout expires. This prevents the consumer connector to poll for the results of providers indefinitely, when the provider fails to provide one.
+
+The watchdog has no effect on provider processes.
 
 ## Configuration
 
