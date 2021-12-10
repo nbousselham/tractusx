@@ -34,15 +34,15 @@ public final class TransferProcessWatchdog {
     /**
      * @param monitor The monitor
      * @param batchSize Transfer process batch size for each iteration
-     * @param delayInMs Delay in milliseconds
-     * @param stateTimeoutInMs Timeout in milliseconds
+     * @param period Delay in seconds
+     * @param stateTimeout Timeout in seconds
      */
     @Builder
-    private TransferProcessWatchdog(Monitor monitor, int batchSize, long delayInMs, long stateTimeoutInMs) {
+    private TransferProcessWatchdog(Monitor monitor, int batchSize, double period, double stateTimeout) {
         this.monitor = monitor;
         this.batchSize = batchSize;
-        this.delay = Duration.of(delayInMs, ChronoUnit.MILLIS);
-        this.stateTimeout = Duration.of(stateTimeoutInMs, ChronoUnit.MILLIS);
+        this.delay = Duration.of((long) secondsToMillis(period), ChronoUnit.MILLIS);
+        this.stateTimeout = Duration.of((long) secondsToMillis(stateTimeout), ChronoUnit.MILLIS);
     }
 
     /**
@@ -67,5 +67,10 @@ public final class TransferProcessWatchdog {
         if (executor != null) {
             executor.shutdownNow();
         }
+    }
+
+    @SuppressWarnings("checkstyle:magicnumber")
+    private double secondsToMillis(double seconds) {
+        return seconds * 1000;
     }
 }

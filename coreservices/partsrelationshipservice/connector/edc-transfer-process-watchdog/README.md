@@ -6,5 +6,5 @@ This extension starts a watchdog thread that cleans up long-running transfer pro
 
 The watchdog thread can be configured with the following properties:
 
-* `edc.watchdog.delay`: delay in milliseconds for polling for running transfer processes (default 1s).
-* `edc.watchdog.timeout`: timeout in milliseconds after which processes are cancelled (default 60s).
+* `edc.watchdog.period`: period in seconds (decimal values allowed) for polling for running transfer processes with default of 1s.
+* `edc.watchdog.timeout`: timeout in seconds (decimal values allowed) after which processes are cancelled with default of 60s.

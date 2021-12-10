@@ -33,8 +33,8 @@ public class TransferProcessWatchdogIntegrationTest {
     public static void setProperties() {
         Properties props = System.getProperties();
         // watchdog delay of 100ms with process timeout of 100ms
-        props.setProperty("edc.watchdog.timeout", "100");
-        props.setProperty("edc.watchdog.delay", "100");
+        props.setProperty("edc.watchdog.timeout", "0.1");
+        props.setProperty("edc.watchdog.delay", "0.1");
     }
 
     @BeforeEach
