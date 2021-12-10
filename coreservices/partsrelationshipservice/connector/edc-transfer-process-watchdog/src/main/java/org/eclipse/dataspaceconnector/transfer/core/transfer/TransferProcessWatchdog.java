@@ -86,6 +86,6 @@ public final class TransferProcessWatchdog {
 
     @SuppressWarnings("checkstyle:magicnumber")
     private long secondsToMillis(final double seconds) {
-        return (long)(seconds * 1000);
+        return (long) (seconds * 1000);
     }
 }
