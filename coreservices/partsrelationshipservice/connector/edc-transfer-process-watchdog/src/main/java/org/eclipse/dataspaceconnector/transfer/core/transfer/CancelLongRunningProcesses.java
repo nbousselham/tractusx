@@ -33,6 +33,7 @@ class CancelLongRunningProcesses implements Runnable {
     private final TransferProcessStore transferProcessStore;
 
     public void run() {
+        monitor.debug("Watchdog triggered");
         var transferProcesses = transferProcessStore.nextForState(IN_PROGRESS.code(), batchSize);
 
         transferProcesses.stream()
