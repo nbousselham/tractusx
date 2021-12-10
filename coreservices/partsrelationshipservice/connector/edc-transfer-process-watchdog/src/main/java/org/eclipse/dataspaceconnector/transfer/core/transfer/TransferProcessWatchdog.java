@@ -26,7 +26,7 @@ import java.util.concurrent.TimeUnit;
 public final class TransferProcessWatchdog {
     private final Monitor monitor;
     private final int batchSize;
-    private final Duration delay;
+    private final Duration interval;
     private final Duration stateTimeout;
 
     private ScheduledExecutorService executor;
@@ -34,14 +34,14 @@ public final class TransferProcessWatchdog {
     /**
      * @param monitor The monitor
      * @param batchSize Transfer process batch size for each iteration
-     * @param period Delay in seconds
-     * @param stateTimeout Timeout in seconds
+     * @param interval Watchdog polling interval in seconds
+     * @param stateTimeout Process timeout in seconds
      */
     @Builder
-    private TransferProcessWatchdog(Monitor monitor, int batchSize, double period, double stateTimeout) {
+    private TransferProcessWatchdog(Monitor monitor, int batchSize, double interval, double stateTimeout) {
         this.monitor = monitor;
         this.batchSize = batchSize;
-        this.delay = Duration.of((long) secondsToMillis(period), ChronoUnit.MILLIS);
+        this.interval = Duration.of((long) secondsToMillis(interval), ChronoUnit.MILLIS);
         this.stateTimeout = Duration.of((long) secondsToMillis(stateTimeout), ChronoUnit.MILLIS);
     }
 
@@ -57,7 +57,7 @@ public final class TransferProcessWatchdog {
                 .transferProcessStore(processStore)
                 .build();
         executor = Executors.newSingleThreadScheduledExecutor();
-        executor.scheduleWithFixedDelay(action, 0, delay.toMillis(), TimeUnit.MILLISECONDS);
+        executor.scheduleWithFixedDelay(action, 0, interval.toMillis(), TimeUnit.MILLISECONDS);
     }
 
     /**

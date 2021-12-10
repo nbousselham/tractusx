@@ -32,9 +32,9 @@ public class TransferProcessWatchdogIntegrationTest {
     @BeforeAll
     public static void setProperties() {
         Properties props = System.getProperties();
-        // watchdog period of 100ms with process timeout of 100ms
+        // watchdog polling interval of 100ms with process timeout of 100ms
         props.setProperty("edc.watchdog.timeout", "0.1");
-        props.setProperty("edc.watchdog.period", "0.1");
+        props.setProperty("edc.watchdog.interval", "0.1");
     }
 
     @BeforeEach
