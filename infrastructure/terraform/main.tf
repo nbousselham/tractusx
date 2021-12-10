@@ -158,7 +158,8 @@ resource "azurerm_public_ip" "ingress_ip" {
   domain_name_label   = "${var.prefix}${var.environment}akssrv"
   
   tags = {
-    environment = "${var.environment}"
+    environment                  = "${var.environment}"
+    kubernetes-dns-label-service = "ingress-service/ingress-service-ingress-nginx-controller"
   }
 }
 
@@ -172,7 +173,8 @@ resource "azurerm_public_ip" "portal_ip" {
   domain_name_label   = "${var.prefix}${var.environment}aksportal"
   
   tags = {
-    environment = "${var.environment}"
+    environment                  = "${var.environment}"
+    kubernetes-dns-label-service = "ingress-portal/ingress-portal-ingress-nginx-controller"
   }
 }
 
@@ -280,7 +282,7 @@ resource "kubernetes_namespace" "cert_manager_namespace" {
 resource "helm_release" "cert-manager" {
   name       = "cert-manager"
   chart      = "cert-manager"
-  version    = "v1.5.3"
+  version    = "v1.6.1"
 
   namespace  = kubernetes_namespace.cert_manager_namespace.metadata[0].name
   repository = "https://charts.jetstack.io"
