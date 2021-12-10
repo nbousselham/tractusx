@@ -3,7 +3,6 @@ import Avatar from '@mui/material/Avatar';
 import Button from '@mui/material/Button';
 import CssBaseline from '@mui/material/CssBaseline';
 import TextField from '@mui/material/TextField';
-//import Link from '@mui/material/Link';
 import Box from '@mui/material/Box';
 import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import Typography from '@mui/material/Typography';
@@ -18,21 +17,26 @@ const defaultValues = {username: '', password: ''};
 
 export default function Login() {
   const required = "This field is required.";
-  //const navigate = useNavigate();
   const auth = useAuth();
-  let navigate = useNavigate();
-  let location = useLocation();
-  let from = location.state?.from?.pathname || '/dashboard';
-
+  const navigate = useNavigate();
+  const location = useLocation();
+  const from = location.state?.from?.pathname || '/dashboard';
   const [values, setValues] = useState(defaultValues);
   const [errors, setErrors] = useState(defaultValues);
 
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     if(fieldHasError(errors.username) || fieldHasError(errors.password)) return;
+
     const data = new FormData(event.currentTarget);
-    let username = data.get('username');
-    if(typeof username === 'string') {
+    const username = data.get('username');
+    const password = data.get('password');
+
+    if(typeof username !== 'string' || typeof password !== 'string' ) {
+      return ;
+    }
+
+    if((username === 'admin' && password === 'admin')  || (username === 'user' && password === 'user')) {
       auth.signin(username,()=> {console.log("asd"); navigate(from, { replace: true });});
     }
   };
