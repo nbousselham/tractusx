@@ -23,10 +23,24 @@ import java.util.Set;
  */
 public class TransferProcessWatchdogExtension implements ServiceExtension {
 
+
+    /**
+     * TransferProcess batch size.
+     * This amount of processes will be monitored on each iteration by the watchdog.
+     */
     private static final int BATCH_SIZE = 5;
 
+    /**
+     * Monitor for logging
+     */
     private Monitor monitor;
+    /**
+     * Extension context
+     */
     private ServiceExtensionContext context;
+    /**
+     * TransferProcessWatchdog monitoring long running processes
+     */
     private TransferProcessWatchdog watchdog;
 
     @Override
@@ -35,7 +49,7 @@ public class TransferProcessWatchdogExtension implements ServiceExtension {
     }
 
     @Override
-    public void initialize(ServiceExtensionContext context) {
+    public void initialize(final ServiceExtensionContext context) {
         monitor = context.getMonitor();
         this.context = context;
 
@@ -51,7 +65,7 @@ public class TransferProcessWatchdogExtension implements ServiceExtension {
 
     @Override
     public void start() {
-        var transferProcessStore = context.getService(TransferProcessStore.class);
+        final var transferProcessStore = context.getService(TransferProcessStore.class);
         watchdog.start(transferProcessStore);
         monitor.info("Started Transfer Process Watchdog extension");
     }

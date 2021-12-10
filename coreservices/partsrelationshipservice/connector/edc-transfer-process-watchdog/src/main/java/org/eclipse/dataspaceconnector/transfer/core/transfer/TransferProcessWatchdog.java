@@ -23,12 +23,27 @@ import java.util.concurrent.TimeUnit;
 /**
  * TransferProcess watchdog thread that cancels long running transfer processes after a timeout
  */
+@SuppressWarnings({"PMD.MissingStaticMethodInNonInstantiatableClass", "PMD.DoNotUseThreads"}) // Instantiated using Lombok
 public final class TransferProcessWatchdog {
+    /**
+     * Monitor for logging
+     */
     private final Monitor monitor;
+    /**
+     * Transfer process batch size
+     */
     private final int batchSize;
+    /**
+     * Watchdog pollin interval
+     */
     private final Duration interval;
+    /**
+     * Transfer process timeout
+     */
     private final Duration stateTimeout;
-
+    /**
+     * Executor service
+     */
     private ScheduledExecutorService executor;
 
     /**
@@ -38,7 +53,7 @@ public final class TransferProcessWatchdog {
      * @param stateTimeout Process timeout in seconds
      */
     @Builder
-    private TransferProcessWatchdog(Monitor monitor, int batchSize, double interval, double stateTimeout) {
+    private TransferProcessWatchdog(final Monitor monitor, final int batchSize, final double interval, final double stateTimeout) {
         this.monitor = monitor;
         this.batchSize = batchSize;
         this.interval = Duration.of((long) secondsToMillis(interval), ChronoUnit.MILLIS);
@@ -49,8 +64,8 @@ public final class TransferProcessWatchdog {
      * Starts the watchdog thread
      * @param processStore Process store
      */
-    public void start(TransferProcessStore processStore) {
-        var action = CancelLongRunningProcesses.builder()
+    public void start(final TransferProcessStore processStore) {
+        final var action = CancelLongRunningProcesses.builder()
                 .monitor(monitor)
                 .stateTimeout(stateTimeout)
                 .batchSize(batchSize)
@@ -70,7 +85,7 @@ public final class TransferProcessWatchdog {
     }
 
     @SuppressWarnings("checkstyle:magicnumber")
-    private double secondsToMillis(double seconds) {
+    private double secondsToMillis(final double seconds) {
         return seconds * 1000;
     }
 }
