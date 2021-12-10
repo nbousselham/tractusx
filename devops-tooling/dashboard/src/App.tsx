@@ -5,13 +5,21 @@ import Grid from '@mui/material/Grid'
 import Button from '@mui/material/Button'
 import theme from './Theme';
 
+import useAuth from './Auth/useAuth'
+
 function App() {
+  let auth = useAuth();
+
+  function handleClick () {
+    auth.signout(()=>{});
+  }
+
   return (
     <ThemeProvider theme={theme}>
       <Grid container direction="column">
         <Grid container justifyContent="center" sx={{p: 2}}>
           <span>DevOps Tooling</span>
-          <Button variant="contained" color="primary">Just a button</Button>
+          <Button variant="contained" color="primary" onClick={handleClick}>Logout</Button>
         </Grid>
         <Dashboard />
       </Grid>
