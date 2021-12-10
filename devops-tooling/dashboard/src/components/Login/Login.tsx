@@ -15,16 +15,15 @@ import { useLocation, useNavigate } from 'react-router-dom';
 
 export default function Login() {
 
-  //const navigate = useNavigate();
   const auth = useAuth();
-  let navigate = useNavigate();
-  let location = useLocation();
-  let from = location.state?.from?.pathname || '/dashboard';
+  const navigate = useNavigate();
+  const location = useLocation();
+  const from = location.state?.from?.pathname || '/dashboard';
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     const data = new FormData(event.currentTarget);
    
-    let username =data.get('username');
+    const username =data.get('username');
     if(typeof username === 'string') {
       auth.signin(username,()=> {console.log("asd"); navigate(from, { replace: true });});
     }
