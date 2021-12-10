@@ -73,6 +73,7 @@ public final class TransferProcessWatchdog {
                 .build();
         executor = Executors.newSingleThreadScheduledExecutor();
         executor.scheduleWithFixedDelay(action, 0, interval.toMillis(), TimeUnit.MILLISECONDS);
+        monitor.info("TransferProcessWatchdog started (timeout=" + stateTimeout.toMillis() + "ms)");
     }
 
     /**
