@@ -15,12 +15,12 @@ import java.time.Clock;
 import java.time.Duration;
 import java.time.Instant;
 import java.time.ZoneOffset;
+import java.time.temporal.ChronoUnit;
 import java.util.Date;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 import static java.time.Instant.now;
-import static java.time.temporal.ChronoUnit.SECONDS;
-import static java.util.concurrent.TimeUnit.MILLISECONDS;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.easymock.EasyMock.*;
 import static org.eclipse.dataspaceconnector.spi.types.domain.transfer.TransferProcessStates.ERROR;
@@ -29,8 +29,8 @@ import static org.eclipse.dataspaceconnector.spi.types.domain.transfer.TransferP
 @ExtendWith(EasyMockExtension.class)
 class CancelLongRunningProcessesTest {
 
-    public static final Duration STATE_TIMEOUT_MS = Duration.of(20, SECONDS);
-    public static final int BATCH_SIZE = 5;
+    private static final Duration STATE_TIMEOUT_MS = Duration.of(20, ChronoUnit.SECONDS);
+    private static final int BATCH_SIZE = 5;
 
     Faker faker = new Faker();
 
@@ -59,13 +59,14 @@ class CancelLongRunningProcessesTest {
     @Test
     public void run_shouldCancelProcessInTimeout() {
         // Arrange
+        var timeoutDate = Date.from(now(clock).minus(STATE_TIMEOUT_MS));
         var activeProcessNotInTimeout = TransferProcess.Builder.newInstance()
                 .id(faker.lorem().characters())
-                .stateTimestamp(now(clock).toEpochMilli())
+                .stateTimestamp(faker.date().future(1, TimeUnit.SECONDS, timeoutDate).getTime())
                 .build();
         var activeProcessInTimeout = TransferProcess.Builder.newInstance()
                 .id(faker.lorem().characters())
-                .stateTimestamp(faker.date().past(1000, MILLISECONDS, Date.from(now(clock).minus(STATE_TIMEOUT_MS))).getTime())
+                .stateTimestamp(faker.date().past(1, TimeUnit.SECONDS, timeoutDate).getTime())
                 .build();
 
         expect(transferProcessStore.nextForState(IN_PROGRESS.code(), BATCH_SIZE)).andReturn(List.of(activeProcessNotInTimeout, activeProcessInTimeout));
@@ -77,15 +78,15 @@ class CancelLongRunningProcessesTest {
         sut.run();
 
         // Assert
-        var transferProcess = transferProcessCaptor.getValue();
-        assertThat(transferProcess)
+        verify(transferProcessStore);
+        assertThat(transferProcessCaptor.getValue())
                 .usingRecursiveComparison()
                 .ignoringFields("stateCount", "stateTimestamp")
                 .isEqualTo(
                     TransferProcess.Builder.newInstance()
                         .id(activeProcessInTimeout.getId())
                         .state(ERROR.code())
-                        .errorDetail("Timed out waiting for process to complete after > " + STATE_TIMEOUT_MS + "ms")
+                        .errorDetail("Timed out waiting for process to complete after > " + STATE_TIMEOUT_MS.toMillis() + "ms")
                         .build()
                 );
     }
