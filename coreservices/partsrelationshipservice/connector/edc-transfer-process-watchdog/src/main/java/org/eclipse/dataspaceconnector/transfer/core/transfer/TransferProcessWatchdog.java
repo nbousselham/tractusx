@@ -23,7 +23,9 @@ import java.util.concurrent.TimeUnit;
 /**
  * TransferProcess watchdog thread that cancels long running transfer processes after a timeout
  */
-@SuppressWarnings({"PMD.MissingStaticMethodInNonInstantiatableClass", "PMD.DoNotUseThreads"}) // Instantiated using Lombok
+// Monitor doesn't offer guard statements
+// Class instantiated using lombok
+@SuppressWarnings({"PMD.MissingStaticMethodInNonInstantiatableClass", "PMD.DoNotUseThreads", "PMD.GuardLogStatement"})
 public final class TransferProcessWatchdog {
     /**
      * Monitor for logging
