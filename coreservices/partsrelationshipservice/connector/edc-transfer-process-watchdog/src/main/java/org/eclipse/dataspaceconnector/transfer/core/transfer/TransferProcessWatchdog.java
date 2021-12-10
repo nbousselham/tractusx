@@ -56,8 +56,8 @@ public final class TransferProcessWatchdog {
     private TransferProcessWatchdog(final Monitor monitor, final int batchSize, final double interval, final double stateTimeout) {
         this.monitor = monitor;
         this.batchSize = batchSize;
-        this.interval = Duration.of((long) secondsToMillis(interval), ChronoUnit.MILLIS);
-        this.stateTimeout = Duration.of((long) secondsToMillis(stateTimeout), ChronoUnit.MILLIS);
+        this.interval = Duration.of(secondsToMillis(interval), ChronoUnit.MILLIS);
+        this.stateTimeout = Duration.of(secondsToMillis(stateTimeout), ChronoUnit.MILLIS);
     }
 
     /**
@@ -85,7 +85,7 @@ public final class TransferProcessWatchdog {
     }
 
     @SuppressWarnings("checkstyle:magicnumber")
-    private double secondsToMillis(final double seconds) {
-        return seconds * 1000;
+    private long secondsToMillis(final double seconds) {
+        return (long)(seconds * 1000);
     }
 }
