@@ -41,11 +41,7 @@ class CancelLongRunningProcesses implements Runnable {
                 p.transitionError("Timed out waiting for process to complete after > " + stateTimeout.toMillis() + "ms");
                 /*
                  * IMPORTANT NOTE: Updating the process here might cause a race condition with the updates performed from the main loop in TransferProcessManagerImpl.
-                 * At the moment EDC offers no capabilities of preventing this in any way. Issue #330 (https://github.com/eclipse-dataspaceconnector/DataSpaceConnector/issues/330)
-                 * will rework TransferProcessManagerImpl to prevent such situations.
-                 *
-                 * The consequences of this race condition are mild though. If a process happens to finish at the same time as its timeout
-                 * the resulting state of the process (COMPLETED vs ERROR) will be determined by the thread that manages to update the process last.
+                 * See README for more details.
                  */
                 transferProcessStore.update(p);
                 monitor.info("Timeout for process " + p);
