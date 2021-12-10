@@ -137,15 +137,6 @@ jobs:
           key: smoke-${{ matrix.partition.key}}-${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
           restore-keys: ${{ runner.os }}-m2
 
-      - name: Run smoke tests
-        run: |
-          set -euo pipefail # safe mode
-          api_url=$(jq -r .api_url.value cd/terraform-dataspace-partition/terraform-outputs.json)
-          mvn --batch-mode --update-snapshots -s settings.xml -Dgroups=SmokeTests test -DbaseURI=$api_url
-        env:
-          PRS_EDC_PKG_USERNAME: ${{ secrets.PRS_EDC_PKG_USERNAME }}
-          PRS_EDC_PKG_PASSWORD: ${{ secrets.PRS_EDC_PKG_PASSWORD }}
-
       - name: Archive terraform-outputs artifact
         uses: actions/upload-artifact@v2
         with:
