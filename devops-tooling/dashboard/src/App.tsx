@@ -8,7 +8,7 @@ import theme from './Theme';
 import useAuth from './Auth/useAuth'
 
 function App() {
-  let auth = useAuth();
+  const auth = useAuth();
 
   function handleClick () {
     auth.signout(()=>{});
