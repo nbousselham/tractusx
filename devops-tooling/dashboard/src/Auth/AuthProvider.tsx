@@ -2,7 +2,7 @@ import { useState } from "react";
 import AuthContext from "./AuthContext";
 import AuthService from "./AuthService";
 
- 
+
 export default function AuthProvider({ children }: { children: React.ReactNode }) {
     let [user, setUser] = useState<any>(null);
   
@@ -13,9 +13,9 @@ export default function AuthProvider({ children }: { children: React.ReactNode }
     };
   
     let signout = (callback: VoidFunction) => {
-       AuthService.signOut();
-       window.location.href = '/';
-       callback();
+      AuthService.signOut();
+      window.location.href = '/';
+      callback();
     };
   
     let value = { user, signin, signout };
