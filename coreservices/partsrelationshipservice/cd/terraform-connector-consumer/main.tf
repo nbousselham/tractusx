@@ -92,7 +92,7 @@ resource "helm_release" "prs-connector-consumer" {
   }
 
   set {
-    name  = "consumer.env.edc\\.watchdog\\.timeout"
+    name  = "consumer.env.edc\\.watchdog\\.timeout\\.seconds"
     value = "60"
   }
 

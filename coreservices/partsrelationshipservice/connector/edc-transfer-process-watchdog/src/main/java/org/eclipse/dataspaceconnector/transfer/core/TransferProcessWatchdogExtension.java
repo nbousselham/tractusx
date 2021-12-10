@@ -41,8 +41,8 @@ public class TransferProcessWatchdogExtension implements ServiceExtension {
 
         watchdog = TransferProcessWatchdog.builder()
                         .monitor(monitor)
-                        .interval(Double.parseDouble(context.getSetting("edc.watchdog.interval", "1")))
-                        .stateTimeout(Double.parseDouble(context.getSetting("edc.watchdog.timeout", "60")))
+                        .interval(Double.parseDouble(context.getSetting("edc.watchdog.interval.seconds", "1")))
+                        .stateTimeout(Double.parseDouble(context.getSetting("edc.watchdog.timeout.seconds", "60")))
                         .batchSize(BATCH_SIZE)
                         .build();
 
