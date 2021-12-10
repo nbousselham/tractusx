@@ -19,6 +19,7 @@ import java.time.Duration;
 
 import static java.time.Instant.now;
 import static java.time.Instant.ofEpochMilli;
+import static org.eclipse.dataspaceconnector.spi.types.domain.transfer.TransferProcess.Type.CONSUMER;
 import static org.eclipse.dataspaceconnector.spi.types.domain.transfer.TransferProcessStates.IN_PROGRESS;
 
 /**
@@ -60,6 +61,7 @@ class CancelLongRunningProcesses implements Runnable {
         final var transferProcesses = transferProcessStore.nextForState(IN_PROGRESS.code(), batchSize);
 
         transferProcesses.stream()
+            .filter(p -> p.getType() == CONSUMER)
             .filter(p -> ofEpochMilli(p.getStateTimestamp()).isBefore(now(clock).minus(stateTimeout)))
             .forEach(p -> {
                 p.transitionError("Timed out waiting for process to complete after > " + stateTimeout.toMillis() + "ms");
