@@ -12,24 +12,45 @@ import { ThemeProvider } from '@mui/material/styles';
 import theme from '../../Theme';
 import useAuth from '../../Auth/useAuth';
 import { useLocation, useNavigate } from 'react-router-dom';
+import { useState } from 'react';
+
+const defaultValues = {username: '', password: ''};
 
 export default function Login() {
-
+  const required = "This field is required.";
   //const navigate = useNavigate();
   const auth = useAuth();
   let navigate = useNavigate();
   let location = useLocation();
   let from = location.state?.from?.pathname || '/dashboard';
+
+  const [values, setValues] = useState(defaultValues);
+  const [errors, setErrors] = useState(defaultValues);
+
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
+    if(fieldHasError(errors.username) || fieldHasError(errors.password)) return;
     const data = new FormData(event.currentTarget);
-   
-    let username =data.get('username');
+    let username = data.get('username');
     if(typeof username === 'string') {
       auth.signin(username,()=> {console.log("asd"); navigate(from, { replace: true });});
     }
-   
   };
+
+  const handleInputChange = e => {
+    const { name, value } = e.target;
+    setValues({...values, [name]: value});
+  }
+
+  const validate = () => {
+    const temp = {... errors};
+    temp.username = values.username ? '' : required
+    temp.password = values.password ? '' : required
+
+    setErrors({...temp});
+  }
+
+  const fieldHasError = (type) => type.length > 0;
 
   return (
     <ThemeProvider theme={theme}>
@@ -59,6 +80,8 @@ export default function Login() {
               name="username"
               autoComplete="username"
               autoFocus
+              onChange={handleInputChange}
+              error={fieldHasError(errors.username)}
             />
             <TextField
               margin="normal"
@@ -69,13 +92,15 @@ export default function Login() {
               type="password"
               id="password"
               autoComplete="current-password"
+              onChange={handleInputChange}
+              error={fieldHasError(errors.password)}
             />
-           
             <Button
               type="submit"
               fullWidth
               variant="contained"
               sx={{ mt: 3, mb: 2 }}
+              onMouseOver={() => validate()}
             >
               Sign In
             </Button>
