@@ -67,8 +67,10 @@ jobs:
         if: always()
         env:
           CHECKOV_OUTPUT: ${{ steps.checkov.outputs.results }}
+          ASDF: "asdf"
         run: |
           echo $CHECKOV_OUTPUT
+          echo $ASDF
           
       - name: Upload iac scan results to artifacts
         if: always()
