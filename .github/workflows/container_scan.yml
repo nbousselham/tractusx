@@ -65,7 +65,8 @@ jobs:
         
       - name: convert checkov output to SARIF
         run: |
-          echo ${{ steps.checkov.outputs.results }}
+          # echo ${{ steps.checkov.outputs.results }}
+          echo asdf
           
       - name: Upload iac scan results to artifacts
         if: always()
