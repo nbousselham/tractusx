@@ -64,9 +64,9 @@ jobs:
           output_format: json # optional: the output format, one of: cli, json, junitxml, github_failed_only
         
       - name: convert checkov output to SARIF
+        if: always()
         run: |
-          # echo ${{ steps.checkov.outputs.results }}
-          echo asdf
+          echo ${{ steps.checkov.outputs.results }}
           
       - name: Upload iac scan results to artifacts
         if: always()
