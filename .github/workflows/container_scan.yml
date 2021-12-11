@@ -68,7 +68,7 @@ jobs:
         env:
           CHECKOV_OUTPUT: ${{ steps.checkov.outputs.results }}
         run: |
-          echo $CHECKOV_OUTPUT > checkov.json
+          echo "$CHECKOV_OUTPUT" > checkov.json
           
       - name: Upload iac scan results to artifacts
         if: always()
