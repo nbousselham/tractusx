@@ -69,10 +69,9 @@ jobs:
           docker pull bridgecrew/checkov
           docker run --volume $(pwd):/data bridgecrew/checkov --directory /data/infrastructure/terraform --framework terraform -o sarif > checkov.sarif
           
-      - name: Upload iac scan results to artifacts
+      - name: Upload Checkov scan results to GitHub Security tab
+        uses: github/codeql-action/upload-sarif@v1
         if: always()
-        uses: actions/upload-artifact@v2
         with:
-          name: checkov_scan
-          path: 'checkov.sarif'
+          sarif_file: 'checkov.sarif'
       
