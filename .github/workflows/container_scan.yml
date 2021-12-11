@@ -67,7 +67,7 @@ jobs:
         if: always()
         run: |
           docker pull bridgecrew/checkov
-          docker run --volume $(pwd):/data bridgecrew/checkov --directory /data/infrastructure/terraform --quiet true --framework terraform -o sarif > checkov.sarif
+          docker run --volume $(pwd):/data bridgecrew/checkov --directory /data/infrastructure/terraform --framework terraform -o sarif > checkov.sarif
           
       - name: Upload iac scan results to artifacts
         if: always()
