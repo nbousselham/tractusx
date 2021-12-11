@@ -69,13 +69,12 @@ jobs:
           CHECKOV_OUTPUT: ${{ steps.checkov.outputs.results }}
           ASDF: "asdf"
         run: |
-          echo $CHECKOV_OUTPUT
-          echo $ASDF
+          echo $CHECKOV_OUTPUT > checkov.json
           
       - name: Upload iac scan results to artifacts
         if: always()
         uses: actions/upload-artifact@v2
         with:
           name: checkov_scan
-          path: 'checkov.sarif'
+          path: 'checkov.json
       
