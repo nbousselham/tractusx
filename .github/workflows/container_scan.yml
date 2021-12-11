@@ -67,12 +67,12 @@ jobs:
         if: always()
         run: |
           docker pull bridgecrew/checkov
-          docker run --volume $(pwd):/data bridgecrew/checkov --directory /data/infrastructure/terraform --quiet true --soft_fail false --framework terraform --output json > checkov.json
+          docker run --volume $(pwd):/data bridgecrew/checkov --directory /data/infrastructure/terraform --quiet true --framework terraform -o sarif > checkov.sarif
           
       - name: Upload iac scan results to artifacts
         if: always()
         uses: actions/upload-artifact@v2
         with:
           name: checkov_scan
-          path: 'checkov.json'
+          path: 'checkov.sarif'
       
