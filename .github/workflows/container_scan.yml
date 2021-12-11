@@ -7,7 +7,7 @@ jobs:
     runs-on: ubuntu-18.04
     continue-on-error: true
     steps:
-      - name: Checkout code
+      - name: checkout code
         uses: actions/checkout@v2
 
       - name: Run Trivy vulnerability scanner in repo mode
@@ -32,7 +32,7 @@ jobs:
     runs-on: ubuntu-18.04
     continue-on-error: true
     steps:
-      - name: Checkout code
+      - name: checkout code
         uses: actions/checkout@v2
 
       - name: Run Trivy vulnerability scanner in IaC mode
@@ -40,15 +40,23 @@ jobs:
         with:
           scan-type: 'config'
           hide-progress: false
-          format: 'json'
-          output: 'iac-results.json'
+          format: 'table'
           ignore-unfixed: true
           severity: 'CRITICAL'
           exit-code: '1'
 
-      - name: Upload iac scan results to artifacts
-        if: always()
-        uses: actions/upload-artifact@v2
+  checkov-scan:
+    runs-on: ubuntu-latest
+    name: checkov-action
+    steps:
+      - name: checkout code
+        uses: actions/checkout@master
+
+      - name: checkov iac scan
+        id: checkov
+        uses: bridgecrewio/checkov-action@master
         with:
-          name: iac_configuration_scan
-          path: 'iac-results.json'
+          quiet: true # optional: display only failed checks
+          soft_fail: flase # optional: do not return an error code if there are failed checks
+          framework: all # optional: run only on a specific infrastructure {cloudformation,terraform,kubernetes,all}
+          output_format: cli # optional: the output format, one of: cli, json, junitxml, github_failed_only
