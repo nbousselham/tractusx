@@ -67,7 +67,6 @@ jobs:
         if: always()
         env:
           CHECKOV_OUTPUT: ${{ steps.checkov.outputs.results }}
-          ASDF: "asdf"
         run: |
           echo $CHECKOV_OUTPUT > checkov.json
           
@@ -76,5 +75,5 @@ jobs:
         uses: actions/upload-artifact@v2
         with:
           name: checkov_scan
-          path: 'checkov.json
+          path: 'checkov.json'
       
