@@ -57,18 +57,16 @@ jobs:
         id: checkov
         uses: bridgecrewio/checkov-action@master
         with:
+          directory: 'infrastructure/terraform'
           quiet: true # optional: display only failed checks
           soft_fail: flase # optional: do not return an error code if there are failed checks
-          framework: all # optional: run only on a specific infrastructure {cloudformation,terraform,kubernetes,all}
+          framework: terraform # optional: run only on a specific infrastructure {cloudformation,terraform,kubernetes,all}
           output_format: json # optional: the output format, one of: cli, json, junitxml, github_failed_only
         
       - name: convert checkov output to SARIF
-        uses: khorwood/sarif-converter@main
-        with:
-          type: checkov
-          input: ${{ steps.checkov.outputs.results}}
-          output: checkov.sarif
-
+        run: |
+          echo ${{ steps.checkov.outputs.results }}
+          
       - name: Upload iac scan results to artifacts
         if: always()
         uses: actions/upload-artifact@v2
