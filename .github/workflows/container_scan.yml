@@ -48,6 +48,7 @@ jobs:
   checkov-scan:
     runs-on: ubuntu-latest
     name: checkov-action
+    continue-on-error: true
     steps:
       - name: checkout code
         uses: actions/checkout@master
