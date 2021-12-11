@@ -53,22 +53,21 @@ jobs:
       - name: checkout code
         uses: actions/checkout@master
 
-      - name: checkov iac scan
-        id: checkov
-        uses: bridgecrewio/checkov-action@master
-        with:
-          directory: 'infrastructure/terraform'
-          quiet: true # optional: display only failed checks
-          soft_fail: flase # optional: do not return an error code if there are failed checks
-          framework: terraform # optional: run only on a specific infrastructure {cloudformation,terraform,kubernetes,all}
-          output_format: json # optional: the output format, one of: cli, json, junitxml, github_failed_only
+      # - name: checkov iac scan
+      #   id: checkov
+      #   uses: bridgecrewio/checkov-action@master
+      #   with:
+      #     directory: 'infrastructure/terraform'
+      #     quiet: true # optional: display only failed checks
+      #     soft_fail: flase # optional: do not return an error code if there are failed checks
+      #     framework: terraform # optional: run only on a specific infrastructure {cloudformation,terraform,kubernetes,all}
+      #     output_format: json # optional: the output format, one of: cli, json, junitxml, github_failed_only
         
-      - name: convert checkov output to SARIF
+      - name: checkov iac scan
         if: always()
-        env:
-          CHECKOV_OUTPUT: ${{ steps.checkov.outputs.results }}
         run: |
-          echo "$CHECKOV_OUTPUT" > checkov.json
+          docker pull bridgecrew/checkov
+          docker run --volume $(pwd):/data bridgecrew/checkov --directory /data/infrastructure/terraform --quiet true --soft_fail false --framework terraform --output json > checkov.json
           
       - name: Upload iac scan results to artifacts
         if: always()
