@@ -15,7 +15,7 @@ jobs:
     - name: Set Node.js version
       uses: actions/setup-node@v1
       with:
-        node-version: '10.x'
+        node-version: '14.x'
 
     # This checks out the repository so your workflow operates from root of repository
     #- uses: actions/checkout@master
