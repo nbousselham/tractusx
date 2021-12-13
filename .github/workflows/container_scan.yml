@@ -13,7 +13,7 @@ jobs:
       - name: Run Trivy vulnerability scanner in repo mode
         run: |
           docker pull aquasec/trivy
-          docker run aquasec/trivy --debug fs --format table .
+          docker run --volume $(pwd):/data aquasec/trivy --debug fs --format table /data
         
         # uses: aquasecurity/trivy-action@master
         # with:
