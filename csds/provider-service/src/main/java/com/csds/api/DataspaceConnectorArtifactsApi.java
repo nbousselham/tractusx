@@ -10,22 +10,26 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
 
 import java.net.URI;
 import java.util.UUID;
 
 @FeignClient(name = "DataspaceConnectorArtifactsApi", url = "placeholder", configuration = DataspaceConnectorConfiguration.class)
 public interface DataspaceConnectorArtifactsApi {
-    @PostMapping(path = "/artifacts", consumes = MediaType.APPLICATION_JSON_VALUE)
-    ArtifactResponse registerArtifact(URI baseUrl, @RequestBody ArtifactDescription metadata);
+	@PostMapping(path = "/artifacts", consumes = MediaType.APPLICATION_JSON_VALUE)
+	ArtifactResponse registerArtifact(URI baseUrl, @RequestHeader("Authorization") String authHeader,
+			@RequestBody ArtifactDescription metadata);
 
-    @GetMapping(path = "/artifacts/{artifactId}")
-    ArtifactResponse getArtifact(URI baseUrl, @PathVariable("artifactId") UUID artifactId);
+	@GetMapping(path = "/artifacts/{artifactId}")
+	ArtifactResponse getArtifact(URI baseUrl, @RequestHeader("Authorization") String authHeader,
+			@PathVariable("artifactId") UUID artifactId);
 
-    @PutMapping(path = "/artifacts/{artifactId}", consumes = MediaType.APPLICATION_JSON_VALUE)
-    void updateArtifact(URI baseUrl, @PathVariable("artifactId") UUID artifactId,
-                        @RequestBody ArtifactDescription metadata);
+	@PutMapping(path = "/artifacts/{artifactId}", consumes = MediaType.APPLICATION_JSON_VALUE)
+	void updateArtifact(URI baseUrl, @RequestHeader("Authorization") String authHeader,
+			@PathVariable("artifactId") UUID artifactId, @RequestBody ArtifactDescription metadata);
 
-    @DeleteMapping(path = "/artifacts/{artifactId}")
-    void deleteArtifact(URI baseUrl, @PathVariable("artifactId") UUID artifactId);
+	@DeleteMapping(path = "/artifacts/{artifactId}")
+	void deleteArtifact(URI baseUrl, @RequestHeader("Authorization") String authHeader,
+			@PathVariable("artifactId") UUID artifactId);
 }

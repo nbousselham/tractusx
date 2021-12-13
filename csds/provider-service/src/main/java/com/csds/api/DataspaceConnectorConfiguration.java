@@ -11,35 +11,30 @@ import javax.net.ssl.TrustManagerFactory;
 import javax.net.ssl.X509TrustManager;
 
 import org.apache.http.conn.ssl.TrustSelfSignedStrategy;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
 
-import feign.auth.BasicAuthRequestInterceptor;
 import okhttp3.OkHttpClient;
 
 @Configuration
 public class DataspaceConnectorConfiguration {
 
-	@Value("${connector.username}")
-	private String username;
+//	@Autowired
+//	private APIConstants aPIConstants;
 
-	@Value("${connector.password}")
-	private String password;
-
-	@Bean
-	public BasicAuthRequestInterceptor adminAuth() {
-		return new BasicAuthRequestInterceptor(username, password);
-	}
+//	@Bean
+//	public BasicAuthRequestInterceptor adminAuth() {
+//		String username = aPIConstants.getConnectorUsername() == null ? "" : aPIConstants.getConnectorUsername();
+//		String password = aPIConstants.getConnectorPassword() == null ? "" : aPIConstants.getConnectorPassword();
+//		return new BasicAuthRequestInterceptor(username, password);
+//	}
 
 	@Bean
 	@Primary
 	public OkHttpClient client() throws Exception {
-
 		SSLContext sslContest = org.apache.http.ssl.SSLContexts.custom()
 				.loadTrustMaterial(new TrustSelfSignedStrategy()).build();
-		
 		return new OkHttpClient().newBuilder()
 				.sslSocketFactory(sslContest.getSocketFactory(), getDefaultJavaTrustManager())
 				.hostnameVerifier(new HostnameVerifier()).build();
@@ -67,5 +62,4 @@ public class DataspaceConnectorConfiguration {
 		}
 		throw new Exception("No X509TrustManager found");
 	}
-
 }
