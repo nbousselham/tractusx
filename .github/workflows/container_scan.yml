@@ -59,16 +59,9 @@ jobs:
           pip3 install checkov
           checkov --directory . --framework terraform -o sarif
           
-      # - name: Upload Checkov scan results to GitHub Security tab
-      #   uses: github/codeql-action/upload-sarif@v1
-      #   if: always()
-      #   with:
-      #     sarif_file: 'checkov.sarif'
-
-      - name: upload scan results to artifacts
+      - name: Upload Checkov scan results to GitHub Security tab
+        uses: github/codeql-action/upload-sarif@v1
         if: always()
-        uses: actions/upload-artifact@v2
         with:
-          name: checkov-results
-          path: 'results.sarif'
+          sarif_file: 'results.sarif'
       
