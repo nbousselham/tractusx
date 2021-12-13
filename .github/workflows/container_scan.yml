@@ -56,8 +56,8 @@ jobs:
       - name: checkov iac scan
         if: always()
         run: |
-          docker pull bridgecrew/checkov
-          docker run --volume $(pwd):/data bridgecrew/checkov --directory /data/infrastructure/terraform --framework terraform -o sarif
+          pip3 install checkov
+          checkov --directory . --framework terraform -o sarif
           
       # - name: Upload Checkov scan results to GitHub Security tab
       #   uses: github/codeql-action/upload-sarif@v1
