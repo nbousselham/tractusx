@@ -13,7 +13,7 @@ jobs:
       - name: Run Trivy vulnerability scanner in repo mode
         run: |
           docker pull aquasec/trivy
-          docker run --volume $(pwd):/data aquasec/trivy --debug fs --format template --template '@/contrib/sarif.tpl' --output trivy-results.sarif --severity 'CRITICAL,HIGH' --exit-code 1 /data
+          docker run --volume $(pwd):/data aquasec/trivy --debug fs --format template --template '@/contrib/sarif.tpl' --output /data/trivy-results.sarif --severity 'CRITICAL,HIGH' --exit-code 1 /data
 
       - name: Upload Trivy scan results to GitHub Security tab
         uses: github/codeql-action/upload-sarif@v1
