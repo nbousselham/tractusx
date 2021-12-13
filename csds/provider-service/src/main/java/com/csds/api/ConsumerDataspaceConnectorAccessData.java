@@ -5,6 +5,7 @@ import java.net.URI;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import com.fasterxml.jackson.databind.JsonNode;
@@ -13,10 +14,10 @@ import com.fasterxml.jackson.databind.JsonNode;
 public interface ConsumerDataspaceConnectorAccessData {
 
 	@GetMapping(path = "/artifacts")
-	JsonNode getArtifactDetailsBasedonAgreement(URI baseUrl);
+	JsonNode getArtifactDetailsBasedonAgreement(URI baseUrl, @RequestHeader("Authorization") String authHeader);
 
 	@GetMapping(path = "/**", consumes = MediaType.APPLICATION_OCTET_STREAM_VALUE)
-	Object readData(URI baseUrl, @RequestParam("download") boolean download,
-			@RequestParam("argreementUri") String argreementUri);
+	Object readData(URI baseUrl, @RequestHeader("Authorization") String authHeader,
+			@RequestParam("download") boolean download, @RequestParam("argreementUri") String argreementUri);
 
 }

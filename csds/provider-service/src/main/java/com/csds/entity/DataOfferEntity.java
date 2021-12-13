@@ -24,6 +24,8 @@ public class DataOfferEntity {
 	
 	private String title;
 
+	private String fileName;
+	
 	private String fileId;
 
 	private String description;

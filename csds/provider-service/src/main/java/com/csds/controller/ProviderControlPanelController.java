@@ -74,10 +74,12 @@ public class ProviderControlPanelController {
 		}
 	}
 
+
 	@RequestMapping(path = "/update-data-offer", method = RequestMethod.POST, consumes = {
 			MediaType.MULTIPART_FORM_DATA_VALUE })
 	public ResponseEntity<ResponseObject> updateDataOffer(@RequestPart("offerRequest") String offerRequest,
-			@RequestPart("file") MultipartFile file, HttpServletRequest httpServletResponse) throws Exception {
+			@RequestPart(name = "file", required = false) MultipartFile file, HttpServletRequest httpServletResponse)
+			throws Exception {
 		logger.info("Request recevied : /api/v1/updateDataOffer");
 		OfferRequest offerRequestObj = new OfferRequest();
 		ResponseObject response = null;

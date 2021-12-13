@@ -2,11 +2,13 @@ package com.csds.service;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.net.URI;
 import java.time.LocalDate;
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
+import java.util.Base64;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -16,7 +18,6 @@ import java.util.UUID;
 import org.apache.commons.io.IOUtils;
 import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.data.mongodb.gridfs.GridFsOperations;
@@ -33,7 +34,9 @@ import com.csds.api.DataspaceConnectorOffersApi;
 import com.csds.api.DataspaceConnectorRepresentationsApi;
 import com.csds.api.DataspaceConnectorRulesApi;
 import com.csds.constant.ApplicationMessageConstant;
+import com.csds.constants.APIConstants;
 import com.csds.entity.DataOfferEntity;
+import com.csds.entity.ProviderControlPanelConnectorDetails;
 import com.csds.exception.ServiceException;
 import com.csds.exception.ValidationException;
 import com.csds.model.ArtifactDescription;
@@ -55,6 +58,7 @@ import com.mongodb.DBObject;
 import com.mongodb.client.gridfs.model.GridFSFile;
 
 import lombok.RequiredArgsConstructor;
+import lombok.val;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
@@ -64,8 +68,11 @@ public class ProviderControlPanelService {
 
 	private static final String CATALOG_NAME = "RECYCLER_CATALOG";
 
-	@Value("${connector.provider.baseUrl}")
-	private URI connectorProviderBaseUrl;
+	@Autowired
+	private APIConstants aPIConstants;
+
+	private static ProviderControlPanelConnectorDetails connectorDetails;
+	private static URI connectorProviderBaseUrl;
 
 	private final DataspaceConnectorOffersApi offersApi;
 	private final DataspaceConnectorCatalogsApi catalogsApi;
@@ -96,9 +103,22 @@ public class ProviderControlPanelService {
 		return offerFile;
 	}
 
+	private String getAuthHeader() {
+		val auth = connectorDetails.getConnectorUsername() + ":" + connectorDetails.getConnectorPassword();
+		String encoding1 = "";
+		try {
+			encoding1 = Base64.getEncoder().encodeToString((auth.toString()).getBytes("UTF-8"));
+		} catch (UnsupportedEncodingException e) {
+			e.printStackTrace();
+		}
+		return "Basic " + encoding1;
+	}
+
 	public Object createDataOffer(OfferRequest offerRequest, MultipartFile file) throws Exception {
 
 		try {
+			connectorDetails = aPIConstants.getDatils();
+			connectorProviderBaseUrl = new URI(connectorDetails.getConnectorbaseURL());
 
 			Map<String, Object> offerIDSdetails = new HashMap<>();
 
@@ -109,19 +129,21 @@ public class ProviderControlPanelService {
 			}
 
 			// create offer
-			var offerResponse = offersApi.registerOffer(connectorProviderBaseUrl, getOfferDescription(offerRequest));
+			var offerResponse = offersApi.registerOffer(connectorProviderBaseUrl, getAuthHeader(),
+					getOfferDescription(offerRequest));
 			var offerId = offerResponse.getUUIDFromLink();
 			var offerSelfHref = offerResponse.getSelfHref();
 
 			// get or create catalog
-			var catalogResponse = Optional.ofNullable(catalogsApi.getAllCatalogs(connectorProviderBaseUrl))
+			var catalogResponse = Optional
+					.ofNullable(catalogsApi.getAllCatalogs(connectorProviderBaseUrl, getAuthHeader()))
 					.map(GetListResponse::getEmbedded).map(CatalogList::getCatalogs).orElseGet(ArrayList::new).stream()
-					.filter(it -> CATALOG_NAME.equals(it.getTitle())).findFirst()
-					.orElseGet(() -> catalogsApi.createCatalog(connectorProviderBaseUrl, getCatalogDescription()));
+					.filter(it -> CATALOG_NAME.equals(it.getTitle())).findFirst().orElseGet(() -> catalogsApi
+							.createCatalog(connectorProviderBaseUrl, getAuthHeader(), getCatalogDescription()));
 			var catalogId = catalogResponse.getUUIDFromLink();
 
 			// link offer with catalog
-			catalogsApi.linkOffer(connectorProviderBaseUrl, catalogId, List.of(offerSelfHref));
+			catalogsApi.linkOffer(connectorProviderBaseUrl, getAuthHeader(), catalogId, List.of(offerSelfHref));
 
 			if (!Optional.of(offerRequest.getUsageControl()).isPresent()) {
 				offerRequest.setUsageControl(new ArrayList<>());
@@ -143,9 +165,9 @@ public class ProviderControlPanelService {
 				offerRequest.getUsageControl().stream().forEach(usagePolicy -> {
 					// Get Usage policy example
 					var usagePolicyResponse = usagePolicyExampleApi.getUsagePolicyExample(connectorProviderBaseUrl,
-							getUsagePolicyExampleRequest(offerRequest, usagePolicy));
+							getAuthHeader(), getUsagePolicyExampleRequest(offerRequest, usagePolicy));
 					// create rule
-					var ruleResponse = rulesApi.registerRule(connectorProviderBaseUrl,
+					var ruleResponse = rulesApi.registerRule(connectorProviderBaseUrl, getAuthHeader(),
 							getRuleDescription(usagePolicy, usagePolicyResponse));
 
 					ruleIdList.add(ruleResponse.getUUIDFromLink().toString());
@@ -154,30 +176,33 @@ public class ProviderControlPanelService {
 			}
 
 			// create contract
-			var contractResponse = contractsApi.createContract(connectorProviderBaseUrl,
+			var contractResponse = contractsApi.createContract(connectorProviderBaseUrl, getAuthHeader(),
 					getContractDescription(offerRequest));
 			var contractId = contractResponse.getUUIDFromLink();
 
-			contractsApi.linkRules(connectorProviderBaseUrl, contractId, ruleSelfHref);
-			contractsApi.linkOffers(connectorProviderBaseUrl, contractId, List.of(offerSelfHref));
+			contractsApi.linkRules(connectorProviderBaseUrl, getAuthHeader(), contractId, ruleSelfHref);
+			contractsApi.linkOffers(connectorProviderBaseUrl, getAuthHeader(), contractId, List.of(offerSelfHref));
 
 			// create representation
 			var representationResponse = representationsApi.registerRepresentation(connectorProviderBaseUrl,
-					getRepresentation(offerRequest));
+					getAuthHeader(), getRepresentation(offerRequest));
 			var representationId = representationResponse.getUUIDFromLink();
 			var representationSelfHref = representationResponse.getSelfHref();
 
 			// create artifact
 			var artifactDescription = getArtifactDescription(offerRequest, file);
-			var artifactResponse = artifactsApi.registerArtifact(connectorProviderBaseUrl, artifactDescription);
+			var artifactResponse = artifactsApi.registerArtifact(connectorProviderBaseUrl, getAuthHeader(),
+					artifactDescription);
 			var artifactId = artifactResponse.getUUIDFromLink();
 			var artifactSelfHref = artifactResponse.getSelfHref();
 
 			// link artifact with representation
-			representationsApi.linkArtifacts(connectorProviderBaseUrl, representationId, List.of(artifactSelfHref));
+			representationsApi.linkArtifacts(connectorProviderBaseUrl, getAuthHeader(), representationId,
+					List.of(artifactSelfHref));
 
 			// link representation with resource
-			offersApi.linkRepresentations(connectorProviderBaseUrl, offerId, List.of(representationSelfHref));
+			offersApi.linkRepresentations(connectorProviderBaseUrl, getAuthHeader(), offerId,
+					List.of(representationSelfHref));
 
 			offerIDSdetails.put("offerId", offerId);
 			offerIDSdetails.put("offerSelfHref", offerSelfHref);
@@ -190,13 +215,11 @@ public class ProviderControlPanelService {
 			offerIDSdetails.put("artifactId", artifactId);
 			offerIDSdetails.put("artifactSelfHref", artifactSelfHref);
 
-			log.info("Created: \n-------------------Offer: {}\n"
-					+ "-------------------Catalog: {}\n"
-					+ "-------------------Rule: {}\n"
-					+ "-------------------Contract: {}\n"
-					+ "-------------------Representation: {}\n"
-					+ "-------------------Artifact: {}", offerId,
-					catalogId, ruleIdList, contractId, representationId, artifactId);
+			log.info(
+					"Created: \n-------------------Offer: {}\n" + "-------------------Catalog: {}\n"
+							+ "-------------------Rule: {}\n" + "-------------------Contract: {}\n"
+							+ "-------------------Representation: {}\n" + "-------------------Artifact: {}",
+					offerId, catalogId, ruleIdList, contractId, representationId, artifactId);
 
 			return saveOfferInMongoDB(offerRequest, offerIDSdetails, file);
 
@@ -210,6 +233,9 @@ public class ProviderControlPanelService {
 	public Object updateDataOffer(OfferRequest offerRequest, MultipartFile file) throws Exception {
 
 		try {
+			connectorDetails = aPIConstants.getDatils();
+			connectorProviderBaseUrl = new URI(connectorDetails.getConnectorbaseURL());
+
 			Map<String, Object> offerIDSdetails = new HashMap<>();
 
 			var dataOffer = Optional.of(dataOfferMongoRepository.findById(offerRequest.getId())).get()
@@ -222,7 +248,8 @@ public class ProviderControlPanelService {
 			UUID catalogId = UUID.fromString(dataOffer.getOfferIDSdetails().get("catalogId").toString());
 
 			// update offer
-			offersApi.updateOffer(connectorProviderBaseUrl, offerId, getOfferDescription(offerRequest));
+			offersApi.updateOffer(connectorProviderBaseUrl, getAuthHeader(), offerId,
+					getOfferDescription(offerRequest));
 
 			// Note:
 			// 1. skip catalog creation and catlog to offer linking steps
@@ -233,11 +260,11 @@ public class ProviderControlPanelService {
 
 			ruleList.stream().forEach(rule -> {
 				UUID ruleId = UUID.fromString(rule);
-				rulesApi.deleteRule(connectorProviderBaseUrl, ruleId);
+				rulesApi.deleteRule(connectorProviderBaseUrl, getAuthHeader(), ruleId);
 			});
 
 			UUID existingContractId = UUID.fromString(dataOffer.getOfferIDSdetails().get("contractId").toString());
-			contractsApi.deleteContract(connectorProviderBaseUrl, existingContractId);
+			contractsApi.deleteContract(connectorProviderBaseUrl, getAuthHeader(), existingContractId);
 
 			if (!Optional.of(offerRequest.getUsageControl()).isPresent()) {
 				offerRequest.setUsageControl(new ArrayList<>());
@@ -259,9 +286,9 @@ public class ProviderControlPanelService {
 				offerRequest.getUsageControl().stream().forEach(usagePolicy -> {
 					// Get Usage policy example
 					var usagePolicyResponse = usagePolicyExampleApi.getUsagePolicyExample(connectorProviderBaseUrl,
-							getUsagePolicyExampleRequest(offerRequest, usagePolicy));
+							getAuthHeader(), getUsagePolicyExampleRequest(offerRequest, usagePolicy));
 					// create rule
-					var ruleResponse = rulesApi.registerRule(connectorProviderBaseUrl,
+					var ruleResponse = rulesApi.registerRule(connectorProviderBaseUrl, getAuthHeader(),
 							getRuleDescription(usagePolicy, usagePolicyResponse));
 
 					ruleIdList.add(ruleResponse.getUUIDFromLink().toString());
@@ -270,18 +297,18 @@ public class ProviderControlPanelService {
 			}
 
 			// create contract
-			var contractResponse = contractsApi.createContract(connectorProviderBaseUrl,
+			var contractResponse = contractsApi.createContract(connectorProviderBaseUrl, getAuthHeader(),
 					getContractDescription(offerRequest));
 			var contractId = contractResponse.getUUIDFromLink();
 
-			contractsApi.linkRules(connectorProviderBaseUrl, contractId, ruleSelfHref);
-			contractsApi.linkOffers(connectorProviderBaseUrl, contractId, List.of(offerSelfHref));
+			contractsApi.linkRules(connectorProviderBaseUrl, getAuthHeader(), contractId, ruleSelfHref);
+			contractsApi.linkOffers(connectorProviderBaseUrl, getAuthHeader(), contractId, List.of(offerSelfHref));
 
 			// update representation
 			var representationId = UUID.fromString(dataOffer.getOfferIDSdetails().get("representationId").toString());
 			var representationSelfHref = dataOffer.getOfferIDSdetails().get("representationSelfHref").toString();
 
-			representationsApi.updateRepresentation(connectorProviderBaseUrl, representationId,
+			representationsApi.updateRepresentation(connectorProviderBaseUrl, getAuthHeader(), representationId,
 					getRepresentation(offerRequest));
 
 			var artifactId = UUID.fromString(dataOffer.getOfferIDSdetails().get("artifactId").toString());
@@ -290,16 +317,22 @@ public class ProviderControlPanelService {
 			// update artifact
 			if (file != null && !file.isEmpty()) {
 				var artifactDescription = getArtifactDescription(offerRequest, file);
-				artifactsApi.updateArtifact(connectorProviderBaseUrl, artifactId, artifactDescription);
+				artifactsApi.updateArtifact(connectorProviderBaseUrl, getAuthHeader(), artifactId, artifactDescription);
 				ObjectId id = saveFileInMongoDB(offerRequest, file);
+
+				String fileName = file.getOriginalFilename();
+				dataOffer.setFileName(fileName);
+
 				dataOffer.setFileId(id.toString());
 			}
 
 			// link artifact with representation
-			representationsApi.linkArtifacts(connectorProviderBaseUrl, representationId, List.of(artifactSelfHref));
+			representationsApi.linkArtifacts(connectorProviderBaseUrl, getAuthHeader(), representationId,
+					List.of(artifactSelfHref));
 
 			// link representation with resource
-			offersApi.linkRepresentations(connectorProviderBaseUrl, offerId, List.of(representationSelfHref));
+			offersApi.linkRepresentations(connectorProviderBaseUrl, getAuthHeader(), offerId,
+					List.of(representationSelfHref));
 
 			offerIDSdetails.put("offerId", offerId);
 			offerIDSdetails.put("offerSelfHref", offerSelfHref);
@@ -312,8 +345,11 @@ public class ProviderControlPanelService {
 			offerIDSdetails.put("artifactId", artifactId);
 			offerIDSdetails.put("artifactSelfHref", artifactSelfHref);
 
-			log.info("Created: \nOffer {}\nCatalog {}\nRule {}\nContract {}\nRepresentation {}\nArtifact {}", offerId,
-					catalogId, ruleIdList, contractId, representationId, artifactId);
+			log.info(
+					"Updated details: \n-------------------Offer: {}\n" + "-------------------Catalog: {}\n"
+							+ "-------------------Rule: {}\n" + "-------------------Contract: {}\n"
+							+ "-------------------Representation: {}\n" + "-------------------Artifact: {}",
+					offerId, catalogId, ruleIdList, contractId, representationId, artifactId);
 
 			dataOffer.setTitle(offerRequest.getTitle());
 			dataOffer.setDescription(offerRequest.getDescription());
@@ -337,8 +373,11 @@ public class ProviderControlPanelService {
 
 		ObjectId id = saveFileInMongoDB(offerRequest, file);
 
-		DataOfferEntity dataOfferEntity = DataOfferEntity.builder().title(offerRequest.getTitle()).fileId(id.toString())
-				.description(offerRequest.getDescription()).accessControlUseCase(offerRequest.getAccessControlUseCase())
+		String fileName = file.getOriginalFilename();
+
+		DataOfferEntity dataOfferEntity = DataOfferEntity.builder().title(offerRequest.getTitle()).fileName(fileName)
+				.fileId(id.toString()).description(offerRequest.getDescription())
+				.accessControlUseCase(offerRequest.getAccessControlUseCase())
 				.accessControlUseCaseType(offerRequest.getAccessControlUseCaseType())
 				.byOrganization(offerRequest.getByOrganization())
 				.byOrganizationRole(offerRequest.getByOrganizationRole())

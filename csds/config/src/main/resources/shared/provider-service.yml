@@ -3,12 +3,6 @@ server:
   servlet:
     context-path: /provider
 
-connector: 
-  username: admin
-  password: password
-  provider:
-    baseUrl: https://20.79.235.138:8080/api/
-    
 spring:
   data:
     mongodb:
