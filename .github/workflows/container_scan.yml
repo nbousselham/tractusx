@@ -65,7 +65,9 @@ jobs:
       #   with:
       #     sarif_file: 'checkov.sarif'
 
-      - uses: actions/upload-artifact@v2
+      - name: upload scan results to artifacts
+        if: always()
+        uses: actions/upload-artifact@v2
           with:
             name: checkov-results
             path: checkov.sarif
