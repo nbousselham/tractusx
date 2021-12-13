@@ -33,10 +33,6 @@ export default function Login() {
     event.preventDefault();
     if(fieldHasError(errors.username) || fieldHasError(errors.password)) return;
 
-/*     const data = new FormData(event.currentTarget);
-    const username = data.get('username');
-    const password = data.get('password'); */
-
     if(loginDataIsValid()) {
       auth.signin(values.username, () => navigate(from, { replace: true }));
     } else {
