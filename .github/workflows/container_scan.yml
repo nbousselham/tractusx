@@ -12,7 +12,6 @@ jobs:
 
       - name: Run Trivy vulnerability scanner in repo mode
         run: |
-          apt install jq
           wget $(curl -s https://api.github.com/repos/aquasecurity/trivy/releases/latest | jq '.assets[].browser_download_url' | grep 'Linux-64bit.tar.gz' | sed 's/"//g')
           tar -xzf trivy*.tar.gz
           ./trivy --debug fs --format table --exit-code 1 --ignore-unfixed true 
