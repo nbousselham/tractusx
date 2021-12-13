@@ -60,20 +60,6 @@ const SemanticModelDetail = (props) => {
     
   }
 
-  const onOpenApiClick = () => {
-    // needs to be adjusted
-    fetch(openApiUrl)
-      .then(res => res.json())
-      .then(
-        (result) => {
-          window.open(openApiUrl);
-        },
-        (error) => {
-          setPayloadError('Your URL is invalid.')
-        }
-      )
-    }
-
   return(
     <div>
       {model ? <div className='df fdc h100pc p44'>
@@ -111,7 +97,7 @@ const SemanticModelDetail = (props) => {
         </div>
         <div className="df aife">
           <TextField onChange={changeOpenApiBaseUrl} errorMessage={payloadError} className="mr10 w50-40" label="Enter a base URL to change the default URL" />
-          <PrimaryButton onClick={onOpenApiClick} title="Get Open API JSON">
+          <PrimaryButton href={openApiUrl} title="Get Open API JSON" target="_blank">
             Open API
           </PrimaryButton>
         </div>
