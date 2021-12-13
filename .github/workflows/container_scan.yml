@@ -70,5 +70,5 @@ jobs:
         uses: actions/upload-artifact@v2
           with:
             name: checkov-results
-            path: checkov.sarif
+            path: 'checkov.sarif'
       
