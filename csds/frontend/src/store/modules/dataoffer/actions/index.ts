@@ -23,7 +23,7 @@ export const actions: ActionTree<dataOfferState, Record<string, never>> = {
         console.log(filteredDataOffersList);
       })
       .catch((error) => {
-        commit(SET_DATA_OFFERS_LOADING, true);
+        commit(SET_DATA_OFFERS_LOADING, false);
         throw error;
       });
   },

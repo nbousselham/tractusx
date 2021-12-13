@@ -9,6 +9,7 @@
           </template>
           <template v-else-if="isDataOffersLoading">
             <v-skeleton-loader
+              class="mb-3"
               type="table-tbody"
               transition="scale-transition"
               :loading="isDataOffersLoading"
@@ -62,6 +63,7 @@
               </v-dialog>
             </template>
           </CxPanel>
+          <v-btn id="add-data-offer-btn" dark large>ADD NEW DATA OFFER</v-btn>
         </div>
         <div class="contract-agreement-panel mt-10">
           <h2 class="mb-4">Contract agreements</h2>

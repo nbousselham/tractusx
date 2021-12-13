@@ -4,7 +4,7 @@
     :items="filteredDataOffers"
     hide-default-header
     :items-per-page="5"
-    class="data-offer-list elevation-3 mb-3"
+    class="data-offer-list elevation-0 mb-3"
   >
     <template v-slot:body="{ items }">
       <tbody>
@@ -14,24 +14,36 @@
           @mouseover="selectItem(item)"
           @mouseleave="unSelectItem()"
         >
-          <td class="d-block d-sm-table-cell">{{ item.title }}</td>
-          <td class="d-block d-sm-table-cell" v-if="item.fileName">
-            <span class="text--disabled">File: </span>
-            <span>{{ item.fileName }}</span>
-          </td>
-          <td class="d-block d-sm-table-cell" v-if="item.accessControlUseCase">
-            <span class="text--disabled">Use cases: </span>
-            <span>{{ item.accessControlUseCase }}</span>
-          </td>
-          <td class="d-block d-sm-table-cell" v-if="item.byOrganizationRole">
-            <span class="text--disabled">Access control: </span>
-            <span>Company role ({{ item.byOrganizationRole }})</span>
-          </td>
-          <td class="d-block d-sm-table-cell" v-if="item.usageControl">
-            <span class="text--disabled">Usage control: </span>
-            <span>{{ item.usageControl }} access</span>
+          <td class="d-block d-sm-table-cell">
+            <p class="mb-0" v-if="item.title">
+              <span>{{ item.title }}</span>
+            </p>
           </td>
           <td class="d-block d-sm-table-cell">
+            <p class="mb-0" v-if="item.fileName">
+              <span class="text--disabled">File: </span>
+              <span>{{ item.fileName }}</span>
+            </p>
+          </td>
+          <td class="d-block d-sm-table-cell">
+            <p class="mb-0" v-if="item.accessControlUseCase">
+              <span class="text--disabled">Use cases: </span>
+              <span>{{ item.accessControlUseCase }}</span>
+            </p>
+          </td>
+          <td class="d-block d-sm-table-cell">
+            <p class="mb-0" v-if="item.byOrganizationRole">
+              <span class="text--disabled">Access control: </span>
+              <span>Company role ({{ item.byOrganizationRole }})</span>
+            </p>
+          </td>
+          <td class="d-block d-sm-table-cell">
+            <p class="mb-0" v-if="item.usageControl">
+              <span class="text--disabled">Usage control: </span>
+              <span>{{ item.usageControl }} usage</span>
+            </p>
+          </td>
+          <td width="25%" class="d-block d-sm-table-cell">
             <div
               class="d-flex"
               :class="{ 'mt-5': isSmallScreen }"
@@ -143,13 +155,28 @@ export default Vue.extend({
 </script>
 
 <style lang="scss">
+@import "~@/styles/variables";
+
 .v-data-table.data-offer-list {
-  & .v-data-footer {
-    border-top: none;
+  & > .v-data-table__wrapper > table > tbody > tr:hover {
+    background: white !important;
+    box-shadow: $cx-elevation;
+  }
+  & > .v-data-table__wrapper {
+    background-color: $grey1 !important;
+  }
+  & > .v-data-table__wrapper > table > tbody > tr {
+    background: white;
+  }
+  & > div > table {
+    border-spacing: 0 0.4rem !important;
   }
   & td {
-    border-bottom: 3px solid rgba(0, 0, 0, 0.12) !important;
     height: 56px !important;
+    border-bottom: none !important;
+  }
+  & .v-data-footer {
+    border-top: none !important;
   }
 }
 </style>
