@@ -68,7 +68,7 @@ jobs:
       - name: upload scan results to artifacts
         if: always()
         uses: actions/upload-artifact@v2
-          with:
-            name: checkov-results
-            path: 'checkov.sarif'
+        with:
+          name: checkov-results
+          path: 'checkov.sarif'
       
