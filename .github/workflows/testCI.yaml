@@ -10,19 +10,45 @@ jobs:
     runs-on: ubuntu-latest
     environment: Catena-X dev/int
     steps:
-    - uses: actions/checkout@v2
+    - name: 'Checkout GitHub Action'
+      uses: actions/checkout@v2
 
-    - name: Set Node.js version
-      uses: actions/setup-node@v1
+    - name: 'Login via Azure CLI'
+      uses: azure/login@v1
       with:
-        node-version: '14.x'
+        creds: ${{ secrets.AZURE_CREDENTIALS }}
+
+    - name: 'Login to ACR'
+      uses: azure/docker-login@v1
+      with:
+        login-server: ${{ secrets.DEV_INT_ACR_SERVER }}
+        username: ${{ secrets.DEV_INT_ACR_USER }}
+        password: ${{ secrets.DEV_INT_ACR_PASSWORD }}
+
+    - name: 'Build the Docker image'
+      working-directory: devops-tooling/dashboard
+      run: |
+        docker build . -t ${{ secrets.DEV_INT_ACR_SERVER }}/dashboard:${{ github.sha }}
+        docker push ${{ secrets.DEV_INT_ACR_SERVER }}/dashboard:${{ github.sha }}
+
+    - name: 'Deploy to Azure App Service'
+      uses: azure/webapps-deploy@v2
+      with:
+        app-name: 'cxtsi-dev011-dashboard-appservice'
+        publish-profile: ${{ secrets.DEV011_DASHBOARD_WEBAPP_PUBLISH_PROFILE }}
+        images: ${{ secrets.DEV_INT_ACR_SERVER }}/dashboard:${{ github.sha }}
+
+    #- name: Set Node.js version
+      #uses: actions/setup-node@v1
+      #with:
+        #node-version: '14.x'
 
     # This checks out the repository so your workflow operates from root of repository
     #- uses: actions/checkout@master
 
     # Install dependencies
-    - name: Install dependencies
-      run: cd devops-tooling/dashboard/ && npm install
+    #- name: Install dependencies
+      #run: cd devops-tooling/dashboard/ && npm install
 
     #- name: Run the tests
     #  run: cd devops-tooling/dashboard/ && npm run test --if-present
@@ -36,8 +62,8 @@ jobs:
     #  with:
     #   token: ${{ secrets.CODECOV_TOKEN }}  # If you repository is private, you must include the codecov token
 
-    - name: Build
-      run: cd devops-tooling/dashboard/ && npm run build --if-present 
+    #- name: Build
+      #run: cd devops-tooling/dashboard/ && npm run build --if-present 
 
 # Map artifactory to get the dependency packages 
 
@@ -56,10 +82,10 @@ jobs:
           #path: output/test/code-coverage.html
           
  # Deploy to App Service
-    - name: 'Run Azure webapp deploy action using publish profile credentials'
-      uses: azure/webapps-deploy@v1
-      with:
-        app-name: demoapplicationnodejs
-        publish-profile: ${{ secrets.DEV011_DASHBOARD_WEBAPP_PUBLISH_PROFILE }} # Replace with the name of your publish profile
-        package: devops-tooling/dashboard/build/  # Specify the folder or file to deploy
+    #- name: 'Run Azure webapp deploy action using publish profile credentials'
+      #uses: azure/webapps-deploy@v1
+      #with:
+        #app-name: demoapplicationnodejs
+        #publish-profile: ${{ secrets.DEV011_DASHBOARD_WEBAPP_PUBLISH_PROFILE }} # Replace with the name of your publish profile
+        #package: devops-tooling/dashboard/build/  # Specify the folder or file to deploy
 
