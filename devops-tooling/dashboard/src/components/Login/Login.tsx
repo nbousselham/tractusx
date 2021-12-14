@@ -31,9 +31,9 @@ export default function Login() {
 
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    if(fieldHasError(errors.username) || fieldHasError(errors.password)) return;
+    if (fieldHasError(errors.username) || fieldHasError(errors.password)) return;
 
-    if(loginDataIsValid()) {
+    if (loginDataIsValid()) {
       auth.signIn(values.username, () => navigate(from, { replace: true }));
     } else {
       setErrors({...errors, 'login': 'Authentication failed. Please try again!'})
@@ -95,6 +95,7 @@ export default function Login() {
               onClick={() => resetForm('username')}
               error={fieldHasError(errors.username)}
               helperText={errors.username}
+              inputProps={{"data-testid": "username"}}
             />
             <TextField
               value={values.password}
@@ -109,8 +110,9 @@ export default function Login() {
               onClick={() => resetForm('password')}
               error={fieldHasError(errors.password)}
               helperText={errors.password}
+              inputProps={{"data-testid": "password"}}
             />
-            {errors.login.length > 0 && 
+            {errors.login.length > 0 &&
               <Typography sx={{color: 'error.main'}} component="p" variant="body1">{errors.login}</Typography>
             }
             <Button

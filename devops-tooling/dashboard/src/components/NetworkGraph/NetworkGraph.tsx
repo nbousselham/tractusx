@@ -12,7 +12,7 @@ export default function NetworkGraph(props) {
 
   useEffect(initVis, [ props ]);
   useEffect(handleResizeEvent, []);
-  
+
   function handleResizeEvent() {
     let resizeTimer;
     const handleResize = () => {
@@ -30,16 +30,16 @@ export default function NetworkGraph(props) {
   }
 
   function initVis() {
-    if(props) {
+    if (props) {
       const d3Props = {
         nodes: props.nodes,
         links: props.links
       };
-      
+
       new ForceD3(ref.current, d3Props);
     }
   }
-  
+
   return (
     <svg width={width} height={height} ref={ref} viewBox={viewBox}>
       <g>
@@ -48,7 +48,7 @@ export default function NetworkGraph(props) {
         )}
       </g>
       <g>
-        {props.nodes.map(node => 
+        {props.nodes.map(node =>
           <Node key={node.id} data={node}></Node>
         )}
       </g>
