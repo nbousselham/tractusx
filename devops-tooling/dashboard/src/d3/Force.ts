@@ -28,7 +28,7 @@ export default class ForceD3 {
       .force("charge", d3.forceManyBody().strength(-5000)) // This adds repulsion between nodes.
       .force("x", d3.forceX())
       .force("y", d3.forceY());
-    
+
     simulation.on("tick", () => {
       this.positionForceElements();
     });
@@ -50,25 +50,25 @@ export default class ForceD3 {
       .attr("y2", (d: any) => d.target.y);
   }
 
-  drag(simulation: Simulation<SimulationNodeDatum, undefined>) {    
+  drag(simulation: Simulation<SimulationNodeDatum, undefined>) {
     function dragstarted(event: CustomEvent) {
       if (!event.active) simulation.alphaTarget(0.3).restart();
-      
+
       event.subject.fx = event.subject.x;
       event.subject.fy = event.subject.y;
     }
-    
+
     function dragged(event: CustomEvent) {
       event.subject.fx = event.x;
       event.subject.fy = event.y;
     }
-    
+
     function dragended(event: CustomEvent) {
       if (!event.active) simulation.alphaTarget(0);
       event.subject.fx = null;
       event.subject.fy = null;
     }
-    
+
     return d3.drag()
       .on("start", dragstarted)
       .on("drag", dragged)
@@ -78,12 +78,12 @@ export default class ForceD3 {
 
 interface CustomEvent {
   subject: {
-    fx: any; 
+    fx: any;
     fy: any;
     x:any;
     y:any;
   };
   x: any;
-  y: any; 
+  y: any;
   active:any;
 }
