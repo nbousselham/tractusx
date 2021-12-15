@@ -21,7 +21,7 @@ fullnameOverride: ""
 
 omejdn:
   # -- Path to directory with private server key
-  serverKeyFolderPath: /opt/
+  serverKeyFolderPath: /opt
   # -- Server key content. DAPS will generate key if it's not provided at startup
   serverKey: ""
   # -- Default user and client will be created if set to `true`. User credentials set in `omejdn.defaultAdminUser` section
@@ -72,6 +72,8 @@ ingress:
   host: chart-example.local
   # -- Path prefix to be added to DAPS URI. Regex can be used
   pathPrefix: "/"
+  # -- Ingress Class name
+  className: "service"
   # -- Root prefix without regex rules that used to configure daps host name in configuration
   rootPath: "/"
   tls:

@@ -1,0 +1,22 @@
+image:
+  pullPolicy: Always
+  repository: idsacontainerregistry01.azurecr.io/omejdn-server
+  tag: 0.0.1
+imagePullSecrets:
+- name: idsa-reg
+ingress:
+  enabled: true
+  host: cxtsiintakssrv.germanywestcentral.cloudapp.azure.com
+  className: service
+  pathPrefix: /ids/daps(/|$)(.*)
+  rootPath: /ids/daps
+  annotations:
+    cert-manager.io/cluster-issuer: letsencrypt-service
+  tls:
+    certMgr:
+      enabled: true
+      issuer: letsencrypt-service
+    enabled: true
+service:
+  port: 80
+  targetPort: 4567
