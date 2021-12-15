@@ -65,7 +65,7 @@ export default function Login() {
 
   return (
     <ThemeProvider theme={theme}>
-      <Container component="main" maxWidth="xs">
+      <Container component="main" maxWidth="xs" data-testid="login">
         <CssBaseline />
         <Box
           sx={{
