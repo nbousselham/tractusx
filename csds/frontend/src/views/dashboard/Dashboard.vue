@@ -3,7 +3,7 @@
     <v-col cols="12">
       <section class="ma-10">
         <div class="data-offers-panel">
-          <h2 class="mb-4">Data offers</h2>
+          <h2 class="mb-4 ml-2">Data offers</h2>
           <template v-if="dataOffers && !isDataOffersLoading">
             <DataOffersList :dataOffers="dataOffers" />
           </template>
@@ -63,7 +63,9 @@
               </v-dialog>
             </template>
           </CxPanel>
-          <v-btn id="add-data-offer-btn" dark large>ADD NEW DATA OFFER</v-btn>
+          <v-btn id="add-data-offer-btn" class="ml-2" dark large
+            >ADD NEW DATA OFFER</v-btn
+          >
         </div>
         <div class="contract-agreement-panel mt-10">
           <h2 class="mb-4">Contract agreements</h2>

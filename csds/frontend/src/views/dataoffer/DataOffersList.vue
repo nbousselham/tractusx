@@ -170,6 +170,7 @@ export default Vue.extend({
   }
   & > div > table {
     border-spacing: 0 0.4rem !important;
+    padding: 0 2px 0 8px;
   }
   & td {
     height: 56px !important;
@@ -177,6 +178,8 @@ export default Vue.extend({
   }
   & .v-data-footer {
     border-top: none !important;
+    box-shadow: inset 8px 0 0 0 $grey1;
+    background-clip: content-box;
   }
 }
 </style>
