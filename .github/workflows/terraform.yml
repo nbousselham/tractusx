@@ -67,6 +67,8 @@ on:
       - feature/A1ODT-11
       # Onboarding env for Network Services (Parts Relationship Service), BASF, Trumpf
       - feature/A1ODT-133-migrate-dev001
+      # Onboarding env for Network Services (Parts Relationship Service), BASF, Trumpf
+      - feature/A1ODT-133-migrate-dev005
       # ADAPT HERE TO ADD NEW WORKSPACES
 
 env:
@@ -133,6 +135,9 @@ jobs:
               elif [[ "${{github.ref}}" == refs/heads/feature/A1ODT-133-migrate-dev001 ]]; then
                   echo "Determined DEV001 ENV"
                   echo "::set-output name=workspace::dev001"
+              elif [[ "${{github.ref}}" == refs/heads/feature/A1ODT-133-migrate-dev005 ]]; then
+                  echo "Determined DEV005 ENV"
+                  echo "::set-output name=workspace::dev005"
               else
                   echo "Unsupported Branch on CATENAX. Leaving Workspace empty."
               fi
