@@ -1,7 +1,7 @@
 ####################################################################################################
-# Team Semantic Layer environment
+# Team Semantic Layer landscape
 ####################################################################################################
-
-prefix="catenax"
+ 
+prefix="cxtsi"
 environment="dev042"
 location="germanywestcentral"
