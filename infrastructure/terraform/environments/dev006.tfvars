@@ -1,7 +1,7 @@
 ####################################################################################################
-# Team PRS and Team Kaputt
+# Team Circular Economy landscape
 ####################################################################################################
-
-prefix="catenax"
+ 
+prefix="cxtsi"
 environment="dev006"
 location="germanywestcentral"
