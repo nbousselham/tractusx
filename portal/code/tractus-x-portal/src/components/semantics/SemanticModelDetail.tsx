@@ -50,28 +50,15 @@ const SemanticModelDetail = (props) => {
     setIsImageLoading(false);
   }
 
-  const changeExamplePayloadUrl = (_, value) => {
+  const changeOpenApiBaseUrl = (_, value) => {
     setPayloadError('');
     if(value === '') {
-      setExamplePayloadUrl(getExamplePayloadUrl(id))
+      setApiBaseUrl(getOpenApiUrl(id, apiBaseUrl))
     } else {
-      setExamplePayloadUrl(value);
+      setApiBaseUrl(getOpenApiUrl(id, value))
     }
     
   }
-
-  const onExamplePayloadClick = () => {
-    fetch(examplePayloadUrl)
-      .then(res => res.json())
-      .then(
-        (result) => {
-          window.open(examplePayloadUrl);
-        },
-        (error) => {
-          setPayloadError('Your URL is invalid.')
-        }
-      )
-    }
 
   return(
     <div>
@@ -103,15 +90,15 @@ const SemanticModelDetail = (props) => {
             <Icon className='fgblack fs20 mt2 mr7' iconName='Code' />
             <span>Download JSON Schema</span>
           </a>
-          <a className='detail-link'href={openApiUrl} target="_blank">
-            <Icon className='fgblack fs20 mt2 mr7' iconName='DataManagementSettings' />
-            <span>Open API</span>
+          <a className='detail-link' href={examplePayloadUrl} target="_blank">
+            <Icon className='fgblack fs20 mt2 mr7' iconName='Code' />
+            <span>Example Payload JSON</span>
           </a>
         </div>
         <div className="df aife">
-          <TextField onChange={changeExamplePayloadUrl} errorMessage={payloadError} className="mr10 w50-40" label="Enter Example Payload Link" />
-          <PrimaryButton onClick={onExamplePayloadClick} title="Get Example Payload JSON">
-            Get JSON
+          <TextField onChange={changeOpenApiBaseUrl} errorMessage={payloadError} className="mr10 w50-40" label="Enter a base URL to change the default URL" />
+          <PrimaryButton href={openApiUrl} title="Get Open API JSON" target="_blank">
+            Open API
           </PrimaryButton>
         </div>
         </div> :
