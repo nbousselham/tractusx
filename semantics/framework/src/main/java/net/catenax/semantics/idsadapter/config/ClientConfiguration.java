@@ -26,7 +26,7 @@ import java.security.NoSuchAlgorithmException;
 @Configuration
 @AllArgsConstructor
 public class ClientConfiguration {
-    private final IdsAdapterConfigProperties idsAdapterConfigProperties;
+    private final BaseIdsAdapterConfigProperties idsAdapterConfigProperties;
 
     @Bean
     Feign.Builder feignBuilder() throws NoSuchAlgorithmException, KeyManagementException {

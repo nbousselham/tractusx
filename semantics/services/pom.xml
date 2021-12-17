@@ -3,12 +3,11 @@
     <parent>
         <groupId>net.catenax</groupId>
         <artifactId>semantics</artifactId>
-        <version>1.0.0-SNAPSHOT</version>
+        <version>1.1.0-SNAPSHOT</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
     <groupId>net.catenax.semantics</groupId>
     <artifactId>servicesApp</artifactId>
-    <version>1.0.0-SNAPSHOT</version>
     <name>Catena-X Semantic Layer Services</name>
     <description>Root Module of the Catena-X Semantic Layer Services</description>
     <packaging>jar</packaging>
@@ -186,6 +185,8 @@
                             <version>0.2.0</version>
                         </path>
                     </annotationProcessorPaths>
+                    <source>11</source>
+                    <target>11</target>
                 </configuration>
             </plugin>
             <plugin>

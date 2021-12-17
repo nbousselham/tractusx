@@ -12,28 +12,25 @@ package net.catenax.semantics.idsadapter.restapi.controller;
 
 import java.util.Map;
 
+import net.catenax.semantics.idsadapter.service.IdsService;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.mvc.method.annotation.StreamingResponseBody;
 
 import org.springframework.stereotype.Controller;
-import org.springframework.util.MultiValueMap;
 
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import net.catenax.semantics.idsadapter.client.api.ConnectorApi;
 import net.catenax.semantics.idsadapter.restapi.dto.Offer;
 import net.catenax.semantics.idsadapter.restapi.dto.Source;
-import net.catenax.semantics.idsadapter.service.IdsService;
-import springfox.documentation.annotations.ApiIgnore;
+import net.catenax.semantics.idsadapter.service.AdapterService;
 
 import io.swagger.annotations.*;
 
@@ -48,8 +45,8 @@ import io.swagger.annotations.*;
 @Slf4j
 @Api(tags="Adapter", value = "adapter", description = "Simple Semantic Adapter API")
 public class AdapterController {
+    private final AdapterService adapterService;
     private final IdsService idsService;
-    private final ConnectorApi connectorApi;
 
     /**
      * Simple hello
@@ -69,7 +66,7 @@ public class AdapterController {
      */
     @GetMapping(value = "/idsinfo", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Object> idsInfo() {
-        return ResponseEntity.ok(connectorApi.getPrivateSelfDescription());
+        return ResponseEntity.ok(idsService.getSelfDescription());
     }
 
     /**
@@ -81,20 +78,20 @@ public class AdapterController {
      */
     @PostMapping(value = "/offer/{name}", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Offer> offerResource(@PathVariable("name") String name, @RequestBody Offer offer) {
-        return ResponseEntity.ok(idsService.getOrCreateOffer(name, offer));
+        return ResponseEntity.ok(adapterService.getOrCreateOffer(name, offer));
     }
 
     /**
      * publish a preconfigured twin
      * 
      * @param name  source specification
-     * @param offer body
+     * @param source Source
      * @return register response
      */
     @PostMapping(value = "/register/{name}", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<String> registerTwins(@PathVariable("name") String name, @RequestBody Source source) {
         try {
-            return ResponseEntity.ok(idsService.registerTwins(name, source));
+            return ResponseEntity.ok(adapterService.registerTwins(name, source));
         } catch(Exception e) {
             e.printStackTrace(System.err);
             return ResponseEntity.internalServerError().body(e.getMessage());
@@ -110,7 +107,7 @@ public class AdapterController {
     @GetMapping(value = "/download", produces = MediaType.APPLICATION_OCTET_STREAM_VALUE)
     public ResponseEntity<StreamingResponseBody> downloadAgreement(@RequestParam Map<String, String> parameters) {
         StreamingResponseBody streamingResponseBody = response -> {
-            idsService.downloadForAgreement(response, MediaType.APPLICATION_OCTET_STREAM_VALUE, parameters);
+            adapterService.downloadForAgreement(response, MediaType.APPLICATION_OCTET_STREAM_VALUE, parameters);
         };
         return ResponseEntity.ok(streamingResponseBody);
     }

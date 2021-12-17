@@ -22,23 +22,10 @@ import java.util.Map;
 
 @ConfigurationProperties("idsadapter")
 @Data
-public class IdsAdapterConfigProperties {
+public class IdsAdapterConfigProperties extends BaseIdsAdapterConfigProperties {
     private boolean offerOnStart=false;
     private boolean registerOnStart=false;
 
-    private String connectorUrl;
-    private String serviceUrl;
-    private String adapterUrl;
-    private String portalUrl;
-    private String connectorUser;
-    private String connectorPassword;
-    private String publisher;
-    
-    private Map<String, Catalog> catalogs = new HashMap<>();
-
     private Map<String, Offer> offers=new HashMap<>();
-
-    private Map<String, Contract> contracts = new HashMap<>();
-
     private Map<String, Source> twins= new HashMap<>();
 }
