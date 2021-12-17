@@ -2,24 +2,19 @@ import './Dashboard.scss';
 import data from './data.json';
 import NetworkGraph from '../../components/NetworkGraph/NetworkGraph';
 import Grid from '@mui/material/Grid'
-import Button from '@mui/material/Button'
 import useAuth from '../../Auth/useAuth';
+import Node from '../../Types/Node';
 
 export default function Dashboard() {
+  const auth =useAuth();
   const nodesData = data.nodes.map((d: any) => Object.assign({}, d));
-  const linksData = data.links;
-  const auth = useAuth();
+  let linksData = [] as Node[];
 
-  function handleClick () {
-    auth.signOut(()=>{});
+  if (auth.user==="admin"){
+    linksData = data.links;
   }
-
   return (
     <Grid container direction="column" className="dashboard" data-testid="dashboard">
-      <Grid container justifyContent="center" sx={{p: 2, bgcolor: 'white' }}>
-        <span>DevOps Tooling</span>
-        <Button variant="contained" color="primary" onClick={handleClick}>Logout</Button>
-      </Grid>
       <NetworkGraph nodes={nodesData} links={linksData}></NetworkGraph>
     </Grid>
   )
