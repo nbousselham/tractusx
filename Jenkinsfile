@@ -70,14 +70,14 @@ pipeline {
                             script {
                                 docker.withRegistry('https://catenaxtsiacr.azurecr.io', 'azure-service-principal') {
                                     image1 = docker.build('semantics/adapterdev',' -f adapter/Dockerfile .')
-                                    image1.push("latest");
+                                    image1.push(getImageTag());
                                 }
                             } 
 
                             script {
                                 docker.withRegistry('https://catenaxtsiacr.azurecr.io', 'azure-service-principal') {
                                     image1 = docker.build('semantics/servicesdev',' -f services/Dockerfile .')
-                                    image1.push("latest");
+                                    image1.push(getImageTag());
                                 }
                             }
                         }
@@ -132,7 +132,7 @@ pipeline {
                             script {
                                 docker.withRegistry('https://catenaxtsiacr.azurecr.io', 'azure-service-principal') {
                                     image1 = docker.build('frontend/portaldev',' -f Dockerfile.develop .')
-                                    image1.push("latest");
+                                    image1.push(getImageTag());
                                 }
                             }
                         }
@@ -190,4 +190,14 @@ pipeline {
             echo 'Things were different before...'
         }
     }
+}
+
+String getImageTag() {
+	def tagPrefix = ""; // empty for master branch
+    if ("master" != env.BRANCH_NAME) {
+		tagPrefix = env.BRANCH_NAME + '-'
+		/* Make sure branch names like feature/JIRA-42 will render to a valid tag name: */
+		tagPrefix = tagPrefix.replaceAll("/", "-")
+	}
+	return tagPredix+"latest";
 }

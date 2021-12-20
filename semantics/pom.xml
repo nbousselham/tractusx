@@ -289,4 +289,21 @@
      </repository>
     </distributionManagement>
 
+	<profiles>
+		<profile>
+			<id>tsi</id>
+			<distributionManagement>
+				<repository>
+					<id>nexus-releases</id>
+					<url>https://strive.devops.t-systems-service.com/nexus/repository/catenax/</url>
+				</repository>
+				<snapshotRepository>
+					<id>nexus-snapshots</id>
+					<url>https://strive.devops.t-systems-service.com/nexus/repository/catenax/</url>
+					<uniqueVersion>false</uniqueVersion>
+				</snapshotRepository>
+			</distributionManagement>
+		</profile>
+	</profiles>
+
 </project>
