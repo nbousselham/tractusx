@@ -199,5 +199,5 @@ String getImageTag() {
 		/* Make sure branch names like feature/JIRA-42 will render to a valid tag name: */
 		tagPrefix = tagPrefix.replaceAll("/", "-")
 	}
-	return tagPredix+"latest";
+	return tagPrefix+"latest";
 }
