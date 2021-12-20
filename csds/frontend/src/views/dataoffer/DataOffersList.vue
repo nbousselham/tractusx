@@ -131,9 +131,6 @@ export default Vue.extend({
       return dataOffersArr;
     },
   },
-  mounted() {
-    console.log(this.filteredDataOffers);
-  },
   methods: {
     selectItem(item: never[]) {
       this.selectedItem = item;
@@ -159,14 +156,14 @@ export default Vue.extend({
 
 .v-data-table.data-offer-list {
   & > .v-data-table__wrapper > table > tbody > tr:hover {
-    background: white !important;
+    background: $white !important;
     box-shadow: $cx-elevation;
   }
   & > .v-data-table__wrapper {
     background-color: $grey1 !important;
   }
   & > .v-data-table__wrapper > table > tbody > tr {
-    background: white;
+    background: $white;
   }
   & > div > table {
     border-spacing: 0 0.4rem !important;
