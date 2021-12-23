@@ -47,12 +47,12 @@ function handleRequest(res: Response){
   return res.json();
 }
 
-export function getTwins(){
+export function getTwins(pageSize: number = 400, page: number = 0){
   const requestOptions = {
     method: 'GET',
     headers: new Headers({"Content-Type": "application/json"})
   }
-  return fetch(`${TWIN_URL}`, requestOptions)
+  return fetch(`${TWIN_URL}?pageSize=${pageSize}&page=${page}`, requestOptions)
     .then(handleRequest);
 }
 

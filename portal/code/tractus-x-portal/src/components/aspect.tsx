@@ -112,6 +112,16 @@ export default class Aspect extends React.Component<any, any> {
         that.appendOutput(`$$$SCHEMA urn:bamm:com.catenaX:0.0.1#Material found ${schema}`);
         that.setSchema(schema);
       });
+    } else if(aspect==='pt-aspect') {
+        this.performGet(`${process.env.REACT_APP_SEMANTIC_SERVICE_LAYER_URL}/models/urn:bamm:com.catenaX:0.0.1%23PartTypization/json-schema`,function(schema) {
+          that.appendOutput(`$$$SCHEMA urn:bamm:com.catenaX:0.0.1#PartTypization found ${schema}`);
+          that.setSchema(schema);
+        });
+    } else if(aspect==='apr-aspect') {
+        this.performGet(`${process.env.REACT_APP_SEMANTIC_SERVICE_LAYER_URL}/models/urn:bamm:com.catenax.traceability:0.1.0%23AssemblyPartRelationship/json-schema`,function(schema) {
+          that.appendOutput(`$$$SCHEMA urn:bamm:com.catenax.traceability:0.1.0#AssemblyPartRelationship found ${schema}`);
+          that.setSchema(schema);
+        });
     }
   }
 
@@ -400,7 +410,9 @@ export default class Aspect extends React.Component<any, any> {
     ];
     const availableRepresentations: IDropdownOption[] = [
       { key: 'material-aspect', text: 'Catena-X Material JSON payload.' },
-      { key: 'bom-aspect', text: 'Catena-X Bill-Of-Material JSON payload.' }
+      { key: 'bom-aspect', text: 'Catena-X Bill-Of-Material JSON payload.' },
+      { key: 'pt-aspect', text: 'Catena-X PartTypization JSON payload.' },
+      { key: 'apr-aspect', text: 'Catena-X AssemblyPartRelationship JSON payload.' }
     ];
 
     let availableArtifacts: IDropdownOption[] = [
@@ -408,7 +420,8 @@ export default class Aspect extends React.Component<any, any> {
       { key: 'bom-brake', text: 'SampleXML/XSLT-Based Aspect Implementation.' },
       { key: 'material-vehicle', text: 'Relational SQL-Based Aspect Implementation.' },
       { key: 'bom-vehicle', text: 'Relational SQL-Based Aspect Implementation.' },
-      { key: 'aras-bom', text: 'Aspect Implementation by PDM Web Connector.' },
+      { key: 'aras-pt', text: 'PartTypization Aspect Implementation by PDM Web Connector.' },
+      { key: 'aras-apr', text: 'AssemblyPartRelationship Aspect Implementation by PDM Web Connector.' },
     ];
 
     let offer=this.state.params.offer
@@ -436,11 +449,15 @@ export default class Aspect extends React.Component<any, any> {
         ];    
       } 
      } else if(offer==='offer-aras') {
-        if(representation==='bom-aspect') {
+        if(representation==='pt-aspect') {
           availableArtifacts = [
-            { key: 'aras-bom', text: 'Aspect Implementation by PDM Web Connector.' },
+            { key: 'aras-pt', text: 'PartTypization Aspect Implementation by PDM Web Connector.' },
           ];    
-        }     
+        } else if (representation==='apr-aspect') {
+          availableArtifacts = [
+            { key: 'aras-apr', text: 'AssemblyPartRelationship Aspect Implementation by PDM Web Connector.' },
+          ];    
+        }
      }
 
     let consoleClass={ backgroundColor: '#0052C9', color:'white' };
@@ -465,7 +482,26 @@ export default class Aspect extends React.Component<any, any> {
     }
     let adapterUrl =`${process.env.REACT_APP_SEMANTIC_SERVICE_LAYER_URL}/../../../swagger-ui.html#/Adapter`;
     var urlRegex = /(((https?:\/\/)|(www\.))[^\s"]+)/g;
-    var urls=this.state.data.match(urlRegex)
+    var uuidRegex = /([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12})/g;
+    var urls = [];
+    var matches=this.state.data.match(uuidRegex);
+    if(matches!=null) {
+      urls=matches.map( function(uuid) {
+      return {
+        "id":uuid,
+        "url":`../digitalTwin/${uuid}`
+      };
+      });
+    }
+    matches=this.state.data.match(urlRegex);
+    if(matches!=null) {
+      urls=urls.concat(matches.map( function(url) {
+      return {
+        "id":url,
+        "url":url
+      }
+      }));
+    }
     return(
       <div className='h100pc df fdc p44'>
          <div className='fs16 bold fgblack ml10 mb4'>Debugging the Semantics-Enabled Data Flow over the <a href='/home/myconnectors' target='_blank'>IDS Connector Network</a> backed by a <a href={adapterUrl} target='_blank'>Sample Adapter</a> (<a href='https://github.com/catenax/tractusx/blob/main/semantics/src/main/resources/application.yml' target='_blank'>Configuration</a>).</div>
@@ -500,7 +536,7 @@ export default class Aspect extends React.Component<any, any> {
             <div>
              <h3>Digital Twin References Found</h3>
              <ul>
-               { urls.map(url => (<li><a href={url} target='_parent'>{url}</a></li>)) }
+               { urls.map(url => (<li><a href={url.url} target='_parent'>{url.id}</a></li>)) }
              </ul>
              </div>
             : 
