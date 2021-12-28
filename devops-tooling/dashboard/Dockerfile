@@ -9,6 +9,6 @@ RUN npm run build
 
 # Step 2
 FROM nginx:1.19.7-alpine
-RUN apt-get update && apt-get install -y curl && apt-get clean
+#RUN apt-get update && apt-get install -y curl && apt-get clean
 COPY --from=build-step /app/build /usr/share/nginx/html
 COPY nginx.conf /etc/nginx/nginx.conf
