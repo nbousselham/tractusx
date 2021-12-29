@@ -5,17 +5,18 @@ import useAuth from '../../Auth/useAuth';
 import Node from '../../Types/Node';
 import { useEffect, useRef, useState } from 'react';
 import theme from '../../Theme';
-import { Typography } from '@mui/material';
+import { Button, Typography } from '@mui/material';
 import DashboardFilter from '../../components/Filter/DashboardFilter';
 import Link from '../../Types/Link';
 import { isAfter, isBefore, isEqual } from 'date-fns';
 
 export default function Dashboard() {
+  const cloneData  = JSON.parse(JSON.stringify(data))
   const auth = useAuth();
   const ref = useRef<HTMLDivElement>(null);
   const [size, setSize] = useState<any>({width: null, height: null});
-  const [nodesData, setNodesData] = useState<Node[]>(data.nodes as Node[]);
-  const [linksData, setLinksData] = useState<Link[]>(auth.user==="admin" ? data.links as Link[] : []);
+  const [nodesData, setNodesData] = useState<Node[]>(cloneData.nodes as Node[]);
+  const [linksData, setLinksData] = useState<Link[]>(auth.user==="admin" ? cloneData.links as Link[] : []);
 
   const updateDimensions = () => {
     if (ref.current) setSize({
@@ -25,8 +26,8 @@ export default function Dashboard() {
   };
 
   const onFilter = (filterStartDate, filterEndDate, searchTerm) => {
-    let filteredNodes = data.nodes as Node[];
-    let filteredLinks = data.links as Link[];
+    let filteredNodes = cloneData.nodes as Node[];
+    let filteredLinks = cloneData.links as Link[];
 
     if (searchTerm){
       filteredNodes = filteredNodes.filter(node => node.name.toLowerCase().includes(searchTerm.toLocaleLowerCase()));
@@ -67,6 +68,15 @@ export default function Dashboard() {
     setLinksData(filteredLinks);
   }
 
+  const addWarningToNode = () => {
+    if (nodesData.length > 0){
+      let n = cloneData.nodes as Node[];
+      const randomIndex = Math.floor(Math.random()*n.length);
+      n[randomIndex]['status'] = {type: 'warning', text: 'The connection has been interrupted.'};
+      setNodesData(n);
+    }
+  }
+
   useEffect(() => {
     window.addEventListener("resize", updateDimensions);
     updateDimensions();
@@ -89,6 +99,11 @@ export default function Dashboard() {
           </Grid>
         }
       </Grid>
+      {auth.user==="admin" &&
+        <Button variant="contained" color="primary" onClick={addWarningToNode}>
+          Add Warning
+        </Button>
+      }
     </>
   )
 }

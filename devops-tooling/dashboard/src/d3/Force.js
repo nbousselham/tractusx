@@ -31,6 +31,7 @@ function ForceGraph({
   const N = d3.map(nodes, nodeId).map(intern);
   const LS = d3.map(links, linkSource).map(intern);
   const LT = d3.map(links, linkTarget).map(intern);
+  const N_STATUS = nodes.map(n => n.status ? n.status : null);
   if (nodeTitle === undefined) nodeTitle = (_, i) => N[i];
   const T = nodeTitle == null ? null : d3.map(nodes, nodeTitle);
   const G = nodeGroup == null ? null : d3.map(nodes, nodeGroup).map(intern);
@@ -83,25 +84,36 @@ function ForceGraph({
 
   node.append("circle")
     .attr("r", nodeRadius)
-    .attr("fill", nodeFill)
     .attr("stroke", nodeStroke)
     .attr("stroke-width", nodeStrokeWidth)
-    .attr("stroke-opacity", nodeStrokeOpacity);
+    .attr("stroke-opacity", nodeStrokeOpacity)
+    .attr("fill",(d,i)=>{
+      let color = nodeFill;
+      if (N_STATUS[i]) {
+        color ='#f7d83f';
+      }
+      return color;
+    });
 
   node.append("text")
-    .text(d => d.name)
     .attr("fill","black")
     .attr('text-anchor', 'middle')
     .attr('dominant-baseline', 'central')
+    .html((d,i)=>{
 
-  node.append("title")
-    .text(function(d) { return d.id; });
+      let htmlContent  = `<tspan>${d.name} </tspan> `;
+      if (N_STATUS[i]){
+        htmlContent+= `<tspan y="-20" x="50" class="fa"> \uf071  </tspan>`
+      }
+
+      return htmlContent;
+    })
 
   node.call(drag(simulation));
 
   if (W) link.attr("stroke-width", ({index: i}) => W[i]);
   if (G) node.attr("fill", ({index: i}) => color(G[i]));
-  if (T) node.append("title").text(({index: i}) => T[i]);
+  if (T) node.append("title").text(({index: i}) => N_STATUS[i] ? N_STATUS[i].text : T[i]);
   if (invalidation != null) invalidation.then(() => simulation.stop());
 
   function intern(value) {
