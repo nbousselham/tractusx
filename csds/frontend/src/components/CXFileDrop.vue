@@ -1,82 +1,98 @@
 <template>
-  <v-card
-    id="drop-zone"
-    @drop.prevent="onDrop($event)"
-    @dragover.prevent="dragover = true"
-    @dragenter.prevent="dragover = true"
-    @dragleave.prevent="dragover = false"
-    :class="{ 'grey lighten-2': dragover }"
-    elevation="0"
-    class="mb-2"
-  >
-    <v-card-text>
-      <v-row class="d-flex flex-column" dense align="center" justify="center">
-        <template v-if="!isFileDropped">
-          <v-icon :class="[dragover ? 'mt-2, mb-6' : 'mt-5']" size="60"
-            >mdi-cloud-upload</v-icon
-          >
-          <p>Drag and drop here</p>
-          <p>Or</p>
-          <p>Browse files</p>
-        </template>
-        <template v-else>
-          <p>{{ uploadedFiles }}</p>
-        </template>
-      </v-row>
-    </v-card-text>
-    <v-card-actions></v-card-actions>
-  </v-card>
+  <div>
+    <v-card id="drop-zone" elevation="0" class="mb-2">
+      <v-card-text>
+        <vue-dropzone
+          id="dropzone-wrapper"
+          :options="dropzoneOptions"
+          :useCustomSlot="true"
+        >
+          <div class="dropzone-custom-content">
+            <p>
+              <v-icon class="pt-5">$vuetify.icons.fileUploadIcon</v-icon>
+            </p>
+            <p class="black--text fs-16 pt-2 mb-1">Drag and drop here</p>
+            <p class="black--text fs-16 mb-1">Or</p>
+            <p class="browse-files fs-16">Browse files</p>
+          </div>
+        </vue-dropzone>
+      </v-card-text>
+    </v-card>
+    <p class="pl-1 text--disabled">Accepted file types: CSV, JSON</p>
+  </div>
 </template>
 <script lang="ts">
 import Vue from "vue";
+// import vue2Dropzone from "vue2-dropzone";
+import "vue2-dropzone/dist/vue2Dropzone.min.css";
+// eslint-disable-next-line @typescript-eslint/no-var-requires
+const vue2Dropzone = require("vue2-dropzone");
+
 export default Vue.extend({
   name: "CXFileDrop",
+  components: {
+    vueDropzone: vue2Dropzone,
+  },
   data: () => ({
-    dragover: false,
-    uploadedFiles: [],
-    isFileDropped: false,
+    dropzoneOptions: {
+      url: "https://httpbin.org/post",
+      uploadMultiple: false,
+      acceptedFiles: [".json", ".csv"].join(","),
+      disablePreviews: true,
+    },
   }),
-  props: {
-    multiple: {
-      type: Boolean,
-      default: false,
-    },
-  },
-  methods: {
-    onDrop(e: {
-      dataTransfer: {
-        files: {
-          length: number;
-          forEach: (arg0: (element: never) => number) => void;
-        };
-      };
-    }) {
-      this.dragover = false;
-
-      if (this.uploadedFiles.length > 0) this.uploadedFiles = [];
-
-      if (!this.multiple && e.dataTransfer.files.length > 1) {
-        alert("Only one file can be uploaded at a time..");
-      } else {
-        this.isFileDropped = true;
-        console.log(e);
-        e.dataTransfer.files.forEach((element: never) =>
-          this.uploadedFiles.push(element)
-        );
-      }
-    },
-  },
 });
 </script>
 <style lang="scss">
 @import "~@/styles/variables";
 
 #drop-zone {
-  width: 490px;
-  height: 240px;
+  width: 518px;
   background: $grey1;
   border: 4px dashed $brand-color-green;
   box-sizing: border-box;
   border-radius: 4px;
+
+  & .dropzone .dz-preview {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    height: 0;
+    margin: 0;
+  }
+
+  & .vue-dropzone > .dz-preview .dz-details {
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+    background: $grey1;
+    color: black;
+    font-size: 18px;
+  }
+  & .dropzone .dz-preview .dz-details .dz-size {
+    display: none;
+  }
+
+  & .dropzone-custom-content {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    text-align: center;
+  }
+
+  & .browse-files {
+    color: $brand-color-orange;
+  }
+
+  & #dropzone-wrapper {
+    width: 100%;
+    background: $grey1;
+    border: none;
+  }
+}
+.fs-16 {
+  font-size: 16px;
 }
 </style>

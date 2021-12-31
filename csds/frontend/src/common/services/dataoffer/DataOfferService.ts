@@ -15,4 +15,10 @@ export default class DataOfferService {
       Util.getRestApiUrl("data-Offers", ServiceUrlType.PROVIDER)
     );
   }
+  static getAllUseCases() {
+    return axios.get(Util.getRestApiUrl("use-cases", ServiceUrlType.CORE));
+  }
+  static getOrgRoles() {
+    return axios.get(Util.getRestApiUrl("roles", ServiceUrlType.CORE));
+  }
 }

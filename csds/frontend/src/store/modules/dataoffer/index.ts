@@ -8,6 +8,8 @@ const DataOfferState: Module<dataOfferState, Record<string, never>> = {
   state: {
     dataOffersList: [],
     isDataOffersLoading: false,
+    useCaseList: [],
+    organizationRoles: [],
   },
   actions,
   getters,

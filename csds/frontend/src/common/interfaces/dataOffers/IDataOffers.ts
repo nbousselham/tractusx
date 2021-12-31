@@ -44,3 +44,13 @@ export interface iDataOffers {
   _id: string;
   usageControl: iUsageControl[];
 }
+
+export interface iUseCase {
+  id: number;
+  name: string;
+}
+
+export interface iOrgRoles {
+  id: number;
+  role: string;
+}
