@@ -11,9 +11,11 @@
             <p>
               <v-icon class="pt-5">$vuetify.icons.fileUploadIcon</v-icon>
             </p>
-            <p class="black--text fs-16 pt-2 mb-1">Drag and drop here</p>
-            <p class="black--text fs-16 mb-1">Or</p>
-            <p class="browse-files fs-16">Browse files</p>
+            <p class="black--text font-weight-bold fs-16 pt-2 mb-1">
+              Drag and drop here
+            </p>
+            <p class="black--text font-weight-bold fs-16 mb-1">Or</p>
+            <p class="browse-files font-weight-bold fs-16">Browse files</p>
           </div>
         </vue-dropzone>
       </v-card-text>

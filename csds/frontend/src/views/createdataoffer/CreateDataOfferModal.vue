@@ -111,7 +111,11 @@
                         color="#b3cb2d"
                       ></v-radio>
                     </v-radio-group>
-                    <v-row v-if="accessControlByUseCase === 'limited'">
+                    <v-row
+                      :class="{
+                        'greyout-box': accessControlByUseCase === 'unlimited',
+                      }"
+                    >
                       <v-spacer></v-spacer>
                       <v-col cols="12" md="9">
                         <div class="limitedUseCases">
@@ -153,7 +157,11 @@
                         color="#b3cb2d"
                       ></v-radio>
                     </v-radio-group>
-                    <v-row v-if="accessControlByRole === 'limited'">
+                    <v-row
+                      :class="{
+                        'greyout-box': accessControlByRole === 'unlimited',
+                      }"
+                    >
                       <v-spacer></v-spacer>
                       <v-col cols="12" md="12">
                         <div class="limitedRole">
@@ -179,13 +187,15 @@
                                   class="draggable-list"
                                   group="org-roles"
                                 >
-                                  <v-chip
-                                    v-for="orgRole in orgRoles"
-                                    :key="orgRole.id"
-                                    draggable
-                                  >
-                                    {{ orgRole.role }}
-                                  </v-chip>
+                                  <transition-group>
+                                    <v-chip
+                                      v-for="orgRole in orgRoles"
+                                      :key="orgRole.id"
+                                      draggable
+                                    >
+                                      {{ orgRole.role }}
+                                    </v-chip>
+                                  </transition-group>
                                 </draggable>
                               </v-chip-group>
                             </v-card-text>
@@ -208,15 +218,17 @@
                                   class="draggable-list"
                                   group="org-roles"
                                 >
-                                  <v-chip
-                                    v-for="selectedOrgRole in selectedOrgRoles"
-                                    :key="selectedOrgRole.id"
-                                    color="#b3cb2d"
-                                    text-color="white"
-                                    draggable
-                                  >
-                                    {{ selectedOrgRole.role }}
-                                  </v-chip>
+                                  <transition-group>
+                                    <v-chip
+                                      v-for="selectedOrgRole in selectedOrgRoles"
+                                      :key="selectedOrgRole.id"
+                                      color="#b3cb2d"
+                                      text-color="white"
+                                      draggable
+                                    >
+                                      {{ selectedOrgRole.role }}
+                                    </v-chip>
+                                  </transition-group>
                                 </draggable>
                               </v-chip-group>
                             </v-card-text>
@@ -254,7 +266,11 @@
                         color="#b3cb2d"
                       ></v-radio>
                     </v-radio-group>
-                    <v-row v-if="usageControl === 'limited'">
+                    <v-row
+                      :class="{
+                        'greyout-box': usageControl === 'unlimited',
+                      }"
+                    >
                       <v-col cols="12" md="4">
                         <v-checkbox
                           v-model="usageLoggingChk"
@@ -272,7 +288,6 @@
                               v-model="startDateMenu"
                               :close-on-content-click="false"
                               transition="scale-transition"
-                              lazy
                               offset-y
                               min-width="auto"
                             >
@@ -307,7 +322,6 @@
                               v-model="endDateMenu"
                               :close-on-content-click="false"
                               transition="scale-transition"
-                              lazy
                               offset-y
                               min-width="auto"
                             >
@@ -355,10 +369,11 @@
                   </v-col>
                   <v-col cols="12" md="8">
                     <v-textarea
-                      class="pa-1"
+                      class="dataoffer-description"
                       background-color="#F5F5F5"
+                      solo
                       color="black"
-                      label="Description"
+                      label="Description of the data offer"
                     ></v-textarea>
                   </v-col>
                 </div>
@@ -587,5 +602,18 @@ section.createOfferSection {
 .date-range {
   position: relative;
   top: 37px;
+}
+.dataoffer-description {
+  & .v-input__slot {
+    box-shadow: none;
+  }
+}
+.greyout-box {
+  background: $grey1;
+  pointer-events: none;
+  opacity: 0.5;
+  --moz-opacity: 0.5;
+  z-index: 99;
+  filter: alpha(opacity=50);
 }
 </style>
