@@ -24,7 +24,7 @@ import Pagination from '../navigation/Pagination';
 import { DigitalTwin, getTwins } from './data';
 
 const defaultPage = 0;
-const defaultItemCount = 10;
+const defaultPageSize = 10;
 
 export default class DigitalTwins extends React.Component<DigitalTwin, any>{
 
@@ -32,12 +32,12 @@ export default class DigitalTwins extends React.Component<DigitalTwin, any>{
     super(props);
     this.state = { 
       twins: null,
-      filteredTwins: null,
+      filterParams: new URLSearchParams(`page=${defaultPage}&pageSize=${defaultPageSize}`),
       error: null,
       searchInput: '',
       manufacturer: '',
       currentPage: defaultPage,
-      itemCount: defaultItemCount,
+      pageSize: defaultPageSize,
       totalPages: 1
     };
 
@@ -54,56 +54,76 @@ export default class DigitalTwins extends React.Component<DigitalTwin, any>{
     this.setTwins();
   }
 
+  componentDidUpdate(prevProps, prevState){
+    if (this.state.filterParams !== prevState.filterParams) {
+      this.setTwins();
+    }
+  }
+
   setTwins(){
-    getTwins()
+    getTwins(this.state.filterParams)
       .then(
         twins => {
           this.setState({
             twins: twins.items, 
-            filteredTwins: twins.items, 
-            itemCount: twins.itemCount,
+            pageSize: twins.itemCount,
             totalPages: twins.totalPages
-          })
+          });
         },
         error => this.setState({error: error.message})
       );
   }
 
+  setFilter(...params: { name: string, value: any }[]){
+    let currentFilter = new URLSearchParams(this.state.filterParams);
+    params.map(param => {
+      if(currentFilter.has(param.name)){
+        currentFilter.set(param.name, param.value);
+      } else {
+        currentFilter.append(param.name, param.value);
+      }
+      return null;
+    })
+    this.setState({filterParams: currentFilter});
+  }
+
   onClearFilter() {
-    this.doSearch('','');
+    this.doSearch('', '');
   }
 
   onSearchChange(value){
-    this.setState({searchInput:value});
-    this.doSearch(value,this.state.manufacturer);
+    this.setState({searchInput: value});
+    this.doSearch(value, this.state.manufacturer);
   }
 
   onSearchClear(){
-    this.doSearch('',this.state.manufacturer);
+    this.doSearch('', this.state.manufacturer);
   }
 
   doSearch(searchInput, manufacturer) {
-    console.log(`Filtering ${this.state.twins.length} twins using manufacturer ${manufacturer} and search ${searchInput}`);
     const filteredTwins = this.state.twins.filter(twin => twin.manufacturer.includes(manufacturer) && (twin.description.includes(searchInput) || twin.localIdentifiers.some(key => key.value.includes(searchInput))));
-    console.log(`Found ${filteredTwins.length} twins.`);
-    this.setState({searchInput: searchInput, manufacturer: manufacturer, filteredTwins: filteredTwins});
+    this.setState({searchInput: searchInput, manufacturer: manufacturer, twins: filteredTwins});
   }
 
   onDropdownChange(ev, option){
-    console.log(`Dropdown option key ${option.key} and value ${option.text}`)
-    this.doSearch(this.state.searchInput,option.key);
+    this.doSearch(this.state.searchInput, option.key);
   }
 
   onItemCountClick(count: number){
     console.log('onItemCountClick');
+    this.setState({pageSize: count}, () => this.setFilter({name: 'pageSize', value: count}));
   }
 
   onPageBefore(){
-    this.setState({currentPage: this.state.currentPage - 1}, () => this.setTwins());
+    this.setState({currentPage: this.state.currentPage - 1}, () => this.updatePageFilter());
   }
 
   onPageNext(){
-    this.setState({currentPage: this.state.currentPage + 1}, () => this.setTwins());
+    this.setState({currentPage: this.state.currentPage + 1}, () => this.updatePageFilter());
+  }
+
+  updatePageFilter(){
+    this.setFilter({name: 'page', value: this.state.currentPage});
   }
 
   public render() {
@@ -135,7 +155,7 @@ export default class DigitalTwins extends React.Component<DigitalTwin, any>{
     return (
       <div className='p44 df fdc'>
         <HelpContextMenu menuItems={helpMenuItems}></HelpContextMenu>
-        {this.state.filteredTwins ?
+        {this.state.twins ?
           <div>
             <h1 className="fs24 bold mb20">Digital Twins</h1>
             <div className="df aife jcfe mb20">
@@ -156,7 +176,7 @@ export default class DigitalTwins extends React.Component<DigitalTwin, any>{
               <>
                 <ListCountSelector activeCount={this.state.pageSize} onCountClick={this.onItemCountClick}/>
                 <div className="df fwrap">
-                  {this.state.filteredTwins.map(twin => (
+                  {this.state.twins.map(twin => (
                     <Link key={twin.id} className="m5 p20 bgpanel flex40 br4 bsdatacatalog tdn" to={{
                       pathname: `/home/digitaltwin/${twin.id}`
                     }}>
