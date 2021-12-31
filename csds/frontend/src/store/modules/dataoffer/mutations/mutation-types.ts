@@ -1,2 +1,4 @@
 export const SET_DATA_OFFERS = "SET_DATA_OFFERS";
 export const SET_DATA_OFFERS_LOADING = "SET_DATA_OFFERS_LOADING";
+export const SET_USE_CASES = "SET_USE_CASES";
+export const SET_ORG_ROLES = "SET_ORG_ROLES";
