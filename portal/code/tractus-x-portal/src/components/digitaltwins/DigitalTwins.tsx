@@ -44,6 +44,7 @@ export default class DigitalTwins extends React.Component<DigitalTwin, any>{
     this.onClearFilter = this.onClearFilter.bind(this);
     this.onSearchChange = this.onSearchChange.bind(this);
     this.onSearchClear = this.onSearchClear.bind(this);
+    this.onInputSearch = this.onInputSearch.bind(this);
     this.onDropdownChange = this.onDropdownChange.bind(this);
     this.onItemCountClick = this.onItemCountClick.bind(this);
     this.onPageBefore = this.onPageBefore.bind(this);
@@ -88,29 +89,69 @@ export default class DigitalTwins extends React.Component<DigitalTwin, any>{
   }
 
   onClearFilter() {
-    this.doSearch('', '');
+    const newFilterParams = [
+      {name: 'page', value: defaultPage},
+      {name: 'pageSize', value: defaultPageSize}
+    ]
+    this.setState({manufacturer: '', searchInput: ''});
+    this.setFilter(...newFilterParams);
   }
 
-  onSearchChange(value){
-    this.setState({searchInput: value});
-    this.doSearch(value, this.state.manufacturer);
+  onSearchChange(_, searchTerm){
+    this.setState({searchInput: searchTerm});
+  }
+
+  onInputSearch(searchTerm){
+    //just work-around since the API has no filter yet
+    if(searchTerm === this.state.filterParams.get('nameFilter')) return;
+    const newFilterParams = [
+      {name: 'page', value: 0},
+      {name: 'pageSize', value: 1000},
+      {name: 'nameFilter', value: searchTerm}
+    ]
+    this.setFilter(...newFilterParams);
+    setTimeout(() => {
+      const filteredTwins = this.state.twins.filter(twin => 
+        this.includesString(twin.description, searchTerm) || 
+        twin.localIdentifiers.some(key => this.includesString(key.value, searchTerm)));
+      this.setState({twins: filteredTwins});
+    }, 500);
+  }
+
+  includesString(baseString: string, includingString: string){
+    return baseString.toUpperCase().includes(includingString.toUpperCase());
   }
 
   onSearchClear(){
-    this.doSearch('', this.state.manufacturer);
+    const newFilterParams = [
+      {name: 'page', value: defaultPage},
+      {name: 'pageSize', value: defaultPageSize},
+      this.state.manufacturer && {name: 'manufacturer', value: this.state.manufacturer}
+    ]
+    this.setState({searchInput: ''});
+    this.setFilter(...newFilterParams);
   }
 
-  doSearch(searchInput, manufacturer) {
-    const filteredTwins = this.state.twins.filter(twin => twin.manufacturer.includes(manufacturer) && (twin.description.includes(searchInput) || twin.localIdentifiers.some(key => key.value.includes(searchInput))));
-    this.setState({searchInput: searchInput, manufacturer: manufacturer, twins: filteredTwins});
-  }
-
-  onDropdownChange(ev, option){
-    this.doSearch(this.state.searchInput, option.key);
+  onDropdownChange(_, option){
+    const manufacturer = option.key;
+    if(manufacturer === ''){
+      this.onClearFilter();
+    } else {
+      //just work-around since the API has no filter yet
+      const newFilterParams = [
+        {name: 'page', value: 0},
+        {name: 'pageSize', value: 1000},
+        {name: 'manufacturer', value: manufacturer}
+      ]
+      this.setFilter(...newFilterParams);
+      setTimeout(() => {
+        const filteredTwins = this.state.twins.filter(twin => twin.manufacturer.includes(manufacturer))
+        this.setState({twins: filteredTwins, manufacturer: manufacturer});
+      }, 500);
+    }
   }
 
   onItemCountClick(count: number){
-    console.log('onItemCountClick');
     this.setState({pageSize: count}, () => this.setFilter({name: 'pageSize', value: count}));
   }
 
@@ -169,13 +210,14 @@ export default class DigitalTwins extends React.Component<DigitalTwin, any>{
               <SearchBox className="w300"
                 placeholder="Filter ID or description"
                 value={this.state.searchInput}
+                onSearch={this.onInputSearch}
                 onClear={this.onSearchClear}
-                onChange={(_, newValue) => this.onSearchChange(newValue)}/>
+                onChange={this.onSearchChange}/>
             </div>
             {this.state.twins.length > 0 ?
               <>
                 <ListCountSelector activeCount={this.state.pageSize} onCountClick={this.onItemCountClick}/>
-                <div className="df fwrap">
+                <div className="df fwrap mt20">
                   {this.state.twins.map(twin => (
                     <Link key={twin.id} className="m5 p20 bgpanel flex40 br4 bsdatacatalog tdn" to={{
                       pathname: `/home/digitaltwin/${twin.id}`
