@@ -45,7 +45,9 @@
                 <div class="d-flex col-12">
                   <v-spacer></v-spacer>
                   <v-col cols="12" md="2">
-                    <v-subheader class="black--text">Title</v-subheader>
+                    <v-subheader class="dataoffer-subheader black--text"
+                      >Title</v-subheader
+                    >
                   </v-col>
                   <v-col cols="12" md="8">
                     <v-text-field
@@ -72,7 +74,9 @@
                 <div class="d-flex col-12">
                   <v-spacer></v-spacer>
                   <v-col cols="12" md="2">
-                    <v-subheader class="black--text">Select file</v-subheader>
+                    <v-subheader class="dataoffer-subheader black--text"
+                      >Select file</v-subheader
+                    >
                   </v-col>
                   <v-col cols="12" md="8">
                     <CxFileDrop />
@@ -86,7 +90,7 @@
                 <div class="accessControlByUseCase d-flex col-12">
                   <v-spacer></v-spacer>
                   <v-col cols="12" md="4">
-                    <v-subheader class="black--text"
+                    <v-subheader class="dataoffer-subheader mt-3 black--text"
                       >Access control by use case</v-subheader
                     >
                     <p class="px-4 text--disabled">
@@ -111,7 +115,11 @@
                         color="#b3cb2d"
                       ></v-radio>
                     </v-radio-group>
-                    <v-row v-if="accessControlByUseCase === 'limited'">
+                    <v-row
+                      :class="{
+                        'greyout-box': accessControlByUseCase === 'unlimited',
+                      }"
+                    >
                       <v-spacer></v-spacer>
                       <v-col cols="12" md="9">
                         <div class="limitedUseCases">
@@ -131,7 +139,7 @@
                 <div class="accessControlByRole d-flex col-12">
                   <v-spacer></v-spacer>
                   <v-col cols="12" md="4">
-                    <v-subheader class="black--text"
+                    <v-subheader class="dataoffer-subheader mt-3 black--text"
                       >Access control by role</v-subheader
                     >
                     <p class="px-4 text--disabled">
@@ -153,7 +161,11 @@
                         color="#b3cb2d"
                       ></v-radio>
                     </v-radio-group>
-                    <v-row v-if="accessControlByRole === 'limited'">
+                    <v-row
+                      :class="{
+                        'greyout-box': accessControlByRole === 'unlimited',
+                      }"
+                    >
                       <v-spacer></v-spacer>
                       <v-col cols="12" md="12">
                         <div class="limitedRole">
@@ -179,13 +191,15 @@
                                   class="draggable-list"
                                   group="org-roles"
                                 >
-                                  <v-chip
-                                    v-for="orgRole in orgRoles"
-                                    :key="orgRole.id"
-                                    draggable
-                                  >
-                                    {{ orgRole.role }}
-                                  </v-chip>
+                                  <transition-group>
+                                    <v-chip
+                                      v-for="orgRole in orgRoles"
+                                      :key="orgRole.id"
+                                      draggable
+                                    >
+                                      {{ orgRole.role }}
+                                    </v-chip>
+                                  </transition-group>
                                 </draggable>
                               </v-chip-group>
                             </v-card-text>
@@ -208,15 +222,17 @@
                                   class="draggable-list"
                                   group="org-roles"
                                 >
-                                  <v-chip
-                                    v-for="selectedOrgRole in selectedOrgRoles"
-                                    :key="selectedOrgRole.id"
-                                    color="#b3cb2d"
-                                    text-color="white"
-                                    draggable
-                                  >
-                                    {{ selectedOrgRole.role }}
-                                  </v-chip>
+                                  <transition-group>
+                                    <v-chip
+                                      v-for="selectedOrgRole in selectedOrgRoles"
+                                      :key="selectedOrgRole.id"
+                                      color="#b3cb2d"
+                                      text-color="white"
+                                      draggable
+                                    >
+                                      {{ selectedOrgRole.role }}
+                                    </v-chip>
+                                  </transition-group>
                                 </draggable>
                               </v-chip-group>
                             </v-card-text>
@@ -237,7 +253,7 @@
                 <div class="usageControl-wrapper d-flex col-12">
                   <v-spacer></v-spacer>
                   <v-col cols="12" md="3">
-                    <v-subheader class="mt-1 black--text"
+                    <v-subheader class="dataoffer-subheader mt-2 black--text"
                       >Usage control</v-subheader
                     >
                   </v-col>
@@ -254,7 +270,11 @@
                         color="#b3cb2d"
                       ></v-radio>
                     </v-radio-group>
-                    <v-row v-if="usageControl === 'limited'">
+                    <v-row
+                      :class="{
+                        'greyout-box': usageControl === 'unlimited',
+                      }"
+                    >
                       <v-col cols="12" md="4">
                         <v-checkbox
                           v-model="usageLoggingChk"
@@ -272,7 +292,6 @@
                               v-model="startDateMenu"
                               :close-on-content-click="false"
                               transition="scale-transition"
-                              lazy
                               offset-y
                               min-width="auto"
                             >
@@ -307,7 +326,6 @@
                               v-model="endDateMenu"
                               :close-on-content-click="false"
                               transition="scale-transition"
-                              lazy
                               offset-y
                               min-width="auto"
                             >
@@ -351,14 +369,17 @@
                 <div class="description-wrapper d-flex col-12">
                   <v-spacer></v-spacer>
                   <v-col cols="12" md="2">
-                    <v-subheader class="black--text">Description</v-subheader>
+                    <v-subheader class="dataoffer-subheader black--text"
+                      >Description</v-subheader
+                    >
                   </v-col>
                   <v-col cols="12" md="8">
                     <v-textarea
-                      class="pa-1"
+                      class="dataoffer-description"
                       background-color="#F5F5F5"
+                      solo
                       color="black"
-                      label="Description"
+                      label="Description of the data offer"
                     ></v-textarea>
                   </v-col>
                 </div>
@@ -373,7 +394,7 @@
       <v-card-actions style="height: 70px">
         <v-spacer></v-spacer>
         <v-btn text width="200" @click.native="close"> CANCEL </v-btn>
-        <v-btn color="primary" disabled width="200" @click.native="close">
+        <v-btn disabled width="200" @click.native="close">
           ADD DATA OFFER
         </v-btn>
       </v-card-actions>
@@ -456,7 +477,7 @@ export default Vue.extend({
       const filteredArr: iFilteredItems[] = [];
       let filteredObj = {
         id: 100,
-        name: "Select/Unselect all",
+        name: "Select/Deselect all",
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         children: (this as any).useCases,
       };
@@ -587,5 +608,23 @@ section.createOfferSection {
 .date-range {
   position: relative;
   top: 37px;
+}
+.dataoffer-description {
+  & .v-input__slot {
+    box-shadow: none !important;
+  }
+}
+.greyout-box {
+  background: $grey1;
+  pointer-events: none;
+  opacity: 0.5;
+  --moz-opacity: 0.5;
+  z-index: 99;
+  filter: alpha(opacity=50);
+}
+.v-subheader.dataoffer-subheader {
+  font-weight: 500;
+  font-size: 16px;
+  letter-spacing: 0.3px;
 }
 </style>
