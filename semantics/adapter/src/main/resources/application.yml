@@ -179,9 +179,6 @@ idsadapter:
                 description: Test Material Database.
                 type: jdbc
                 transformation: sql2material.xsl
-                datasource: 
-                  driverClassName:
-                  url: jdbc:h2:file:./semantics/persistence
                 aliases: 
                   material: |
                    WITH RECURSIVE materialtree(id,parent,material_name, material_type,aggregate_state, chemical_composition_fraction,weight,owner,owner_type,level) AS (
@@ -233,9 +230,6 @@ idsadapter:
                 description: Test Traceability Database.
                 type: jdbc
                 transformation: sql2bom.xsl
-                datasource: 
-                  driverClassName:
-                  url: jdbc:h2:file:./semantics/persistence
                 aliases: 
                   bom: |
                    WITH RECURSIVE bom(parentId,
@@ -299,9 +293,6 @@ idsadapter:
       description: Test Data Digital Twins.
       type: jdbc
       transformation: sql2twins.xsl
-      datasource: 
-        driverClassName:
-        url: jdbc:h2:file:./semantics/persistence
       aliases: 
         parts: |
          SELECT partStaticData_partNameCustomer AS description, 
