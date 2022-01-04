@@ -38,7 +38,6 @@ pipeline {
                 ]) {
                     sh '''
                     docker login -u ${AZURE_PRINCIPAL} -p ${AZURE_PASSWORD} https://catenaxtsiacr.azurecr.io;
-                    for IMAGE in $(docker image ls | grep "catenax" | awk -F ' ' '{print $3}' | sort | uniq); do docker image rm -f ${IMAGE}; done;
                     docker container prune -f;
                     docker image prune -f;
                     docker pull catenaxtsiacr.azurecr.io/catenax/deploy;
