@@ -98,8 +98,9 @@ export default class DigitalTwins extends React.Component<DigitalTwin, any>{
       { key: '', text: 'All' },
       { key: 'BMW', text: 'BMW' },
       { key: 'BOSCH', text: 'Bosch' },
-      { key: 'T-Systems', text: 'T-Systems' },
+      { key: 'Musterfirma GmbH', text: 'Musterfirma'},
       { key: 'SAMSUNG', text: 'Samsung' },
+      { key: 'T-Systems', text: 'T-Systems' },
       { key: 'ZF', text: 'ZF' }
     ];
     return (
