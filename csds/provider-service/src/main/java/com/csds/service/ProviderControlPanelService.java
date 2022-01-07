@@ -428,6 +428,11 @@ public class ProviderControlPanelService {
 			usageExampleInput.setStart(policy.getStartDate());
 			usageExampleInput.setEnd(policy.getEndDate());
 			break;
+		case USAGE_UNTIL_DELETION:
+			usageExampleInput.setStart(policy.getStartDate());
+			usageExampleInput.setEnd(policy.getEndDate());
+			usageExampleInput.setDate(policy.getEndDate());
+			break;
 		case DURATION_USAGE:
 			usageExampleInput.setDuration(policy.getDuration());
 			break;
