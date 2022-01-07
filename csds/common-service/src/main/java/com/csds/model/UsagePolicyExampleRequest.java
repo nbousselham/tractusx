@@ -23,7 +23,7 @@ public class UsagePolicyExampleRequest {
 	private Integer value;
 	private Date start;
 	private Date end;
-	private Date deleteDate;
+	private Date date;
 	private String duration;
 	private String url;
 	private String profile;
