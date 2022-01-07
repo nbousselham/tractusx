@@ -32,10 +32,10 @@ public class OrganizationController {
 		return ResponseEntity.ok(orgService.getAllRoles());
 	}
 
-	@GetMapping(value = "/{role}/organizations")
+	@GetMapping(value = "role/{role}/organizations")
 	public ResponseEntity<ResponseObject> getOrganizationByRole(@PathVariable ("role") String role) {
 
-		logger.info("Started Organization Controller  for : getCompanyNames");
+		logger.info("Started Organization Controller  for : getCompanies by role");
 		return ResponseEntity.ok(orgService.getAllOrgnizationByRole(role));
 	}
 

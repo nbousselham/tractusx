@@ -43,5 +43,9 @@ public class DataOfferEntity {
 	private Integer contractEndsinDays;
 
 	private Map<String,Object> offerIDSdetails;
+	
+	private String accessControlByRoleType;
+	
+	private String usageControlType;
 
 }

@@ -1,8 +1,11 @@
 package com.csds.service.impl;
 
+import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
+import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
@@ -10,9 +13,11 @@ import org.springframework.util.Assert;
 import com.csds.constant.ApplicationMessageConstant;
 import com.csds.entities.OrganizationDetails;
 import com.csds.entities.Role;
+import com.csds.entities.UseCases;
 import com.csds.model.request.OrganizationRequest;
 import com.csds.repository.OrganizationRepository;
 import com.csds.repository.RoleRepository;
+import com.csds.repository.UseCasesRepository;
 import com.csds.response.ResponseObject;
 import com.csds.service.OrganizationServices;
 
@@ -27,6 +32,11 @@ public class OrganizationServicesImpl implements OrganizationServices {
 
 	@Autowired
 	private RoleRepository roleRepository;
+	
+	@Autowired
+	private UseCasesRepository useCasesRepository;
+	
+	
 
 	@Override
 	public ResponseObject getAllRoles() {
@@ -99,7 +109,15 @@ public class OrganizationServicesImpl implements OrganizationServices {
 		}
 
 		organizationDetails.setName(organizationRequest.getName());
+		if (StringUtils.isNotBlank(organizationRequest.getRole())) {
+			saveRoleInDBIfNotAvaiable(organizationRequest.getRole());
+		}
 		organizationDetails.setRole(organizationRequest.getRole());
+
+		if (!organizationRequest.getUseCase().isEmpty()) {
+			saveUseCaseInDBIfNotAvaiable(organizationRequest.getUseCase());
+		}
+		organizationDetails.setUseCase(organizationRequest.getUseCase());
 		organizationDetails.setBaseUrl(organizationRequest.getBaseUrl());
 		organizationDetails.setStatus(organizationRequest.getStatus());
 		organizationRepository.saveAndFlush(organizationDetails);
@@ -109,5 +127,52 @@ public class OrganizationServicesImpl implements OrganizationServices {
 		response.setStatus(ApplicationMessageConstant.SUCCESS);
 		log.info(String.format(ApplicationMessageConstant.SUCCESS_OPERATION, "getAddAndUpdateOrgnizationDetials"));
 		return response;
+	}
+
+
+	@Override
+	public ResponseObject getAllOrgnizationByUseCase(String useCase) {
+		Assert.notNull(useCase, ApplicationMessageConstant.VALIDATION_FAILED);
+		ResponseObject response = new ResponseObject();
+		Optional<List<OrganizationDetails>> optionalOrgList = organizationRepository.findByUseCase(useCase);
+
+		if (optionalOrgList.isPresent()) {
+			response.setData(optionalOrgList.get());
+			response.setMessage(String.format(ApplicationMessageConstant.SUCCESS_OPERATION, "getAllOrgnizationByUseCase"));
+			response.setStatus(ApplicationMessageConstant.SUCCESS);
+		} else {
+			response.setMessage(ApplicationMessageConstant.NOT_FOUND);
+			response.setData(null);
+			response.setStatus(ApplicationMessageConstant.SUCCESS);
+		}
+		log.info(String.format(ApplicationMessageConstant.SUCCESS_OPERATION, "getAllOrgnizationByUseCase"));
+		return response;
+	}
+	
+	
+	private void saveUseCaseInDBIfNotAvaiable(Set<String> useCaseList) {
+
+		Set<UseCases> useCasesListDb = new HashSet<>();
+
+		for (String useCase : useCaseList) {
+			Optional<UseCases> useCaseOptional = useCasesRepository.findByNameIgnoreCase(useCase);
+
+			if (!useCaseOptional.isPresent() || StringUtils.isBlank(useCaseOptional.get().getName())) {
+				UseCases useCaseDb = new UseCases();
+				useCaseDb.setName(useCase);
+				useCasesListDb.add(useCaseDb);
+			}
+		}
+		useCasesRepository.saveAllAndFlush(useCasesListDb);
+	}
+
+	private void saveRoleInDBIfNotAvaiable(String role) {
+		
+		Optional<Role> roleOptional = roleRepository.findByRoleIgnoreCase(role);
+		if (!roleOptional.isPresent() || StringUtils.isBlank(roleOptional.get().getRole())) {
+			Role roleDb = new Role();
+			roleDb.setRole(role);
+			roleRepository.saveAndFlush(roleDb);
+		}	
 	}
 }

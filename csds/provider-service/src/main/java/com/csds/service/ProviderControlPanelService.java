@@ -360,6 +360,8 @@ public class ProviderControlPanelService {
 			dataOffer.setContractEndsinDays(offerRequest.getContractEndsinDays());
 			dataOffer.setUsageControl(offerRequest.getUsageControl());
 			dataOffer.setOfferIDSdetails(offerIDSdetails);
+			dataOffer.setAccessControlByRoleType(offerRequest.getAccessControlByRoleType());
+			dataOffer.setUsageControlType(offerRequest.getUsageControlType());
 
 			return dataOfferMongoRepository.save(dataOffer);
 
@@ -382,7 +384,10 @@ public class ProviderControlPanelService {
 				.byOrganization(offerRequest.getByOrganization())
 				.byOrganizationRole(offerRequest.getByOrganizationRole())
 				.contractEndsinDays(offerRequest.getContractEndsinDays()).usageControl(offerRequest.getUsageControl())
-				.offerIDSdetails(offerIDSdetails).build();
+				.offerIDSdetails(offerIDSdetails)
+				.accessControlByRoleType(offerRequest.getAccessControlByRoleType())
+				.usageControlType(offerRequest.getUsageControlType())
+				.build();
 
 		return dataOfferMongoRepository.save(dataOfferEntity);
 	}
