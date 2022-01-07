@@ -38,6 +38,7 @@ public class OrganizationController {
 		logger.info("Started Organization Controller  for : getCompanies by role");
 		return ResponseEntity.ok(orgService.getAllOrgnizationByRole(role));
 	}
+	
 
 	@GetMapping(value = "/organizations")
 	public ResponseEntity<ResponseObject> getOrganizationDetails() {
