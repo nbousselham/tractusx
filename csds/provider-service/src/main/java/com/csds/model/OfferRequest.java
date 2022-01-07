@@ -25,5 +25,6 @@ public class OfferRequest {
 	private List<OrganizationDetails> byOrganization;
 	private List<UsagePolicyDetails> usageControl;
 	private Integer contractEndsinDays;
-
+	private String accessControlByRoleType;
+	private String usageControlType;
 }

@@ -1,5 +1,8 @@
 package com.csds.entities;
 
+import java.util.Set;
+
+import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -21,4 +24,7 @@ public class OrganizationDetails {
 	private String role;
 	private String baseUrl;
 	private String status;
+	
+	@ElementCollection(targetClass = String.class)
+	private Set<String> useCase;
 }
