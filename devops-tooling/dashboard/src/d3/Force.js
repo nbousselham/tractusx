@@ -25,7 +25,8 @@ function ForceGraph({
   colors = d3.schemeTableau10, // an array of color strings, for the node groups
   width = 640, // outer width, in pixels
   height = 400, // outer height, in pixels
-  invalidation // when this promise resolves, stop the simulation
+  invalidation, // when this promise resolves, stop the simulation
+  onClick
 } = {}) {
   // Compute values.
   const N = d3.map(nodes, nodeId).map(intern);
@@ -81,6 +82,7 @@ function ForceGraph({
     .selectAll("g")
     .data(nodes)
     .enter().append("g")
+    .on('click', (d,elem) => onClick(elem.id))
 
   node.append("circle")
     .attr("r", nodeRadius)
@@ -93,7 +95,7 @@ function ForceGraph({
         color ='#f7d83f';
       }
       return color;
-    });
+    })
 
   node.append("text")
     .attr("fill","black")
