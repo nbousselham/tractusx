@@ -10,10 +10,13 @@ import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.Base64;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 import org.apache.commons.io.IOUtils;
 import org.bson.types.ObjectId;
@@ -23,9 +26,11 @@ import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.data.mongodb.gridfs.GridFsOperations;
 import org.springframework.data.mongodb.gridfs.GridFsTemplate;
 import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.csds.api.CoreServiceOrganizationApi;
 import com.csds.api.DataSpaceConnectorUsagePolicyExample;
 import com.csds.api.DataspaceConnectorArtifactsApi;
 import com.csds.api.DataspaceConnectorCatalogsApi;
@@ -34,7 +39,7 @@ import com.csds.api.DataspaceConnectorOffersApi;
 import com.csds.api.DataspaceConnectorRepresentationsApi;
 import com.csds.api.DataspaceConnectorRulesApi;
 import com.csds.constant.ApplicationMessageConstant;
-import com.csds.constants.APIConstants;
+import com.csds.constants.ApplicationConstantsConfigurationService;
 import com.csds.entity.DataOfferEntity;
 import com.csds.entity.ProviderControlPanelConnectorDetails;
 import com.csds.exception.ServiceException;
@@ -47,12 +52,15 @@ import com.csds.model.GetListResponse;
 import com.csds.model.OfferDescription;
 import com.csds.model.OfferFile;
 import com.csds.model.OfferRequest;
+import com.csds.model.OrganizationDetails;
 import com.csds.model.ResourceRepresentationDescription;
 import com.csds.model.RuleDescription;
 import com.csds.model.UsagePolicyDetails;
 import com.csds.model.UsagePolicyExampleRequest;
 import com.csds.model.UsagePolicyType;
 import com.csds.repository.DataOfferMongoRepository;
+import com.csds.response.ResponseObject;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.mongodb.BasicDBObject;
 import com.mongodb.DBObject;
 import com.mongodb.client.gridfs.model.GridFSFile;
@@ -69,7 +77,7 @@ public class ProviderControlPanelService {
 	private static final String CATALOG_NAME = "RECYCLER_CATALOG";
 
 	@Autowired
-	private APIConstants aPIConstants;
+	private ApplicationConstantsConfigurationService aPIConstants;
 
 	private static ProviderControlPanelConnectorDetails connectorDetails;
 	private static URI connectorProviderBaseUrl;
@@ -81,6 +89,8 @@ public class ProviderControlPanelService {
 	private final DataspaceConnectorRepresentationsApi representationsApi;
 	private final DataspaceConnectorArtifactsApi artifactsApi;
 	private final DataSpaceConnectorUsagePolicyExample usagePolicyExampleApi;
+
+	private final CoreServiceOrganizationApi coreServiceOrganizationApi;
 
 	@Autowired
 	private DataOfferMongoRepository dataOfferMongoRepository;
@@ -123,6 +133,8 @@ public class ProviderControlPanelService {
 			Map<String, Object> offerIDSdetails = new HashMap<>();
 
 			validateOfferRequestData(offerRequest);
+
+			updateOrganizationsfromSelectedRoleAndUsecase(offerRequest);
 
 			if (file == null || file.isEmpty()) {
 				throw new ValidationException("The input file should not be null or empty");
@@ -242,6 +254,8 @@ public class ProviderControlPanelService {
 					.orElseThrow(() -> new ValidationException("Offer id is not valid or not present"));
 
 			validateOfferRequestData(offerRequest);
+
+			updateOrganizationsfromSelectedRoleAndUsecase(offerRequest);
 
 			UUID offerId = UUID.fromString(dataOffer.getOfferIDSdetails().get("offerId").toString());
 			var offerSelfHref = dataOffer.getOfferIDSdetails().get("offerSelfHref").toString();
@@ -384,12 +398,48 @@ public class ProviderControlPanelService {
 				.byOrganization(offerRequest.getByOrganization())
 				.byOrganizationRole(offerRequest.getByOrganizationRole())
 				.contractEndsinDays(offerRequest.getContractEndsinDays()).usageControl(offerRequest.getUsageControl())
-				.offerIDSdetails(offerIDSdetails)
-				.accessControlByRoleType(offerRequest.getAccessControlByRoleType())
-				.usageControlType(offerRequest.getUsageControlType())
-				.build();
+				.offerIDSdetails(offerIDSdetails).accessControlByRoleType(offerRequest.getAccessControlByRoleType())
+				.usageControlType(offerRequest.getUsageControlType()).build();
 
 		return dataOfferMongoRepository.save(dataOfferEntity);
+	}
+
+	@SuppressWarnings("unchecked")
+	private void updateOrganizationsfromSelectedRoleAndUsecase(OfferRequest offerRequest) throws ServiceException {
+		final ObjectMapper mapper = new ObjectMapper();
+		List<OrganizationDetails> allOrganizationLs = new ArrayList<>();
+		try {
+			ResponseEntity<ResponseObject> allOrganizations = coreServiceOrganizationApi.getAllOrganizations();
+			if (allOrganizations.getStatusCodeValue() == 200) {
+				Set<OrganizationDetails> uniqueOrganizationLs = new HashSet<>();
+				List<Object> data = (ArrayList<Object>) allOrganizations.getBody().getData();
+
+				List<OrganizationDetails> tempallOrganizationLs = data.stream()
+						.map(org -> mapper.convertValue(org, OrganizationDetails.class)).collect(Collectors.toList());
+
+				offerRequest.getByOrganizationRole().stream().forEach(role -> {
+
+					uniqueOrganizationLs.addAll(tempallOrganizationLs.stream().filter(org -> org.getRole().equals(role))
+							.collect(Collectors.toList()));
+				});
+
+				offerRequest.getAccessControlUseCase().stream().forEach(useCase -> {
+
+					uniqueOrganizationLs.addAll(tempallOrganizationLs.stream()
+							.filter(org -> org.getUseCase().contains(useCase)).collect(Collectors.toList()));
+				});
+
+				allOrganizationLs = new ArrayList<OrganizationDetails>(uniqueOrganizationLs);
+			} else {
+				log.error("Error in get organiations list request processing " + allOrganizations.getStatusCodeValue()
+						+ ", " + allOrganizations.getBody().getMessage());
+			}
+
+			offerRequest.setByOrganization(allOrganizationLs);
+		} catch (Exception e) {
+			log.error("Exception in get organiations list request processing " + e.getMessage());
+			throw new ServiceException(e.getMessage());
+		}
 	}
 
 	private ObjectId saveFileInMongoDB(OfferRequest offerRequest, MultipartFile file) throws ServiceException {
@@ -479,23 +529,36 @@ public class ProviderControlPanelService {
 
 	private void validateOfferRequestData(OfferRequest offerRequest) {
 
-		if (offerRequest.getTitle() != null && offerRequest.getTitle().equals("")) {
+		if (offerRequest.getTitle().isBlank()) {
 			throw new ValidationException(String.format(ApplicationMessageConstant.REQUIRED_FIELD, "title"));
 		}
 
-		if (offerRequest.getAccessControlUseCaseType() != null
-				&& offerRequest.getAccessControlUseCaseType().equals("")) {
+		if (offerRequest.getAccessControlUseCaseType().isBlank()) {
 			throw new ValidationException(
-					String.format(ApplicationMessageConstant.REQUIRED_FIELD, "access control usage"));
+					String.format(ApplicationMessageConstant.REQUIRED_FIELD, "access control by use case type"));
 		}
 
-		if (offerRequest.getByOrganizationRole() != null && offerRequest.getByOrganizationRole().isEmpty()) {
+		if (offerRequest.getAccessControlByRoleType().isBlank()) {
 			throw new ValidationException(
-					String.format(ApplicationMessageConstant.REQUIRED_FIELD, "Organization role"));
+					String.format(ApplicationMessageConstant.REQUIRED_FIELD, "access control by role type"));
 		}
+		
+		if (offerRequest.getUsageControlType().isBlank()) {
+			throw new ValidationException(
+					String.format(ApplicationMessageConstant.REQUIRED_FIELD, "usage control type"));
+		}
+		
+		if (offerRequest.getAccessControlByRoleType().equals(ApplicationMessageConstant.LIMITED)) {
 
-		if (offerRequest.getByOrganization() != null && offerRequest.getByOrganization().isEmpty()) {
-			throw new ValidationException(String.format(ApplicationMessageConstant.REQUIRED_FIELD, "Organization"));
+			if (offerRequest.getByOrganizationRole() == null) {
+				throw new ValidationException(
+						String.format(ApplicationMessageConstant.REQUIRED_FIELD, "organization role"));
+			}
+
+			if (offerRequest.getByOrganizationRole().isEmpty()) {
+				throw new ValidationException(
+						String.format(ApplicationMessageConstant.REQUIRED_FIELD, "organization role"));
+			}
 		}
 
 	}

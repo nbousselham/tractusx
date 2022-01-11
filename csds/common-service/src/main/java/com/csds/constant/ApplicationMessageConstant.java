@@ -4,6 +4,9 @@ public class ApplicationMessageConstant {
 
 	public static final String SUCCESS = "SUCCESS";
 	public static final String FAILED = "FAILED";
+	
+	public static final String LIMITED = "Limited";
+	
 
 	public static final String LOGIN_FAILED = "Failed to login. Please try again later";
 	public static final String LOGIN_INVALID = "Invalid Username and Password. Please try again";
