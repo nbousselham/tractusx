@@ -6,7 +6,7 @@ export default function DescriptionList(props){
     <div style={{marginBottom: theme.spacing(1)}}>
       <Typography component={'span'} sx={{fontWeight: 'bold'}}>{props.topic}: </Typography>
       {props.link ?
-        <Link href={props.link}>{props.link}</Link> :
+        <Link href={props.link} target="_blank">{props.link}</Link> :
         <Typography component={'span'}>{props.description}</Typography>
       }
     </div>
