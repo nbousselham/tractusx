@@ -32,12 +32,14 @@
       <v-card-text
         @scroll.passive="handleScroll"
         class="pa-0 create-offer-modal-content"
+        ref="createOfferModalContent"
       >
         <v-form
-          name="createOfferForm"
           ref="createOfferForm"
+          v-model="createOfferForm"
           class="mx-2"
           lazy-validation
+          enctype="multipart/form-data"
         >
           <v-container>
             <section id="fileTitle" class="createOfferSection">
@@ -53,21 +55,12 @@
                     <v-text-field
                       v-model="dataOfferTitle"
                       class="data-offer-title"
+                      hide-details="auto"
                       solo
-                      label="Title of the data offer"
-                      @input="$v.dataOfferTitle.$touch()"
-                      @blur="$v.dataOfferTitle.$touch()"
+                      :rules="[(v) => !!v || 'Title is required']"
                       required
+                      label="Title of the data offer"
                     ></v-text-field>
-                    <div
-                      v-if="
-                        $v.dataOfferTitle.$dirty && $v.dataOfferTitle.$error
-                      "
-                    >
-                      <span class="red--text" v-if="!$v.dataOfferTitle.required"
-                        >Title is required</span
-                      >
-                    </div>
                   </v-col>
                   <v-spacer></v-spacer>
                 </div>
@@ -79,7 +72,7 @@
                     >
                   </v-col>
                   <v-col cols="12" md="8">
-                    <CxFileDrop />
+                    <CxFileDrop ref="fileUpload" />
                   </v-col>
                   <v-spacer></v-spacer>
                 </div>
@@ -106,18 +99,18 @@
                     >
                       <v-radio
                         label="Unlimited access"
-                        value="unlimited"
+                        value="Unlimited"
                         color="#b3cb2d"
                       ></v-radio>
                       <v-radio
                         label="Limited access"
-                        value="limited"
+                        value="Limited"
                         color="#b3cb2d"
                       ></v-radio>
                     </v-radio-group>
                     <v-row
                       :class="{
-                        'greyout-box': accessControlByUseCase === 'unlimited',
+                        'greyout-box': accessControlByUseCase === 'Unlimited',
                       }"
                     >
                       <v-spacer></v-spacer>
@@ -130,7 +123,23 @@
                             selectable
                             return-object
                             open-all
+                            :rules="[
+                              () =>
+                                selectedUseCases.length < 0 ||
+                                'At least 1 use case should be selected',
+                            ]"
                           ></v-treeview>
+                          <div
+                            v-if="isAccessControlByUseCaseError"
+                            class="v-messages theme--light error--text"
+                            role="alert"
+                          >
+                            <div class="v-messages__wrapper">
+                              <div class="v-messages__message">
+                                At least 1 use case should be selected
+                              </div>
+                            </div>
+                          </div>
                         </div>
                       </v-col>
                     </v-row>
@@ -147,23 +156,29 @@
                       items and from left to right to add access. It doesn’t
                       matter it is a role or a company name.
                     </p>
+                    <p class="px-4">
+                      <img src="@/styles/assets/images/drag-drop.svg" />
+                      <span class="ml-1 text--disabled"
+                        >Drag and drop items</span
+                      >
+                    </p>
                   </v-col>
                   <v-col cols="12" md="8">
                     <v-radio-group v-model="accessControlByRole" row mandatory>
                       <v-radio
                         label="Unlimited access"
-                        value="unlimited"
+                        value="Unlimited"
                         color="#b3cb2d"
                       ></v-radio>
                       <v-radio
                         label="Limited access"
-                        value="limited"
+                        value="Limited"
                         color="#b3cb2d"
                       ></v-radio>
                     </v-radio-group>
                     <v-row
                       :class="{
-                        'greyout-box': accessControlByRole === 'unlimited',
+                        'greyout-box': accessControlByRole === 'Unlimited',
                       }"
                     >
                       <v-spacer></v-spacer>
@@ -178,7 +193,9 @@
                             <v-card-text>
                               <p class="mb-0">
                                 Company role
-                                <span class="link ml-2">Add all</span>
+                                <span class="link ml-2" @click="addAllRoles()"
+                                  >Add all</span
+                                >
                               </p>
                               <v-chip-group
                                 column
@@ -187,7 +204,7 @@
                               >
                                 <draggable
                                   :list="orgRoles"
-                                  :emptyInsertThreshold="500"
+                                  :emptyInsertThreshold="200"
                                   class="draggable-list"
                                   group="org-roles"
                                 >
@@ -205,7 +222,12 @@
                             </v-card-text>
                           </v-card>
                           <v-card
-                            class="selected-roles-card rounded-0"
+                            class="rounded-0"
+                            :class="{
+                              'selected-roles-card':
+                                !isAccessControlByRoleError,
+                            }"
+                            red-border
                             height="120"
                             min-height="120"
                             outlined
@@ -217,7 +239,7 @@
                                 active-class="primary--text"
                               >
                                 <draggable
-                                  :emptyInsertThreshold="500"
+                                  :emptyInsertThreshold="200"
                                   :list="selectedOrgRoles"
                                   class="draggable-list"
                                   group="org-roles"
@@ -238,9 +260,22 @@
                             </v-card-text>
                             <v-card-actions>
                               <v-spacer></v-spacer>
-                              <span class="link">Remove all</span>
+                              <span class="link" @click="removeAllRoles()"
+                                >Remove all</span
+                              >
                             </v-card-actions>
                           </v-card>
+                        </div>
+                        <div
+                          v-if="isAccessControlByRoleError"
+                          class="mt-1 v-messages theme--light error--text"
+                          role="alert"
+                        >
+                          <div class="v-messages__wrapper">
+                            <div class="v-messages__message">
+                              At least 1 role should be selected
+                            </div>
+                          </div>
                         </div>
                       </v-col>
                     </v-row>
@@ -261,20 +296,16 @@
                     <v-radio-group v-model="usageControl" row mandatory>
                       <v-radio
                         label="Unlimited usage timeframe"
-                        value="unlimited"
+                        value="Unlimited"
                         color="#b3cb2d"
                       ></v-radio>
                       <v-radio
                         label="Limited usage timeframe"
-                        value="limited"
+                        value="Limited"
                         color="#b3cb2d"
                       ></v-radio>
                     </v-radio-group>
-                    <v-row
-                      :class="{
-                        'greyout-box': usageControl === 'unlimited',
-                      }"
-                    >
+                    <v-row>
                       <v-col cols="12" md="4">
                         <v-checkbox
                           v-model="usageLoggingChk"
@@ -283,7 +314,13 @@
                         ></v-checkbox>
                       </v-col>
                       <v-spacer></v-spacer>
-                      <v-col cols="12" md="8">
+                      <v-col
+                        cols="12"
+                        md="8"
+                        :class="{
+                          'greyout-box': usageControl === 'Unlimited',
+                        }"
+                      >
                         <p class="black--text mb-0 ml-9">Usage timeframe</p>
                         <v-row>
                           <v-col class="ml-9" cols="12" sm="6" md="5">
@@ -303,7 +340,6 @@
                                   v-bind="attrs"
                                   v-on="on"
                                   required
-                                  :rules="[(v) => !!v || 'Required']"
                                 ></v-text-field>
                               </template>
                               <v-date-picker
@@ -336,6 +372,15 @@
                                   :value="formattedEndDate"
                                   v-bind="attrs"
                                   v-on="on"
+                                  :rules="
+                                    usageControl === 'Limited'
+                                      ? [
+                                          () =>
+                                            !!formattedEndDate ||
+                                            'End date is required',
+                                        ]
+                                      : []
+                                  "
                                 ></v-text-field>
                               </template>
                               <v-date-picker
@@ -355,6 +400,11 @@
                         <v-checkbox
                           class="ml-8"
                           v-model="deleteAfterTimeFrame"
+                          :rules="
+                            usageControl === 'Limited' ? [
+                              (v) => !!v || 'This is required field',
+                            ] : []
+                          "
                           label="Must delete after the selected timeframe"
                           color="#b3cb2d"
                         ></v-checkbox>
@@ -376,6 +426,7 @@
                   <v-col cols="12" md="8">
                     <v-textarea
                       class="dataoffer-description"
+                      v-model="dataOfferDescription"
                       background-color="#F5F5F5"
                       solo
                       color="black"
@@ -394,7 +445,13 @@
       <v-card-actions style="height: 70px">
         <v-spacer></v-spacer>
         <v-btn text width="200" @click.native="close"> CANCEL </v-btn>
-        <v-btn disabled width="200" @click.native="close">
+        <v-btn
+          :disabled="isCreateOfferFormError"
+          :loading="isNewOfferLoading"
+          width="200"
+          id="addOfferBtn"
+          @click.native="addDataOffer"
+        >
           ADD DATA OFFER
         </v-btn>
       </v-card-actions>
@@ -402,15 +459,24 @@
   </v-dialog>
 </template>
 <script lang="ts">
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import Vue from "vue";
 import draggable from "vuedraggable";
-import { validationMixin } from "vuelidate";
-import { required } from "vuelidate/lib/validators";
 import CxFileDrop from "@/components/CXFileDrop.vue";
 import {
   FETCH_USE_CASES,
   FETCH_ORG_ROLES,
+  FETCH_SELECTED_ORG_ROLES,
+  GET_DATA_OFFER_FILE,
+  IS_NEW_OFFER_LOADING,
+  IS_FILE_ERROR,
+  IS_CREATE_OFFER_ERROR,
 } from "@/store/modules/dataoffer/getters/getter-types";
+import { ADD_DATA_OFFER } from "@/store/modules/dataoffer/actions/action-types";
+import {
+  ADD_ALL_ROLES,
+  REMOVE_ALL_ROLES,
+} from "@/store/modules/dataoffer/mutations/mutation-types";
 import {
   iUseCase,
   iOrgRoles,
@@ -422,28 +488,31 @@ interface iFilteredItems {
   name: string;
   children: Array<iUseCase>;
 }
+interface iUsageControl {
+  type: string;
+  startDate?: string;
+  endDate?: string;
+  deleteDate?: string;
+}
 export default Vue.extend({
   name: "CreateDataOfferModal",
   components: { CxFileDrop, draggable },
-  validations: {
-    dataOfferTitle: { required },
-  },
   data: () => ({
+    createOfferForm: true,
     dataOfferTitle: "",
+    dataOfferDescription: "",
     accessControlByUseCase: null,
     accessControlByRole: null,
     usageControl: null,
     selectedUseCases: [],
-    selectedOrgRoles: [],
     usageLoggingChk: false,
     date: DATE_TODAY,
     startDateMenu: false,
     endDateMenu: false,
-    startDateVal: DATE_TODAY,
+    startDateVal: null,
     endDateVal: null,
     deleteAfterTimeFrame: false,
   }),
-  mixins: [validationMixin],
   props: {
     isOpen: {
       type: Boolean,
@@ -456,6 +525,9 @@ export default Vue.extend({
     },
     orgRoles(): Array<iOrgRoles> {
       return this.$store.getters[FETCH_ORG_ROLES];
+    },
+    selectedOrgRoles(): Array<iOrgRoles> {
+      return this.$store.getters[FETCH_SELECTED_ORG_ROLES];
     },
     startDateDisp() {
       return this.startDateVal;
@@ -484,9 +556,53 @@ export default Vue.extend({
       filteredArr.push(filteredObj);
       return filteredArr;
     },
+    dataOfferFile() {
+      return this.$store.getters[GET_DATA_OFFER_FILE];
+    },
+    isNewOfferLoading(): boolean {
+      return this.$store.getters[IS_NEW_OFFER_LOADING];
+    },
+    isFileError(): boolean {
+      return this.$store.getters[IS_FILE_ERROR];
+    },
+    isTitleError(): boolean {
+      return this.isFileError || !this.dataOfferTitle;
+    },
+    isAccessControlByUseCaseError(): boolean {
+      if (
+        this.accessControlByUseCase === "Limited" &&
+        this.selectedUseCases.length <= 0
+      )
+        return true;
+      return false;
+    },
+    isAccessControlByRoleError(): boolean {
+      if (
+        this.accessControlByRole === "Limited" &&
+        this.selectedOrgRoles.length <= 0
+      )
+        return true;
+      return false;
+    },
+    isUsageControlError(): boolean {
+      if (this.usageControl === "Limited")
+        return !this.deleteAfterTimeFrame || !this.formattedEndDate;
+      return false;
+    },
+    isCreateOfferError(): boolean {
+      return this.$store.getters[IS_CREATE_OFFER_ERROR];
+    },
+    isCreateOfferFormError(): boolean {
+      return (
+        !this.createOfferForm ||
+        this.isTitleError ||
+        this.isAccessControlByUseCaseError ||
+        this.isAccessControlByRoleError ||
+        this.isUsageControlError
+      );
+    },
   },
   methods: {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     handleScroll(event: { srcElement: { scrollTop: any } }) {
       let accessControlTab = document.querySelector(
         "#accessControl"
@@ -530,8 +646,135 @@ export default Vue.extend({
         document.querySelector(".fileTitle")?.setAttribute("id", "activeTab");
       }
     },
-    close() {
+    addAllRoles() {
+      this.$store.commit(ADD_ALL_ROLES);
+    },
+    removeAllRoles() {
+      this.$store.commit(REMOVE_ALL_ROLES);
+    },
+    resetForm() {
+      const createOfferForm: any = this.$refs.createOfferForm;
+      createOfferForm.resetValidation();
+      createOfferForm.reset();
+      this.selectedUseCases = [];
+      this.removeAllRoles();
+      const fileUpload: any = this.$refs.fileUpload;
+      fileUpload.removeFiles();
       this.$emit("update:isOpen", false);
+    },
+    close() {
+      this.resetForm();
+    },
+    addDataOffer() {
+      const self = this as any;
+      const createOfferForm: any = this.$refs.createOfferForm;
+      if (createOfferForm.validate()) {
+        const createOfferPayload = {
+          file: self.dataOfferFile,
+          offerRequest: {
+            title: "",
+            description: "",
+            accessControlUseCaseType: "",
+            accessControlUseCase: [],
+            accessControlByRoleType: "",
+            byOrganizationRole: [],
+            byOrganization: [],
+            usageControlType: "",
+            usageControl: [] as iUsageControl[],
+            contractEndsinDays: 0,
+          },
+        };
+        createOfferPayload.offerRequest["title"] = self.dataOfferTitle;
+        createOfferPayload.offerRequest["description"] =
+          self.dataOfferDescription;
+        createOfferPayload.offerRequest["accessControlUseCaseType"] =
+          self.accessControlByUseCase;
+        const accessControlUseCase = self.selectedUseCases.map(
+          (useCase: { name: string }) => useCase.name
+        );
+        createOfferPayload.offerRequest["accessControlUseCase"] =
+          self.accessControlByUseCase === "Limited" ? accessControlUseCase : [];
+        createOfferPayload.offerRequest["accessControlByRoleType"] =
+          self.accessControlByRole;
+        const byOrganizationRole = self.selectedOrgRoles.map(
+          (selectedOrgRole: { role: string }) => selectedOrgRole.role
+        );
+        createOfferPayload.offerRequest["byOrganizationRole"] =
+          self.accessControlByRole === "Limited" ? byOrganizationRole : [];
+        createOfferPayload.offerRequest["usageControlType"] = self.usageControl;
+        const usageControlArr: iUsageControl[] = [];
+        const usageTimeframeStart = moment(self.startDateVal)
+          .utc()
+          .toISOString();
+        const usageTimeframeEnd = moment(self.endDateVal).utc().toISOString();
+        if (self.usageLoggingChk) {
+          usageControlArr.push({ type: "USAGE_LOGGING" });
+        }
+        if (self.usageControl === "Unlimited") {
+          usageControlArr.push({ type: "PROVIDE_ACCESS" });
+        } else {
+          if (self.deleteAfterTimeFrame) {
+            usageControlArr.push({
+              type: "USAGE_UNTIL_DELETION",
+              startDate: usageTimeframeStart,
+              endDate: usageTimeframeEnd,
+              deleteDate: usageTimeframeStart,
+            });
+          }
+        }
+        createOfferPayload.offerRequest["usageControl"] = usageControlArr;
+        const contractLimitDurationInDays = moment(usageTimeframeEnd).diff(
+          moment(usageTimeframeStart),
+          "days"
+        );
+        createOfferPayload.offerRequest["contractEndsinDays"] =
+          contractLimitDurationInDays;
+        this.$store.dispatch(ADD_DATA_OFFER, createOfferPayload).then(() => {
+          if (this.isCreateOfferError) {
+            const successNotificationObj = {
+              type: "error",
+              duration: 3000,
+              theme: "toasted-primary",
+              action: {
+                text: "Cancel",
+                onClick: (
+                  e: Event,
+                  toastObject: { goAway: (arg0: number) => void }
+                ) => {
+                  toastObject.goAway(0);
+                },
+              },
+            };
+            this.$toasted.show(
+              "Failed to create data offer",
+              successNotificationObj
+            );
+            return;
+          } else {
+            const failureNotificationObj = {
+              type: "success",
+              duration: 3000,
+              theme: "toasted-primary",
+              action: {
+                text: "Cancel",
+                onClick: (
+                  e: Event,
+                  toastObject: { goAway: (arg0: number) => void }
+                ) => {
+                  toastObject.goAway(0);
+                },
+              },
+            };
+            this.$toasted.show(
+              "Data offer created successfully",
+              failureNotificationObj
+            );
+            this.resetForm();
+          }
+        });
+      } else {
+        return;
+      }
     },
   },
 });
@@ -584,9 +827,6 @@ section.createOfferSection {
   height: 70vh;
 }
 .data-offer-title {
-  & .v-text-field__details {
-    display: none;
-  }
   & .v-input__slot {
     background: $grey1 !important;
     box-shadow: none !important;
@@ -626,5 +866,12 @@ section.createOfferSection {
   font-weight: 500;
   font-size: 16px;
   letter-spacing: 0.3px;
+}
+#addOfferBtn {
+  background-color: $brand-color-orange;
+  color: white;
+}
+.red-border {
+  border: 1px solid red;
 }
 </style>
