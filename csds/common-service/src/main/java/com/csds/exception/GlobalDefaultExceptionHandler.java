@@ -50,7 +50,7 @@ public class GlobalDefaultExceptionHandler extends ResponseEntityExceptionHandle
 		response.setStatus(ApplicationMessageConstant.FAILED);
 		response.setMessage(ex.getMessage());
 		log.error(ex.getMessage());
-		return new ResponseEntity<>(response, HttpStatus.OK);
+		return new ResponseEntity<>(response, HttpStatus.UNPROCESSABLE_ENTITY);
 
 	}
 

@@ -14,7 +14,7 @@ import lombok.Data;
 
 @Data
 @Service
-public class APIConstants {
+public class ApplicationConstantsConfigurationService {
 
 	private ProviderControlPanelConnectorDetails providerControlPanelConnectorDetails;
 

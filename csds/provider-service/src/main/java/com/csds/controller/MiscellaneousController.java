@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.csds.constant.ApplicationMessageConstant;
-import com.csds.constants.APIConstants;
+import com.csds.constants.ApplicationConstantsConfigurationService;
 import com.csds.entity.ProviderControlPanelConnectorDetails;
 import com.csds.repository.ProviderControlPanelConnectorDetailsRepository;
 import com.csds.response.ResponseObject;
@@ -28,7 +28,7 @@ public class MiscellaneousController {
 	private ProviderControlPanelConnectorDetailsRepository providerControlPanelConnectorDetailsRepository;
 
 	@Autowired
-	private APIConstants apiConstant;
+	private ApplicationConstantsConfigurationService apiConstant;
 
 	@PostMapping("/update-provider-connector-details")
 	public ResponseEntity<ResponseObject> updateProviderConnectorDetails(
