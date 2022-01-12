@@ -4,9 +4,11 @@ import router from "./router";
 import store from "./store";
 import vuetify from "@/plugins/vuetify";
 import Vuelidate from "vuelidate";
+import Toasted from "vue-toasted";
 import "@/styles/styles.scss";
 
 Vue.use(Vuelidate);
+Vue.use(Toasted);
 Vue.config.productionTip = false;
 
 new Vue({

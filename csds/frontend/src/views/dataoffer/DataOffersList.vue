@@ -54,7 +54,6 @@
                 color="#CCCCCC"
                 small
                 elevation="0"
-                @click="editOffer(item)"
                 >EDIT</v-btn
               >
               <v-btn
@@ -62,7 +61,6 @@
                 color="#CCCCCC"
                 small
                 elevation="0"
-                @click="duplicateOffer(item)"
                 >DUPLICATE</v-btn
               >
               <v-btn
@@ -70,7 +68,6 @@
                 color="#CCCCCC"
                 small
                 elevation="0"
-                @click="deleteOffer(item)"
                 >DELETE</v-btn
               >
             </div>
@@ -137,15 +134,6 @@ export default Vue.extend({
     },
     unSelectItem() {
       this.selectedItem = [];
-    },
-    editOffer(dataOffer: iDataOffers) {
-      console.log(dataOffer);
-    },
-    duplicateOffer(dataOffer: iDataOffers) {
-      console.log(dataOffer);
-    },
-    deleteOffer(dataOffer: iDataOffers) {
-      console.log(dataOffer);
     },
   },
 });
