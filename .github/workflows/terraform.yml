@@ -224,7 +224,7 @@ jobs:
     - name: Terraform Plan
       working-directory: ./infrastructure/terraform
       run: |
-        mv provider.tf_muted provider.tf
+        #mv provider.tf_muted provider.tf
         #export TF_LOG="DEBUG"
         terraform plan \
         -var-file=environments/${{needs.environment.outputs.workspace}}.tfvars \
