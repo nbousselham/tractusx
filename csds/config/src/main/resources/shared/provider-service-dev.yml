@@ -4,12 +4,12 @@ server:
     context-path: /provider
 
 spring:
- servlet:
-  multipart:
-   maxFileSize: 10MB
-   maxRequestSize: 10MB
-  data:
+   data: 
     mongodb:
-      host: mongo 
+      host: localhost 
       port: 27017
       database: csds-mongo
+   servlet:
+    multipart: 
+     maxFileSize: 10MB
+     maxRequestSize: 10MB
