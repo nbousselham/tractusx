@@ -53,5 +53,15 @@ public class OrganizationController {
 		logger.info("Started Organization Controller  for : addORUpdateCompany");
 		return ResponseEntity.ok(orgService.getAddAndUpdateOrgnizationDetials(organizationRequest));
 	}
+	
+	//@DeleteMapping(value = "delete/{id}/organizations")
+		/*
+		 * public ResponseEntity<ResponseObject> getDeleteOrganizationById(@PathVariable
+		 * ("id") long id) {
+		 * 
+		 * logger.
+		 * info("Started Organization Controller  for : get Delete Organization By Id");
+		 * return ResponseEntity.ok(orgService.getDeleteOrgnization(id)); }
+		 */
 
 }
