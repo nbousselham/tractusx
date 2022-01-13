@@ -278,7 +278,7 @@ resource "kubernetes_namespace" "cert_manager_namespace" {
   }
 }
 
-# Deploy cert-manager for TLS with Helm
+# Deploy cert-manager with Helm
 resource "helm_release" "cert-manager" {
   name       = "cert-manager"
   chart      = "cert-manager"
