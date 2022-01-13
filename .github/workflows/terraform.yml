@@ -366,7 +366,7 @@ jobs:
       run: |
         az postgres db create --name "tdmdb" --resource-group ${{env.prefix}}-${{needs.environment.outputs.workspace}}-rg --server-name ${{env.prefix}}${{needs.environment.outputs.workspace}}database
 
-    # Get IAM DB for KeyCloak instance 1
+    # Get IAM DB for central IDP KeyCloak instance
     - name: Azure Try Existing IAMCENTRALIDP DB
       id: try_iamcentralidp_db
       working-directory: ./infrastructure/terraform
@@ -380,7 +380,7 @@ jobs:
       run: |
         az postgres db create --name "iamcentralidp" --resource-group ${{env.prefix}}-${{needs.environment.outputs.workspace}}-rg --server-name ${{env.prefix}}${{needs.environment.outputs.workspace}}database
 
-    # Get IAM DB for KeyCloak instance 2
+    # Get IAM DB for shared IDP KeyCloak instance
     - name: Azure Try Existing IAMSHAREDIDP DB
       id: try_iamsharedidp_db
       working-directory: ./infrastructure/terraform
