@@ -98,16 +98,26 @@ public class OrganizationServicesImpl implements OrganizationServices {
 	public ResponseObject getAddAndUpdateOrgnizationDetials(OrganizationRequest organizationRequest) {
 
 		Assert.notNull(organizationRequest, ApplicationMessageConstant.VALIDATION_FAILED);
+		ResponseObject response = new ResponseObject();
+		
+		if(validateOrganizationExitOrNot(organizationRequest)) {
+			
+			response.setMessage(ApplicationMessageConstant.ORGANIZATION_VALIDATION_FAILD);
+			response.setData(null);
+			response.setStatus(ApplicationMessageConstant.SUCCESS);
+			log.info("getAddAndUpdateOrgnizationDetials : Organization Already Exist in Database {}",organizationRequest.getName());
+			return response;
+		}
 
 		Optional<OrganizationDetails> optionalOrgDetails = organizationRepository.findById(organizationRequest.getId());
 		OrganizationDetails organizationDetails;
-		ResponseObject response = new ResponseObject();
+	
 		if (optionalOrgDetails.isPresent()) {
 			organizationDetails = optionalOrgDetails.get();
 		} else {
 			organizationDetails = new OrganizationDetails();
 		}
-
+		
 		organizationDetails.setName(organizationRequest.getName());
 		if (StringUtils.isNotBlank(organizationRequest.getRole())) {
 			saveRoleInDBIfNotAvaiable(organizationRequest.getRole());
@@ -147,6 +157,38 @@ public class OrganizationServicesImpl implements OrganizationServices {
 		}
 		log.info(String.format(ApplicationMessageConstant.SUCCESS_OPERATION, "getAllOrgnizationByUseCase"));
 		return response;
+	}
+	
+	
+	@Override
+	public ResponseObject getDeleteOrgnization(long id) {
+		
+		ResponseObject response = new ResponseObject();
+		
+		if(id<0) {
+			response.setMessage("ID should not be null or empty");
+			response.setData(null);
+			response.setStatus(ApplicationMessageConstant.SUCCESS);
+		
+		}else {
+			organizationRepository.deleteById(id);
+			response.setData(null);
+			response.setMessage( id +" : ID deleted successfully from database");
+			response.setStatus(ApplicationMessageConstant.SUCCESS);
+			log.info("getDeleteOrgnization : Successfully deleted provided ID : {}",id);
+		}
+		return response;
+	}
+	
+	private boolean validateOrganizationExitOrNot(OrganizationRequest organizationRequest) {
+
+		boolean flag = true;
+		Optional<List<OrganizationDetails>> orgList = organizationRepository
+				.findByNameAndRoleIgnoreCase(organizationRequest.getName(), organizationRequest.getRole());
+		if (orgList.isPresent() && orgList.get().isEmpty()) {
+			flag = false;
+		}
+		return flag;
 	}
 	
 	

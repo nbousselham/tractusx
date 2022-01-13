@@ -11,4 +11,5 @@ public interface OrganizationServices {
 	public ResponseObject getAllOrganizations();
 	public ResponseObject getAddAndUpdateOrgnizationDetials(OrganizationRequest organizationRequest);
 	public ResponseObject getAllOrgnizationByUseCase(String useCase);
+	public ResponseObject getDeleteOrgnization(long id);
 }

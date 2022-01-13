@@ -18,4 +18,5 @@ public interface OrganizationRepository extends JpaRepository<OrganizationDetail
 	@Query(value = "select organization_details.* from organization_details JOIN organization_details_use_case ON id = organization_details_id WHERE use_case =?1", nativeQuery = true)
 	public Optional<List<OrganizationDetails>> findByUseCase(String useCase);
 
+	public Optional<List<OrganizationDetails>> findByNameAndRoleIgnoreCase(String name, String role);
 }

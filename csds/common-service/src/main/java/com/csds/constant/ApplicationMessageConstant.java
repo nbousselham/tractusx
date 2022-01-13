@@ -21,6 +21,7 @@ public class ApplicationMessageConstant {
 
 	public static final String NOT_FOUND = "Data not found in database";
 	public static final String VALIDATION_FAILED = "Request validation failed";
+	public static final String ORGANIZATION_VALIDATION_FAILD = "Organization already exist in DB with same role";
 
 	public static final String REQUIRED_FIELD = "The `%s` field should not be null or empty";
 
