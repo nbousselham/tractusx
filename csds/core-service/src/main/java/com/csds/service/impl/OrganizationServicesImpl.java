@@ -105,7 +105,7 @@ public class OrganizationServicesImpl implements OrganizationServices {
 			response.setMessage(ApplicationMessageConstant.ORGANIZATION_VALIDATION_FAILD);
 			response.setData(null);
 			response.setStatus(ApplicationMessageConstant.SUCCESS);
-			log.info("getAddAndUpdateOrgnizationDetials : Organization Already Exist in Database {}",organizationRequest.getName());
+			log.info("getAddAndUpdateOrgnizationDetials : Organization Already Exist in Database : {}",organizationRequest.getName());
 			return response;
 		}
 
@@ -182,11 +182,11 @@ public class OrganizationServicesImpl implements OrganizationServices {
 	
 	private boolean validateOrganizationExitOrNot(OrganizationRequest organizationRequest) {
 
-		boolean flag = true;
-		Optional<List<OrganizationDetails>> orgList = organizationRepository
-				.findByNameAndRoleIgnoreCase(organizationRequest.getName(), organizationRequest.getRole());
-		if (orgList.isPresent() && orgList.get().isEmpty()) {
-			flag = false;
+		boolean flag = false;
+		Optional<OrganizationDetails> orgList = organizationRepository
+				.findByNameIgnoreCase(organizationRequest.getName());
+		if (orgList.isPresent()) {
+			flag = true;
 		}
 		return flag;
 	}
