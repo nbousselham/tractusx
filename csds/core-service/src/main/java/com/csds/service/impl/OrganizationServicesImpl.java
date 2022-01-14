@@ -185,7 +185,7 @@ public class OrganizationServicesImpl implements OrganizationServices {
 		boolean flag = false;
 		Optional<OrganizationDetails> orgList = organizationRepository
 				.findByNameIgnoreCase(organizationRequest.getName());
-		if (orgList.isPresent()) {
+		if (orgList.isPresent() && organizationRequest.getId() == 0) {
 			flag = true;
 		}
 		return flag;
