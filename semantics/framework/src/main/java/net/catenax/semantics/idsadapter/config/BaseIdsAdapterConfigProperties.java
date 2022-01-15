@@ -15,6 +15,8 @@ public class BaseIdsAdapterConfigProperties {
     private String connectorUser;
     private String connectorPassword;
     private String publisher;
+    private String proxyUrl;
+    private int proxyPort;
     private String serviceName = "adpater";
 
     private Map<String, Catalog> catalogs = new HashMap<>();

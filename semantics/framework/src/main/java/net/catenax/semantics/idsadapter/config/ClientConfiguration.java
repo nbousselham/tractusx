@@ -23,6 +23,9 @@ import org.springframework.context.annotation.Configuration;
 import java.security.KeyManagementException;
 import java.security.NoSuchAlgorithmException;
 
+import java.net.Proxy;
+import java.net.InetSocketAddress;
+
 @Configuration
 @AllArgsConstructor
 public class ClientConfiguration {
@@ -32,8 +35,18 @@ public class ClientConfiguration {
     Feign.Builder feignBuilder() throws NoSuchAlgorithmException, KeyManagementException {
         ApiClient apiClient = new ApiClient();
         NaiveSSLSocketFactory naiveSSLSocketFactory = new NaiveSSLSocketFactory("localhost");
-        Client.Default client = new Client.Default(naiveSSLSocketFactory,null);
+
+        Client client;
+        
+        if(idsAdapterConfigProperties.getProxyUrl()!=null) {
+            client=new Client.Proxied(naiveSSLSocketFactory, null, new Proxy(Proxy.Type.HTTP, 
+                new InetSocketAddress(idsAdapterConfigProperties.getProxyUrl(), idsAdapterConfigProperties.getProxyPort())));
+        } else {
+            client = new Client.Default(naiveSSLSocketFactory,null);
+        }
+
         Feign.Builder feignBuilder = apiClient.getFeignBuilder();
+        apiClient.setBasePath(idsAdapterConfigProperties.getConnectorUrl());
         feignBuilder.client(client)
                 .requestInterceptor(new BasicAuthRequestInterceptor(idsAdapterConfigProperties.getConnectorUser(),
                     idsAdapterConfigProperties.getConnectorPassword()));
