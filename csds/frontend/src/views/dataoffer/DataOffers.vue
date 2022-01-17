@@ -1,6 +1,39 @@
 <template>
   <div class="data-offers-panel">
-    <h2 class="mb-4 ml-2">Data offers</h2>
+    <v-toolbar class="data-offer-toolbar" color="#F5F5F5" elevation="0">
+      <h2 class="mb-4">Data offers</h2>
+      <v-spacer></v-spacer>
+      <template>
+        <v-tooltip bottom>
+          <template v-slot:activator="{ on, attrs }">
+            <v-btn
+              id="add-data-offer-btn"
+              class="mb-4 ml-2"
+              dark
+              large
+              v-bind="attrs"
+              v-on="on"
+              @click.stop="showCreateOfferDialog = true"
+              >ADD NEW DATA OFFER<v-icon
+                color="#b3cb2d"
+                class="ml-4 add-offer-icon"
+                x-large
+                right
+                dark
+              >
+                mdi-plus-box
+              </v-icon></v-btn
+            >
+          </template>
+          <span>Add new data offer</span>
+        </v-tooltip>
+        <CreateDataOfferModal :isOpen.sync="showCreateOfferDialog" />
+      </template>
+    </v-toolbar>
+    <h5 class="mb-4 ml-2 contract-agreement-info">
+      Data offers represent data of your organization that other ecosystem
+      members can discover and subscribe to.
+    </h5>
     <template v-if="dataOffers && !isDataOffersLoading">
       <DataOffersList :dataOffers="dataOffers" />
     </template>
@@ -19,17 +52,6 @@
         <span>No data offers.</span>
       </template>
     </CxPanel>
-    <template>
-      <v-btn
-        id="add-data-offer-btn"
-        class="ml-2"
-        dark
-        large
-        @click.stop="showCreateOfferDialog = true"
-        >ADD NEW DATA OFFER</v-btn
-      >
-      <CreateDataOfferModal :isOpen.sync="showCreateOfferDialog" />
-    </template>
   </div>
 </template>
 
@@ -80,5 +102,13 @@ export default Vue.extend({
 #add-data-offer-btn {
   background-color: $brand-color-green;
   padding: 15px;
+}
+.data-offer-toolbar {
+  & .v-toolbar__content {
+    padding: 4px 8px;
+  }
+}
+.add-offer-icon {
+  background: white;
 }
 </style>

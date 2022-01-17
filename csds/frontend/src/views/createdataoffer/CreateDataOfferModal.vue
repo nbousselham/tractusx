@@ -545,18 +545,18 @@ export default Vue.extend({
         ? moment(this.endDateVal).format("DD/MM/YYYY")
         : "";
     },
-    filteredItems() {
+    filteredItems(): iFilteredItems[] {
       const filteredArr: iFilteredItems[] = [];
       let filteredObj = {
         id: 100,
         name: "Select/Deselect all",
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        children: (this as any).useCases,
+        children: this.useCases,
       };
       filteredArr.push(filteredObj);
       return filteredArr;
     },
-    dataOfferFile() {
+    dataOfferFile(): File {
       return this.$store.getters[GET_DATA_OFFER_FILE];
     },
     isNewOfferLoading(): boolean {

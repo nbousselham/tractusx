@@ -1,11 +1,3 @@
-export interface iFilteredDataOffers {
-  title: string;
-  fileName: string;
-  accessControlUseCase: string;
-  byOrganizationRole: string;
-  usageControl: string;
-  id: string;
-}
 export interface iOrganization {
   baseUrl: string;
   id: string;
