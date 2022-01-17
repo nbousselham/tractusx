@@ -152,7 +152,14 @@ export default class DigitalTwins extends React.Component<DigitalTwin, any>{
   }
 
   onItemCountClick(count: number){
-    this.setState({pageSize: count}, () => this.setFilter({name: 'pageSize', value: count}));
+    const paramPageSize = { name: 'pageSize', value: count };
+    if(this.state.currentPage > defaultPage){
+      const paramDefaultPage = { name: 'page', value: defaultPage };
+      this.setState({pageSize: count, currentPage: defaultPage});
+      this.setFilter(paramPageSize, paramDefaultPage);
+    } else {
+      this.setState({pageSize: count}, () => this.setFilter(paramPageSize))
+    }
   }
 
   onPageBefore(){
