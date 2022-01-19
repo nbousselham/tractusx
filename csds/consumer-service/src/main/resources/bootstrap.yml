@@ -1,0 +1,12 @@
+spring:
+  application:
+    name: consumer-service
+  cloud:
+    config:
+      enabled: true
+      uri: http://csds-config:9090
+      fail-fast: true
+
+feign: 
+ okhttp:
+   enabled: true
