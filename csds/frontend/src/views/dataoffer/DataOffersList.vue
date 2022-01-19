@@ -26,8 +26,10 @@
           <td class="d-block d-sm-table-cell">
             <p class="mb-0">
               <span>{{
-                item.accessControlUseCase
-                  ? item.accessControlUseCase.join(",")
+                item.accessControlUseCaseType === AccessControlType.UNLIMITED
+                  ? item.accessControlUseCaseType
+                  : item.accessControlUseCase
+                  ? item.accessControlUseCase.join(", ")
                   : ""
               }}</span>
             </p>
@@ -35,39 +37,18 @@
           <td class="d-block d-sm-table-cell">
             <p class="mb-0">
               <span>{{
-                item.accessControlUseCaseType
-                  ? item.accessControlUseCaseType
-                  : "Unlimited"
-              }}</span>
-            </p>
-          </td>
-          <td class="d-block d-sm-table-cell">
-            <p class="mb-0">
-              <span>{{
-                item.byOrganizationRole ? item.byOrganizationRole.join(",") : ""
-              }}</span>
-            </p>
-          </td>
-          <td class="d-block d-sm-table-cell">
-            <p class="mb-0">
-              <span>{{
-                item.accessControlByRoleType
+                item.accessControlByRoleType === AccessControlType.UNLIMITED
                   ? item.accessControlByRoleType
-                  : "Unlimited"
+                  : item.byOrganizationRole
+                  ? item.byOrganizationRole.join(", ")
+                  : ""
               }}</span>
             </p>
           </td>
           <td class="d-block d-sm-table-cell">
             <p class="mb-0">
               <span>{{
-                item.usageControlType ? item.usageControlType : "Unlimited"
-              }}</span>
-            </p>
-          </td>
-          <td class="d-block d-sm-table-cell">
-            <p class="mb-0">
-              <span>{{
-                item.contractEndsinDays ? item.contractEndsinDays : 0
+                item.usageControlType ? item.usageControlType : ""
               }}</span>
             </p>
           </td>
@@ -143,13 +124,17 @@
 <script lang="ts">
 import Vue from "vue";
 import { iDataOffers } from "@/common/interfaces/dataOffers/IDataOffers";
-import { DATA_OFFER_TABLE_HEADERS } from "@/common/util/DataOfferUtil";
+import {
+  DATA_OFFER_TABLE_HEADERS,
+  AccessControlType,
+} from "@/common/util/DataOfferUtil";
 
 export default Vue.extend({
   name: "DataOffersList",
   data: () => ({
     headers: DATA_OFFER_TABLE_HEADERS,
     selectedItem: [],
+    AccessControlType,
   }),
   props: {
     dataOffers: {

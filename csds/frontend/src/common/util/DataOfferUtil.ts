@@ -3,19 +3,21 @@ export enum ServiceUrlType {
   CORE = "CORE",
 }
 
+export enum AccessControlType {
+  LIMITED = "Limited",
+  UNLIMITED = "Unlimited",
+}
+
 export const DATA_OFFER_TABLE_HEADERS = [
   {
-    text: "Data offer Name",
+    text: "data offer name",
     align: "start",
     value: "title",
   },
-  { text: "File", value: "fileName" },
-  { text: "Use cases", value: "accessControlUseCase" },
-  { text: "Access limited by use case", value: "accessControlUseCaseType" },
-  { text: "Access control", value: "byOrganizationRole" },
-  { text: "Access limited by company role", value: "accessControlByRoleType" },
-  { text: "Usage control", value: "usageControlType" },
-  { text: "Contract ends in (Days)", value: "contractEndsinDays" },
+  { text: "file", value: "fileName" },
+  { text: "access limited by use case", value: "accessControlUseCaseType" },
+  { text: "access limited by company role", value: "accessControlByRoleType" },
+  { text: "usage control", value: "usageControlType" },
   { text: "", align: "end", value: "actions", sortable: false },
 ];
 
