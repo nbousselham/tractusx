@@ -24,7 +24,7 @@ public class PolicesServicesImpl implements PolicesServices {
 		ResponseObject response = new ResponseObject();
 		List<UsagePolicies> usagePoliciesList = getPolicyList();
 
-		if(usagePoliciesList!=null) {
+		if(!usagePoliciesList.isEmpty()) {
 
 			response.setData(usagePoliciesList);
 			response.setStatus(ApplicationMessageConstant.SUCCESS);
