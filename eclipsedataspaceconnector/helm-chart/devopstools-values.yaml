@@ -1,0 +1,10 @@
+certificate:
+  dnsName: edc.cxtsidevopstoolsakssrv.germanywestcentral.cloudapp.azure.com
+  certManagerCert:
+    enabled: true
+    issuer:
+      kind: ClusterIssuer
+      name: letsencrypt-staging
+env:
+  secrets:
+    KEYSTORE_PASSWORD: password
