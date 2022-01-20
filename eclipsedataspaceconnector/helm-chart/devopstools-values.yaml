@@ -4,7 +4,7 @@ certificate:
     enabled: true
     issuer:
       kind: ClusterIssuer
-      name: letsencrypt-staging
+      name: letsencrypt-service
 env:
   secrets:
     KEYSTORE_PASSWORD: password
