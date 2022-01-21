@@ -1,5 +1,5 @@
 certificate:
-  dnsName: edc.cxtsidevopstoolsakssrv.germanywestcentral.cloudapp.azure.com
+  dnsName: cxtsidevopstoolsakssrv.germanywestcentral.cloudapp.azure.com
   certManagerCert:
     enabled: true
     issuer:
