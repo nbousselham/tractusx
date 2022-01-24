@@ -17,7 +17,7 @@ public class BaseIdsAdapterConfigProperties {
     private String publisher;
     private String proxyUrl;
     private int proxyPort;
-    private String serviceName = "adpater";
+    private String serviceName = "adapter";
 
     private Map<String, Catalog> catalogs = new HashMap<>();
     private Map<String, Contract> contracts = new HashMap<>();

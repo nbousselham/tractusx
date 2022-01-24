@@ -9,12 +9,15 @@ import net.catenax.semantics.exceptions.AdapterException;
 import net.catenax.semantics.idsadapter.config.BaseIdsAdapterConfigProperties;
 import net.catenax.semantics.idsadapter.restapi.dto.Source;
 import org.apache.commons.io.IOUtils;
+import org.apache.http.HttpHost;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.StringEntity;
+import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.impl.client.HttpClients;
+import org.apache.http.impl.conn.DefaultProxyRoutePlanner;
 
 @RequiredArgsConstructor
 @Slf4j
@@ -29,7 +32,16 @@ public class SemanticsService {
      */
     public String registerTwinDefinitions(String twinType, String twinSource) {
         try {
-            HttpClient httpclient = HttpClients.createDefault();
+            HttpClient httpclient;
+            if(baseIdsAdapterConfigProperties.getProxyUrl()!=null) {
+                HttpHost proxyHost = new HttpHost(baseIdsAdapterConfigProperties.getProxyUrl(),baseIdsAdapterConfigProperties.getProxyPort());
+                DefaultProxyRoutePlanner routePlanner = new DefaultProxyRoutePlanner(proxyHost);
+                HttpClientBuilder clientBuilder = HttpClients.custom();
+                clientBuilder = clientBuilder.setRoutePlanner(routePlanner);
+                httpclient = clientBuilder.build();
+            } else {
+                httpclient = HttpClients.createDefault();
+            }
             HttpPost httppost = new HttpPost(baseIdsAdapterConfigProperties.getServiceUrl() + "/twins");
             httppost.addHeader("accept", "application/json");
             httppost.setHeader("Content-type", "application/json");
