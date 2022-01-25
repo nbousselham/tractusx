@@ -54,17 +54,17 @@ spec:
         - name: PROXY_ADDRESS_FORWARDING
           value: "true"
         - name: DB_VENDOR
-          value: "postgres"
+          value: postgres
         - name: DB_ADDR
-          value: "${DB_HOST}.postgres.database.azure.com"
+          value: ${DB_HOST}.postgres.database.azure.com
         - name: DB_DATABASE
-          value: "iamsharedidp"
+          value: iamsharedidp
         - name: DB_USER
-          value: "{DB_USER}@${DB_HOST}"
+          value: ${DB_USER}@${DB_HOST}
         - name: DB_PASSWORD
           value: ${DB_PASSWORD}
         - name: KEYCLOAK_LOGLEVEL
-          value: "INFO"
+          value: INFO
         ports:
         - name: http
           containerPort: 8080
