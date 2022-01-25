@@ -10,7 +10,7 @@
 
 
 import * as React from 'react';
-import BackLink from './navigation/BackLink';
+import BackLink from '../navigation/BackLink';
 import { Dropdown, IDropdownOption, IDropdownStyles} from '@fluentui/react';
 import  Ajv from "ajv";
 import jsonSchemaV4 from 'ajv/lib/refs/json-schema-draft-04.json';
@@ -33,10 +33,22 @@ export default class Aspect extends React.Component<any, any> {
   constructor(props) {
     super(props);
 
+    var pathname=props.location.pathname;
+    if(pathname.indexOf("aspect/")>=0) {
+      var split=pathname.indexOf("aspect/");
+      pathname=pathname.substring(split+7);
+      props.location.pathname=props.location.pathname.substring(0,split);
+    }
     var query=props.location.search.substr(1);
     if(query==='') {
-      query=props.location.pathname.substring(props.location.pathname.indexOf("?")+1);
+      var split=pathname.indexOf("?");
+      query=pathname.substring(split+1);
+    } 
+    
+    if(pathname.indexOf("?")>=0) {
+      pathname=pathname.substring(0,pathname.indexOf("?"));
     }
+    props.match.params["connector"]=pathname;
     query.split("&").forEach(function(part) {
       var item = part.split("=");
       props.match.params[item[0]] = decodeURIComponent(item[1]);
@@ -241,19 +253,34 @@ export default class Aspect extends React.Component<any, any> {
   findCatalog() {
     const that = this;
 
-    that.performGet(`${process.env.REACT_APP_BROKER_ENDPOINT}/api/catalogs`, function(catalogs) {
-      let catalogues=catalogs._embedded.catalogs;
-      for(let catalog of catalogues) {
-        if(catalog.title === that.catalog) {
-          let fullId=that.dereference(catalog._links.self.href);
-
-          that.appendOutput(`$$$CATALOG found ${that.catalog} under id ${fullId}`);
-          that.appendOutput('');
-          return that.findOffer(fullId);
-        } 
+    if(that.state.params.connector != null && that.state.params.connector.startsWith("http")) {
+      var targetUrl=that.state.params.connector;
+      for (var prop in that.state.params) {
+        if (Object.prototype.hasOwnProperty.call(this.state.params, prop)) {
+            if(prop !== "connector") {
+              if(targetUrl.indexOf("?")<0) {
+                targetUrl=targetUrl+"?";
+              }
+              targetUrl=`${targetUrl}&${prop}=${this.state.params[prop].replace('+','%2b')}`;
+            }
+        }
       }
-      that.appendOutput(`!!!CATALOG ${that.catalog} was not found.`);        
-    });
+      that.downloadGet(targetUrl);
+    } else {
+      that.performGet(`${process.env.REACT_APP_BROKER_ENDPOINT}/api/catalogs`, function(catalogs) {
+        let catalogues=catalogs._embedded.catalogs;
+        for(let catalog of catalogues) {
+          if(catalog.title === that.catalog) {
+            let fullId=that.dereference(catalog._links.self.href);
+
+            that.appendOutput(`$$$CATALOG found ${that.catalog} under id ${fullId}`);
+            that.appendOutput('');
+            return that.findOffer(fullId);
+          } 
+        }
+        that.appendOutput(`!!!CATALOG ${that.catalog} was not found.`);        
+      });
+    }
   }
 
   /** find the selected offer (and trigger finding the representation, afterwards) */
@@ -357,17 +384,22 @@ export default class Aspect extends React.Component<any, any> {
     });
   }
 
-  /** download an agree artifact */
+  /** download an agreed artifact */
   download(artifactUrl,remoteAgreement) {
     const that = this;
-    var targetUrl=`${artifactUrl}/data/**?download=true&agreementUri=${remoteAgreement}`
+    var targetUrl=`${artifactUrl}/data/**?download=true&agreementUri=${remoteAgreement}`;
     for (var prop in that.state.params) {
       if (Object.prototype.hasOwnProperty.call(this.state.params, prop)) {
-          if(prop !== "offer" && prop !== "representation" && prop !== "artifact" && prop !== "recipient" && prop !== "connector") {
-            targetUrl=`${targetUrl}&${prop}=${this.state.params[prop].replace('+','%2b')}`
+          if(prop !== "offer" && prop !== "representation" && prop !== "artifact" && prop !== "recipient" && prop !== "connector" && prop !== 'endpoint' ) {
+            targetUrl=`${targetUrl}&${prop}=${this.state.params[prop].replace('+','%2b')}`;
           }
       }
     }
+    that.downloadGet(targetUrl);
+  }
+
+  downloadGet(targetUrl) {
+    const that = this;
     that.performGet(targetUrl, function(body) {
       let text = JSON.stringify(body);
       that.appendOutput(`^^^ Got Result with ${text.length} bytes.`);
@@ -406,7 +438,8 @@ export default class Aspect extends React.Component<any, any> {
     const availableOffers: IDropdownOption[] = [
       { key: 'offer-windchill', text: 'Sample PLM offering representing by static files.' },
       { key: 'offer-tdm', text: 'Test Data from Catena-X.' },
-      { key: 'offer-aras', text: 'Live Data From PDM Web Connector.' }
+      { key: 'offer-aras', text: 'Live Construction Data From PDM Web Connector.' },
+      { key: 'offer-sap', text: 'Live Manufacturing Data From PDM Web Connector.' }
     ];
     const availableRepresentations: IDropdownOption[] = [
       { key: 'material-aspect', text: 'Catena-X Material JSON payload.' },
@@ -420,8 +453,10 @@ export default class Aspect extends React.Component<any, any> {
       { key: 'bom-brake', text: 'SampleXML/XSLT-Based Aspect Implementation.' },
       { key: 'material-vehicle', text: 'Relational SQL-Based Aspect Implementation.' },
       { key: 'bom-vehicle', text: 'Relational SQL-Based Aspect Implementation.' },
-      { key: 'aras-pt', text: 'PartTypization Aspect Implementation by PDM Web Connector.' },
-      { key: 'aras-apr', text: 'AssemblyPartRelationship Aspect Implementation by PDM Web Connector.' },
+      { key: 'aras-pt', text: 'PartTypization Aspect "AS-DESIGNED" Implementation by PDM Web Connector.' },
+      { key: 'aras-apr', text: 'AssemblyPartRelationship Aspect "AS-DESIGNED" Implementation by PDM Web Connector.' },
+      { key: 'sap-pt', text: 'PartTypization Aspect "AS-PLANNED" Implementation by PDM Web Connector.' },
+      { key: 'sap-apr', text: 'AssemblyPartRelationship Aspect "AS-PLANNED" Implementation by PDM Web Connector.' },
     ];
 
     let offer=this.state.params.offer
@@ -451,14 +486,24 @@ export default class Aspect extends React.Component<any, any> {
      } else if(offer==='offer-aras') {
         if(representation==='pt-aspect') {
           availableArtifacts = [
-            { key: 'aras-pt', text: 'PartTypization Aspect Implementation by PDM Web Connector.' },
+            { key: 'aras-pt', text: 'PartTypization Aspect "AS-DESIGNED" Implementation by PDM Web Connector.' },
           ];    
         } else if (representation==='apr-aspect') {
           availableArtifacts = [
-            { key: 'aras-apr', text: 'AssemblyPartRelationship Aspect Implementation by PDM Web Connector.' },
+            { key: 'aras-apr', text: 'AssemblyPartRelationship Aspect "AS-DESIGNED" Implementation by PDM Web Connector.' },
           ];    
         }
-     }
+     } else if(offer==='offer-sap') {
+      if(representation==='pt-aspect') {
+        availableArtifacts = [
+          { key: 'sap-pt', text: 'PartTypization Aspect "AS-PLANNED" Implementation by PDM Web Connector.' },
+        ];    
+      } else if (representation==='apr-aspect') {
+        availableArtifacts = [
+          { key: 'sap-apr', text: 'AssemblyPartRelationship Aspect "AS-PLANNED"  Implementation by PDM Web Connector.' },
+        ];    
+      }
+   }
 
     let consoleClass={ backgroundColor: '#0052C9', color:'white' };
     let frameStyle  = { backgroundColor: '', color:'black' };
@@ -489,7 +534,7 @@ export default class Aspect extends React.Component<any, any> {
       urls=matches.map( function(uuid) {
       return {
         "id":uuid,
-        "url":`../digitalTwin/${uuid}`
+        "url":`/home/digitalTwin/${uuid}`
       };
       });
     }

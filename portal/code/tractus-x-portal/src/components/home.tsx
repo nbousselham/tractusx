@@ -34,7 +34,7 @@ import YellowPages from './yellowpages';
 import { NewSemanticModel } from './semantics/NewSemanticModel';
 import SemanticHub from './semantics/SemanticHub';
 import SemanticModelDetail from './semantics/SemanticModelDetail';
-import Aspect from './aspect';
+import Aspect from './apps/aspect';
 import DigitalTwins from './digitaltwins/DigitalTwins';
 import { DigitalTwinDetail } from './digitaltwins/DigitalTwinDetail';
 import Admin from './admin';
