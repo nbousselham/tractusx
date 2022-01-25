@@ -13,14 +13,14 @@ name: IAM
 on: 
   push:
     paths:
-      # This is where IAM related scripts and manifests reside
-      - 'coreservices/iam/**'
       # this workflow file
       - '.github/workflows/iam.yml'
-      # deployment manifest file
-      - 'infrastructure/manifests/iam.yaml'
+      # deployment manifest files
+      - 'infrastructure/manifests/iamcentralidp.yaml'
+      - 'infrastructure/manifests/iamsharedidp.yaml'
       # ingress manifest file
-      - 'infrastructure/manifests/iam-ingress.yaml'
+      - 'infrastructure/manifests/iamcentralidp-ingress.yaml'
+      - 'infrastructure/manifests/iamsharedidp-ingress.yaml'
     branches:
       # Integration environment
       - main
