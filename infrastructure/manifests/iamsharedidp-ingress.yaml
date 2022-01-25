@@ -31,7 +31,7 @@ spec:
   ingressClassName: service
   tls:
   - hosts:
-    - ${CATENAX_SERVICE_HOST}
+    - ${CATENA_SERVICE_HOST}
     secretName: certificate-secret
   rules:
   - host: ${CATENA_SERVICE_HOST}
