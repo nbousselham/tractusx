@@ -34,7 +34,7 @@ spec:
     - ${CATENAX_SERVICE_HOST}
     secretName: certificate-secret
   rules:
-  - host: $[CATENA_SERVICE_HOST}
+  - host: ${CATENA_SERVICE_HOST}
     http:
       paths:
       - path: /iamsharedidp/auth(/|$)(.*)
