@@ -31,10 +31,10 @@ spec:
   ingressClassName: service
   tls:
   - hosts:
-    - ${CATENAX_SERVICE_URL}
+    - ${CATENAX_SERVICE_HOST}
     secretName: certificate-secret
   rules:
-  - host: $[CATENA_SERVICE_URL}
+  - host: $[CATENA_SERVICE_HOST}
     http:
       paths:
       - path: /iamsharedidp/auth(/|$)(.*)
