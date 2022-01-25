@@ -1,3 +1,11 @@
+/*
+Copyright (c) 2021-2022 T-Systems International GmbH (Catena-X Consortium)
+See the AUTHORS file(s) distributed with this work for additional
+information regarding authorship.
+
+See the LICENSE file(s) distributed with this work for
+additional information regarding license terms.
+*/
 package net.catenax.semantics.idsadapter.service;
 
 import java.io.ByteArrayOutputStream;
@@ -97,20 +105,15 @@ public class SimpleAdapterService {
     protected String handleSource(OutputStream response, String mediaType, Source so, Map<String,String> params) {
         Map.Entry<String,javax.xml.transform.Source> sourceImpl= handleRawSource(mediaType,so,params);
 
-        mediaType=sourceImpl.getKey();
-
         String transformation=so.getTransformation();
         if(transformation==null) {
             transformation="xml2xml.xsl";
+            mediaType="application/xml";
         }
 
         log.info("Accessing TRANSFORMATION source "+transformation);
 
         URL sheet = getClass().getClassLoader().getResource(transformation);
-
-        mediaType="application/json";
-
-        log.info("Media Type changed to "+mediaType);
 
         try {
             StreamSource xslt = new StreamSource(sheet.openStream());
@@ -124,17 +127,30 @@ public class SimpleAdapterService {
             if (sourceImpl instanceof StreamSource) {
                 ((StreamSource) sourceImpl).getInputStream().close();
             }
+            mediaType="application/json";
+            log.info("Media Type changed to "+mediaType);
             return mediaType;
         } catch (IOException | TransformerException e) {
             throw new AdapterException("error during transforming data",e);
         }
     }
 
+    /**
+     * Allows to use transformations with parameters
+     * SERVICE_URL   - link to the (semantic) services
+     * ADAPTER_URL   - self link to this adapter
+     * PORTAL_URL    - link to the cockpit
+     * CONNECTOR_ID  - id of the associated (provider) connector
+     * CONNECTOR_URL - link to the associated (provider) connector
+     * @param transformer unparameterized transformation
+     * @return parameterized transformation
+     */
     protected  javax.xml.transform.Transformer setTransformationParameters( javax.xml.transform.Transformer transformer ) {
         transformer.setParameter("SERVICE_URL", baseIdsAdapterConfigProperties.getServiceUrl());
         transformer.setParameter("ADAPTER_URL", baseIdsAdapterConfigProperties.getAdapterUrl());
         transformer.setParameter("PORTAL_URL", baseIdsAdapterConfigProperties.getPortalUrl());
-        transformer.setParameter("CONNECTOR_ID","https://w3id.org/idsa/autogen/connectorEndpoint/a73d2202-cb77-41db-a3a6-05ed251c0b");
+        transformer.setParameter("CONNECTOR_ID",baseIdsAdapterConfigProperties.getConnectorId());
+        transformer.setParameter("CONNECTOR_URL",baseIdsAdapterConfigProperties.getConnectorUrl());
         return transformer;
     }
 
@@ -187,9 +203,9 @@ public class SimpleAdapterService {
 
     /**
      * Handle a relational based adapter/transformation source
-     * @param mediaType
-     * @param so
-     * @param params
+     * @param mediaType resulting file/content type
+     * @param so source to query
+     * @param params runtime parameters to the query
      * @return pair of final media type and xml transformation source
      * @throws TransformerFactoryConfigurationError
      */
@@ -223,9 +239,9 @@ public class SimpleAdapterService {
 
     /**
      * registers new twins
-     * @param twinType
-     * @param twinSource
-     * @return the registration response
+     * @param twinType name under which the type is registered
+     * @param twinSource source backed with which the twins are defined
+     * @return the registration response from the registry copied
      */
     public String registerTwins(String twinType, Source twinSource) {
         try (ByteArrayOutputStream outStream = new ByteArrayOutputStream()) {

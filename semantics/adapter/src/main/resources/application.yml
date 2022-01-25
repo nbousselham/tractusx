@@ -94,7 +94,8 @@ idsadapter:
   # Part 1 - Connection to IDS/Catena-X
   # with catalogs and contracts
   #
-  connectorUrl: http://localhost:8080  
+  connectorUrl: http://localhost:8080
+  connectorId: https://w3id.org/idsa/autogen/connectorEndpoint/a73d2202-cb77-41db-a3a6-05ed251c0b
   connectorUser: admin
   connectorPassword: password
   publisher: http://t-systems.com

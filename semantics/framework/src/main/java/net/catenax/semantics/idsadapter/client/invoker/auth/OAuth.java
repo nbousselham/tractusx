@@ -1,3 +1,19 @@
+/*
+ * Copyright (c) 2021 Robert Bosch Manufacturing Solutions GmbH
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package net.catenax.semantics.idsadapter.client.invoker.auth;
 
 import java.io.IOException;
@@ -8,6 +24,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.stream.Collectors;
 
+import org.apache.http.HttpStatus;
 import org.apache.oltu.oauth2.client.HttpClient;
 import org.apache.oltu.oauth2.client.OAuthClient;
 import org.apache.oltu.oauth2.client.request.OAuthClientRequest;
@@ -31,7 +48,9 @@ import feign.Response;
 import feign.RetryableException;
 import feign.Util;
 
-
+/**
+ * Oauth authentication as a request interceptor
+ */
 public class OAuth implements RequestInterceptor {
 
     static final int MILLIS_PER_SECOND = 1000;
@@ -96,7 +115,7 @@ public class OAuth implements RequestInterceptor {
         try {
             accessTokenResponse = oauthClient.accessToken(tokenRequestBuilder.buildBodyMessage());
         } catch (Exception e) {
-            throw new RetryableException(500,e.getMessage(),HttpMethod.POST,e,null,null);
+            throw new RetryableException(HttpStatus.SC_INTERNAL_SERVER_ERROR,e.getMessage(),HttpMethod.POST,e,null,null);
         }
         if (accessTokenResponse != null && accessTokenResponse.getAccessToken() != null) {
             setAccessToken(accessTokenResponse.getAccessToken(), accessTokenResponse.getExpiresIn());
