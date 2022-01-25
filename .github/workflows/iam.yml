@@ -28,9 +28,9 @@ on:
       - feature/CAX-12-devops
       # Onboarding Dev Space
       - feature/CAX-9-onboarding
-      # ADAPT HERE TO ADD NEW WORKSPACES
       - feature/CAX-9-onboarding@deploy
-      # ADAPT HERE TO ADD NEW WORKSPACES
+      # Perf workspace for IAM testing
+      - feature/CAX-12-devops@CPLP-127-two-keycloak-instances
 
 jobs:
   ########################################
