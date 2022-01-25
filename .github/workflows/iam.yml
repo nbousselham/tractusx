@@ -61,9 +61,9 @@ jobs:
               if [[ "${{github.ref}}" == refs/heads/main ]]; then
                 echo "Determined INTEGRATION"
                 echo "::set-output name=workspace::int"
-              elif [[ "${{github.ref}}" = refs/heads/feature/CAX-12-semantics || "${{github.ref}}" = refs/heads/feature/CAX-12-devops@CXMVP-117-IAM-Shared-Service ]]; then
-                  echo "Determined IAM"
-                  echo "::set-output name=workspace::dev042"
+              elif [[ "${{github.ref}}" == refs/heads/feature/CAX-12-devops@CPLP-127-two-keycloak-instances ]]; then
+                  echo "Determined PERFORMANCE"
+                  echo "::set-output name=workspace::perf"
               else 
                 echo "Unsupported Branch on CATENAX. Leaving Workspace empty."
               fi
@@ -101,6 +101,9 @@ jobs:
       DB_HOST: catenax${{needs.environment.outputs.workspace}}database
       DB_USER: ${{secrets.CATENAX_USER}}
       DB_PASSWORD: ${{secrets.CATENAX_PASSWORD}}
+      CONTAINER_REGISTRY: catenaxacr.azurecr.io
+      KEYCLOAK_ADMIN_USER: ${{secrets.KEYCLOAK_ADMIN_USER}}
+      KEYCLOAK_ADMIN_PASSWORD: ${{secrets.KEYCLOAK_ADMIN_PASSWORD}}
     steps:
       # Wait for infrastructure deployments to terminate
       - name: Wait for Infrastructure
@@ -131,18 +134,29 @@ jobs:
           cluster-name: 'catenax-${{needs.environment.outputs.workspace}}-aks-services'
         id: login
 
-      # Deploy IAM service
-      - name: Deploy IAM service on AKS
+      # Deploy central idp service
+      - name: Deploy central idp service on AKS
         working-directory: ./infrastructure/manifests        
         run: |
-          cat iam.yaml | envsubst | kubectl apply -f -
+          cat iamcentralidp.yaml | envsubst | kubectl apply -f -
 
-
-      # Deploy IAM ingress
-      - name: Deploy IAM ingress on AKS
+      # Deploy central idp ingress
+      - name: Deploy central idp ingress on AKS
         working-directory: ./infrastructure/manifests        
         run: |
-          cat iam-ingress.yaml | envsubst | kubectl apply -f -
+          cat iamcentralidp-ingress.yaml | envsubst | kubectl apply -f -
+
+      # Deploy shared idp service
+      - name: Deploy shared idp service on AKS
+        working-directory: ./infrastructure/manifests        
+        run: |
+          cat iamsharedidp.yaml | envsubst | kubectl apply -f -
+
+      # Deploy shared idp ingress
+      - name: Deploy shared idp ingress on AKS
+        working-directory: ./infrastructure/manifests        
+        run: |
+          cat iamsharedidp-ingress.yaml | envsubst | kubectl apply -f -          
         
       # Get Pending Solver, we have to wait a bit as it may take some time for the solver to come up
       - name: Kubernetes Try To Find Pending Solver
@@ -159,7 +173,12 @@ jobs:
           echo "Found a pending solver ${{steps.try_solver.outputs.SOLVER}} which we need to patch"
           kubectl get ingress ${{steps.try_solver.outputs.SOLVER}} -n iam -o yaml | sed '/^\w.*kubernetes.io\/ingress.class: service\w*$/d' | sed "/spec:$/a\  ingressClassName: service" | kubectl apply -f -
 
-      - name: Rollout the Layer
+      - name: Rollout the central idp service
         working-directory: ./infrastructure/manifests
         run: |
-          kubectl rollout restart deployment iam -n iam
+          kubectl rollout restart deployment iamcentralidp -n iam
+
+      - name: Rollout the shared idp service
+        working-directory: ./infrastructure/manifests
+        run: |
+          kubectl rollout restart deployment iamsharedidp -n iam         
