@@ -59,10 +59,7 @@ jobs:
           elif [[ "${{github.repository}}" == catenax/tractusx ]]; then
               if [[ "${{github.ref}}" == refs/heads/main ]]; then
                 echo "Determined INTEGRATION"
-                echo "::set-output name=workspace::int"
-              elif [[ "${{github.ref}}" = refs/heads/feature/CAX-9-onboarding ]]; then
-                echo "Determined ONBOARDING"
-                echo "::set-output name=workspace::dev003"                              
+                echo "::set-output name=workspace::int"                             
               else
                 echo "Unsupported Branch on CATENAX. Leaving Workspace empty."
               fi
