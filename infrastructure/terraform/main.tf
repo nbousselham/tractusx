@@ -132,12 +132,6 @@ module "aks_services" {
   tags = {
     environment = "${var.environment}"
   }
-  addon_profile = {
-    http_application_routing = {
-      enabled                      = true
-      }
-  }
-
   depends_on = [module.aks_vnet]
 }
 
