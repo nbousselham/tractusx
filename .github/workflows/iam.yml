@@ -31,14 +31,11 @@ on:
       # Onboarding Dev Space
       - feature/CAX-9-onboarding
       - feature/CAX-9-onboarding@deploy
-      # Perf workspace for IAM testing
-      - feature/CAX-12-devops@CPLP-127-two-keycloak-instances
 
 jobs:
   ########################################
   # First job to determine the environment
   ########################################
-
 
   environment:
     # name of the job starts with a "run-level" subordinate to the workflow such that we can
@@ -63,10 +60,10 @@ jobs:
               if [[ "${{github.ref}}" == refs/heads/main ]]; then
                 echo "Determined INTEGRATION"
                 echo "::set-output name=workspace::int"
-              elif [[ "${{github.ref}}" == refs/heads/feature/CAX-12-devops@CPLP-127-two-keycloak-instances ]]; then
-                  echo "Determined PERFORMANCE"
-                  echo "::set-output name=workspace::perf"
-              else 
+              elif [[ "${{github.ref}}" = refs/heads/feature/CAX-9-onboarding ]]; then
+                echo "Determined ONBOARDING"
+                echo "::set-output name=workspace::dev003"                              
+              else
                 echo "Unsupported Branch on CATENAX. Leaving Workspace empty."
               fi
           elif [[ "${{github.repository}}" == tractusx-team-portal-onboarding/tractusx ]]; then
@@ -74,7 +71,7 @@ jobs:
                 echo "Determined dev003"
                 echo "::set-output name=workspace::dev003"
             else 
-                echo "Unsupported Branch on CATENAX. Leaving Workspace empty."
+                echo "Unsupported Branch on tractusx-team-portal-onboarding. Leaving Workspace empty."
             fi
           else
             echo "Unsupported Environment/Repository. Leaving Workspace empty."
@@ -187,4 +184,3 @@ jobs:
         run: |
           kubectl rollout restart deployment iamcentralidp -n iam
           kubectl rollout restart deployment iamsharedidp -n iam
-                
