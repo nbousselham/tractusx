@@ -21,6 +21,8 @@ on:
       # ingress manifest file
       - 'infrastructure/manifests/iamcentralidp-ingress.yaml'
       - 'infrastructure/manifests/iamsharedidp-ingress.yaml'
+      # KeyCloak Docker files
+      - 'coreservices/iam/docker/**'
     branches:
       # Integration environment
       - main
@@ -102,8 +104,11 @@ jobs:
       DB_USER: ${{secrets.CATENAX_USER}}
       DB_PASSWORD: ${{secrets.CATENAX_PASSWORD}}
       CONTAINER_REGISTRY: catenaxacr.azurecr.io
+      CONTAINER_IMAGE_CENTRALIDP: catenaxacr.azurecr.io/keycloak/centralidp${{needs.environment.outputs.workspace}}:latest
+      CONTAINER_IMAGE_SHAREDIDP: catenaxacr.azurecr.io/keycloak/sharedidp${{needs.environment.outputs.workspace}}:latest
       KEYCLOAK_ADMIN_USER: ${{secrets.KEYCLOAK_ADMIN_USER}}
       KEYCLOAK_ADMIN_PASSWORD: ${{secrets.KEYCLOAK_ADMIN_PASSWORD}}
+      
     steps:
       # Wait for infrastructure deployments to terminate
       - name: Wait for Infrastructure
@@ -124,6 +129,19 @@ jobs:
       # Get the latest sources
       - name: Checkout
         uses: actions/checkout@v2
+
+      # Build and push KeyCloak custom images for central and shared idp instances
+      - name: 'Build and push KeyCloak images'
+        uses: azure/docker-login@v1
+        with:
+          login-server: ${{env.CONTAINER_REGISTRY}}
+          username: ${{secrets.AZURE_REGISTRY_USERNAME}}
+          password: ${{secrets.AZURE_REGISTRY_PASSWORD}}
+      - run: |      
+          docker build ./coreservices/iam/docker/Dockerfile.centralidp -t ${{env.CONTAINER_IMAGE_CENTRALIDP}}
+          docker push ${{env.CONTAINER_IMAGE_CENTRALIDP}}
+          docker build ./coreservices/iam/docker/Dockerfile.sharedidp -t ${{env.CONTAINER_IMAGE_SHAREDIDP}}
+          docker push ${{env.CONTAINER_IMAGE_SHAREDIDP}}
 
       # Login to K8
       - name: Kubernetes Login

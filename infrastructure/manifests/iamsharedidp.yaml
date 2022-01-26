@@ -45,7 +45,7 @@ spec:
     spec:
       containers:
       - name: iamsharedidp
-        image: ${CONTAINER_REGISTRY}/keycloak:sharedidp
+        image: ${CONTAINER_IMAGE_SHAREDIDP}
         env:
         - name: KEYCLOAK_USER
           value: ${KEYCLOAK_ADMIN_USER}

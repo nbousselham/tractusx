@@ -45,7 +45,7 @@ spec:
     spec:
       containers:
       - name: iamcentralidp
-        image: ${CONTAINER_REGISTRY}/keycloak:centralidp
+        image: ${CONTAINER_IMAGE_CENTRALIDP}
         env:
         - name: KEYCLOAK_USER
           value: ${KEYCLOAK_ADMIN_USER}
