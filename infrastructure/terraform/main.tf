@@ -264,6 +264,68 @@ resource "helm_release" "nginx_ingress_portal" {
   depends_on = [kubernetes_namespace.ingress_portal_namespace, module.aks_services, azurerm_public_ip.portal_ip]
 }
 
+################################################
+### Backstage 
+################################################
+
+# Create static public IP Address to be used by Backstage
+resource "azurerm_public_ip" "backstage_ip" {
+  name                = "${var.prefix}-${var.environment}-backstage-pip"
+  location            = azurerm_resource_group.default_rg.location
+  resource_group_name = "${module.aks_services.node_resource_group}"
+  sku                 = "Standard"
+  allocation_method   = "Static"
+  domain_name_label   = "${var.prefix}${var.environment}backstage"
+
+  tags = {
+    environment                  = "${var.environment}"
+    kubernetes-dns-label-service = "ingress-backstage/ingress-backstage-ingress-nginx-controller"
+  }
+}
+
+# create namespace for Backstage NGINX ingress controller resources
+resource "kubernetes_namespace" "ingress_backstage_namespace" {
+  metadata {
+    name = "ingress-backstage"
+  }
+}
+
+# deploy a third NGINX ingress controller with Helm for Backstage
+resource "helm_release" "nginx_ingress_backstage" {
+  name       = "ingress-backstage"
+  chart      = "ingress-nginx"
+  namespace  = kubernetes_namespace.ingress_backstage_namespace.metadata[0].name
+  repository = "https://kubernetes.github.io/ingress-nginx"
+  timeout    = 300
+
+  set {
+    name  = "controller.service.loadBalancerIP"
+    value = "${azurerm_public_ip.backstage_ip.ip_address}"
+  }
+
+  set {
+    name = "controller.ingressClass"
+    value = "backstage"
+  }
+
+  set {
+    name = "controller.ingressClassResource.name"
+    value = "backstage"
+  }
+
+  set {
+    name  = "controller.service.annotations.\"service\\.beta\\.kubernetes\\.io/azure-load-balancer-resource-group\""
+    value = "${module.aks_services.node_resource_group}"
+  }
+
+  set {
+    name  = "controller.service.annotations.\"service\\.beta\\.kubernetes\\.io/azure-dns-label-name\""
+    value = "${var.prefix}${var.environment}backstage"
+  }
+
+  depends_on = [kubernetes_namespace.ingress_backstage_namespace, module.aks_services, azurerm_public_ip.backstage_ip]
+}
+
 ####################################################################################################
 # cert-manager for TLS with Letsencrypt certificates
 ####################################################################################################

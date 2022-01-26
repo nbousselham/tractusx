@@ -51,24 +51,12 @@ on:
     branches:
       # Integration environment
       - main
-      # ART1 Semantics Layer and Digitial Twin Dev Space
-      - feature/CATX-A1-SLDT
-      # Onboarding Dev Space
-      - feature/CAX-9-onboarding      
-      # Temporarily: Semantics Dev Space Terraform/Deplyment Features
-      - feature/CAX-1-semantics@CXMVP-50-semantic-adapter
-      # Onboarding env for data services team
-      - feature/A1ODT-18
-      # Onboarding env for DevOps Tooling team
-      - feature/A1ODT-37
-      # Onboarding env for Trust Anchor team
-      - feature/A1ODT-60
-      # Onboarding env for GPDM
-      - feature/A1ODT-11
+      # Create Backstage ingress
+      - feature/DevOpsTools
       # ADAPT HERE TO ADD NEW WORKSPACES
 
 env:
-  prefix: catenax
+  prefix: cxtsi
 
 ###############################################################
 # Consists of two jobs, the first determines the environment
@@ -109,24 +97,9 @@ jobs:
               if [[ "${{github.ref}}" == refs/heads/main ]]; then
                 echo "Determined INTEGRATION"
                 echo "::set-output name=workspace::int"
-              elif [[ "${{github.ref}}" == refs/heads/feature/CAX-1-semantics || "${{github.ref}}" = refs/heads/feature/CAX-1-semantics@CXMVP-50-semantic-adapter ]]; then
-                  echo "Determined SEMANTICS"
-                  echo "::set-output name=workspace::dev042"
-              elif [[ "${{github.ref}}" == refs/heads/feature/CAX-9-onboarding ]]; then
-                  echo "Determined ONBOARDING"
-                  echo "::set-output name=workspace::dev003"                 
-              elif [[ "${{github.ref}}" == refs/heads/feature/A1ODT-18 ]]; then
-                  echo "Determined DEV010 ENV"
-                  echo "::set-output name=workspace::dev010"  
-              elif [[ "${{github.ref}}" == refs/heads/feature/A1ODT-37 ]]; then
-                  echo "Determined DEV011 ENV"
-                  echo "::set-output name=workspace::dev011"
-              elif [[ "${{github.ref}}" == refs/heads/feature/A1ODT-60 ]]; then
-                  echo "Determined DEV012 ENV"
-                  echo "::set-output name=workspace::dev012"
-              elif [[ "${{github.ref}}" == refs/heads/feature/A1ODT-11 ]]; then
-                  echo "Determined DEV013 ENV"
-                  echo "::set-output name=workspace::dev013"
+              elif [[ "${{github.ref}}" == refs/heads/feature/DevOpsTools ]]; then
+                  echo "Determined DevOpsTools env"
+                  echo "::set-output name=workspace::devopstools"
               else
                   echo "Unsupported Branch on CATENAX. Leaving Workspace empty."
               fi
@@ -145,6 +118,7 @@ jobs:
     # depend on them in order to implement workflow dependencies
     name: 09 Infrastructure Terraform
     runs-on: ubuntu-latest
+    environment: Catena-X dev/int
     # rely on the first job
     needs: environment
     # rely on successful detection of the workspace, ignore if empty
@@ -251,7 +225,7 @@ jobs:
       env:
         TF_LOG: INFO
       run: |
-        terraform apply -auto-approve -input=false .terraform/terraform.plan 
+        echo DRYRUN terraform apply -auto-approve -input=false .terraform/terraform.plan 
     
     # Login to K8
     - name: Kubernetes Login
