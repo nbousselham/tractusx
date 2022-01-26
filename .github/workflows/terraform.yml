@@ -225,7 +225,7 @@ jobs:
       env:
         TF_LOG: INFO
       run: |
-        echo DRYRUN terraform apply -auto-approve -input=false .terraform/terraform.plan 
+        terraform apply -auto-approve -input=false .terraform/terraform.plan 
     
     # Login to K8
     - name: Kubernetes Login
