@@ -114,13 +114,7 @@ jobs:
                 echo "::set-output name=workspace::int"
               elif [[ "${{github.ref}}" == refs/heads/feature/CAX-1-semantics || "${{github.ref}}" = refs/heads/feature/CAX-1-semantics@CXMVP-50-semantic-adapter ]]; then
                   echo "Determined SEMANTICS"
-                  echo "::set-output name=workspace::dev042"
-              elif [[ "${{github.ref}}" == refs/heads/feature/CAX-9-onboarding ]]; then
-                  echo "Determined ONBOARDING"
-                  echo "::set-output name=workspace::dev003" 
-              elif [[ "${{github.ref}}" == refs/heads/feature/CAX-12-devops@CPLP-127-two-keycloak-instances ]]; then
-                  echo "Determined ONBOARDING"
-                  echo "::set-output name=workspace::dev003"                                                              
+                  echo "::set-output name=workspace::dev042"                                                                           
               elif [[ "${{github.ref}}" == refs/heads/feature/A1ODT-18 ]]; then
                   echo "Determined DEV010 ENV"
                   echo "::set-output name=workspace::dev010"  
