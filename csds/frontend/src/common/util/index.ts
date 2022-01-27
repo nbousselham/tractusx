@@ -1,6 +1,11 @@
 /* eslint-disable @typescript-eslint/ban-types */
 import Vue from "vue";
-import { ServiceUrlType } from "@/common/util/DataOfferUtil";
+
+export enum ServiceUrlType {
+  PROVIDER = "PROVIDER",
+  CORE = "CORE",
+  CONSUMER = "CONSUMER",
+}
 
 interface QueryObj {
   /* eslint-disable-next-line */
@@ -10,6 +15,7 @@ interface QueryObj {
 export default class Util {
   static PROVIDER_API_HOST_URL = process.env.VUE_APP_PROVIDER_API_HOST_URL;
   static CORE_API_HOST_URL = process.env.VUE_APP_CORE_API_HOST_URL;
+  static CONSUMER_API_HOST_URL = process.env.VUE_APP_CONSUMER_API_HOST_URL;
 
   static FORM_DATA_CONFIG_HEADER = {
     headers: {
@@ -29,8 +35,12 @@ export default class Util {
     return str;
   }
 
-  // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
-  static buildUrl(path: string, url: string, attr?: object, append?: boolean) {
+  static buildUrl(
+    path: string,
+    url: string,
+    attr?: object,
+    append?: boolean
+  ): string {
     let totalUrl = `${path}/${url}`;
     const parameters = attr ? this.getQueryParameters(attr) : null;
     if (append) {
@@ -40,11 +50,16 @@ export default class Util {
     return parameters ? `${totalUrl}?${parameters}` : totalUrl;
   }
 
-  // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
-  static getRestApiUrl(url: string, serviceType: string, attr?: object) {
+  static getRestApiUrl(
+    url: string,
+    serviceType: string,
+    attr?: object
+  ): string {
     return serviceType === ServiceUrlType.PROVIDER
       ? this.buildUrl(this.PROVIDER_API_HOST_URL, url, attr)
-      : this.buildUrl(this.CORE_API_HOST_URL, url, attr);
+      : serviceType === ServiceUrlType.CORE
+      ? this.buildUrl(this.CORE_API_HOST_URL, url, attr)
+      : this.buildUrl(this.CONSUMER_API_HOST_URL, url, attr);
   }
 
   /**

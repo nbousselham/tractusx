@@ -14,7 +14,7 @@
           @mouseleave="unSelectItem()"
         >
           <td class="d-block d-sm-table-cell">
-            <p class="mb-0">
+            <p class="mb-0 black--text font-weight-bold">
               <span>{{ item.title ? item.title : "" }}</span>
             </p>
           </td>

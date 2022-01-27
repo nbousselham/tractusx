@@ -2,7 +2,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import axios from "axios";
 import Util from "@/common/util/index";
-import { ServiceUrlType } from "@/common/util/DataOfferUtil";
+import { ServiceUrlType } from "@/common/util";
 
 export default class DataOfferService {
   /**

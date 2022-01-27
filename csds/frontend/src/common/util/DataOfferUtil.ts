@@ -1,8 +1,3 @@
-export enum ServiceUrlType {
-  PROVIDER = "PROVIDER",
-  CORE = "CORE",
-}
-
 export enum AccessControlType {
   LIMITED = "Limited",
   UNLIMITED = "Unlimited",

@@ -1,31 +1,228 @@
 <template>
-  <div class="contract-agreement-panel mt-10">
-    <h2 class="mb-4 ml-2">Contract agreements</h2>
-    <h5 class="mb-4 ml-2 contract-agreement-info">
-      Contract agreements are automatic processes. You can only discover latest
-      added contracts and their details.
-    </h5>
-    <CxPanel class="ml-2">
-      <template v-slot:panel-title>
-        <span>No contract agreements.</span>
-      </template>
-    </CxPanel>
-  </div>
+  <v-data-table
+    :headers="headers"
+    :items="contractAgreementItems"
+    :items-per-page="5"
+    class="contract-agreements-list elevation-0 mb-3"
+  >
+    <template v-slot:body="{ items }">
+      <tbody>
+        <tr
+          v-for="item in items"
+          :key="item.id"
+          @mouseover="selectItem(item)"
+          @mouseleave="unSelectItem()"
+        >
+          <td class="d-block d-sm-table-cell">
+            <p class="mb-0 black--text font-weight-bold">
+              <span>{{ item.contractName ? item.contractName : "" }}</span>
+            </p>
+          </td>
+          <td class="d-block d-sm-table-cell">
+            <p class="mb-0">
+              <span v-if="item.status === 'accepted'">
+                <v-icon small color="black"> mdi-check-circle </v-icon></span
+              >
+              <span v-if="item.status === 'suspended'">
+                <v-icon small color="#ffa600" dark>
+                  mdi-alert-circle
+                </v-icon></span
+              >
+            </p>
+          </td>
+          <td class="d-block d-sm-table-cell">
+            <p class="mb-0">
+              <span>{{
+                item.dateEstablished ? item.dateEstablished : ""
+              }}</span>
+            </p>
+          </td>
+          <td class="d-block d-sm-table-cell">
+            <p class="mb-0">
+              <span>{{
+                item.dataConsumerName ? item.dataConsumerName : ""
+              }}</span>
+            </p>
+          </td>
+          <td class="d-block d-sm-table-cell">
+            <p class="mb-0">
+              <span>{{
+                item.accessLimitedByUsecase
+                  ? item.accessLimitedByUsecase.join(", ")
+                  : ""
+              }}</span>
+            </p>
+          </td>
+          <td class="d-block d-sm-table-cell">
+            <p class="mb-0">
+              <span>{{
+                item.accessLimitedByCompanyRole
+                  ? item.accessLimitedByCompanyRole.join(", ")
+                  : ""
+              }}</span>
+            </p>
+          </td>
+          <td class="d-block d-sm-table-cell">
+            <p class="mb-0">
+              <span>{{
+                item.usageControl ? item.usageControl.join(", ") : ""
+              }}</span>
+            </p>
+          </td>
+          <td width="15%" class="d-block d-sm-table-cell">
+            <div
+              class="d-flex"
+              :class="{ 'mt-5': isSmallScreen }"
+              v-if="item === selectedItem"
+            >
+              <v-tooltip bottom>
+                <template v-slot:activator="{ on, attrs }">
+                  <v-btn
+                    icon
+                    v-bind="attrs"
+                    v-on="on"
+                    class="mr-2"
+                    @click="viewContractAgreementDetails(item)"
+                  >
+                    <v-icon large dark>$vuetify.icons.infoIcon</v-icon>
+                  </v-btn>
+                </template>
+                <span>See contract agreement details</span>
+              </v-tooltip>
+              <v-tooltip bottom>
+                <template v-slot:activator="{ on, attrs }">
+                  <v-btn
+                    icon
+                    v-bind="attrs"
+                    v-on="on"
+                    class="mr-2"
+                    v-if="item.status === 'suspended'"
+                    @click="acceptContractAgreement(item)"
+                  >
+                    <v-icon color="#b3cb2d" large dark
+                      >$vuetify.icons.playIcon</v-icon
+                    >
+                  </v-btn>
+                  <v-btn
+                    icon
+                    v-bind="attrs"
+                    v-on="on"
+                    class="mr-2"
+                    v-if="item.status === 'accepted'"
+                    disabled
+                    @click="acceptContractAgreement(item)"
+                  >
+                    <v-icon large dark>$vuetify.icons.playIconGrayed</v-icon>
+                  </v-btn>
+                </template>
+                <span>Accept contract agreement</span>
+              </v-tooltip>
+              <v-tooltip bottom>
+                <template v-slot:activator="{ on, attrs }">
+                  <v-btn
+                    icon
+                    v-bind="attrs"
+                    v-on="on"
+                    class="mr-2"
+                    v-if="item.status === 'accepted'"
+                    @click="suspendContractAgreement(item)"
+                  >
+                    <v-icon color="#b3cb2d" large dark
+                      >$vuetify.icons.pauseIcon</v-icon
+                    >
+                  </v-btn>
+                  <v-btn
+                    icon
+                    v-bind="attrs"
+                    v-on="on"
+                    class="mr-2"
+                    v-if="item.status === 'suspended'"
+                    disabled
+                    @click="acceptContractAgreement(item)"
+                  >
+                    <v-icon large dark>$vuetify.icons.pauseIconGrayed</v-icon>
+                  </v-btn>
+                </template>
+                <span>Suspend contract agreement</span>
+              </v-tooltip>
+            </div>
+          </td>
+        </tr>
+      </tbody>
+    </template>
+  </v-data-table>
 </template>
 <script lang="ts">
 import Vue from "vue";
-import CxPanel from "@/components/CxPanel.vue";
+import {
+  CONTRACT_AGREEMENTS_TABLE_HEADERS,
+  contractAgreementItems,
+} from "@/common/util/ContractAgreementsUtil";
 
 export default Vue.extend({
   name: "ContractAgreementsList",
-  components: {
-    CxPanel,
+  data: () => ({
+    headers: CONTRACT_AGREEMENTS_TABLE_HEADERS,
+    selectedItem: [],
+    contractAgreementItems,
+  }),
+  props: {
+    contractAgreements: {
+      type: Array as () => Array<any>,
+      default: () => [],
+    },
+  },
+  computed: {
+    isSmallScreen(): boolean {
+      return this.$vuetify.breakpoint.mdAndDown;
+    },
+  },
+  methods: {
+    selectItem(item: never[]) {
+      this.selectedItem = item;
+    },
+    unSelectItem() {
+      this.selectedItem = [];
+    },
   },
 });
 </script>
+
 <style lang="scss">
-.contract-agreement-info {
-  opacity: 0.4;
-  font-size: 14px;
+@import "~@/styles/variables";
+
+.v-data-table.contract-agreements-list {
+  & > .v-data-table__wrapper > table > thead > tr:last-child > th {
+    border-bottom: none !important;
+    & > span {
+      color: $grey9;
+    }
+  }
+  & > .v-data-table__wrapper > table > tbody > tr:hover {
+    background: $white !important;
+    box-shadow: $cx-elevation;
+  }
+  & > .v-data-table__wrapper {
+    background-color: $grey1 !important;
+  }
+  & > .v-data-table__wrapper > table > tbody > tr {
+    background: $white;
+  }
+  & > div > table {
+    border-spacing: 0 0.4rem !important;
+    padding: 0 2px 0 8px;
+  }
+  & td {
+    height: 56px !important;
+    border-bottom: none !important;
+    & span.v-icon {
+      width: 32px !important;
+    }
+  }
+  & .v-data-footer {
+    border-top: none !important;
+    box-shadow: inset 8px 0 0 0 $grey1;
+    background-clip: content-box;
+  }
 }
 </style>
