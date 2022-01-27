@@ -202,7 +202,7 @@ $(document).ready(function()
 						
 						$.each(data.data,function(i,data)
 						{
-							console.log(data);
+							//console.log(data);
 							var status= data.status;
 							
 							var statusSpan = status==="Accepted"? status+' <br/><a href="'+data.dataUrl+'?download=true&agreementUri='+data.agreementInformation+'">Data offer file</a>'  : status;
