@@ -8,10 +8,7 @@ additional information regarding license terms.
 */
 package net.catenax.semantics.idsadapter.service;
 
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -265,7 +262,7 @@ public class FhIdsService implements IdsService {
         resource.setKeywords(offer.getKeywords());
         resource.setPublisher(baseIdsAdapterConfigProperties.getPublisher());
         resource.setLanguage(offer.getLanguage());
-        resource.setPaymentMethod(OfferedResourceDesc.PaymentMethodEnum.valueOf(offer.getPaymentMethod()));
+        resource.setPaymentMethod(OfferedResourceDesc.PaymentMethodEnum.fromValue(offer.getPaymentMethod()));
         resource.setLicense(offer.getLicense());
         resource.setEndpointDocumentation(baseIdsAdapterConfigProperties.getAdapterUrl()+"/adapter");
         OfferedResourceView resourceView = offeredResourcesApi.create4(resource);

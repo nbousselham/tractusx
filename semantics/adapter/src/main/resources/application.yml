@@ -132,7 +132,7 @@ idsadapter:
         contract: contract-readall
         # reference to the catalogue
         catalog: catenax-catalog
-        paymentMethod: FREE
+        paymentMethod: free
         # The representations correspond to aspects/semantic models supported
         representations:
           material-aspect:
@@ -167,7 +167,7 @@ idsadapter:
         contract: contract-readall
         # reference to the catalog
         catalog: catenax-catalog
-        paymentMethod: FREE
+        paymentMethod: free
         # The representations correspond to all Speedboat aspects/semantic models
         representations:
           material-aspect:
