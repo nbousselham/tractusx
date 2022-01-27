@@ -10,7 +10,22 @@ package net.catenax.semantics.idsadapter.service;
 
 import net.catenax.semantics.idsadapter.restapi.dto.Offer;
 
+/**
+ * Interface to any IDS service that this adapter
+ * is attached to
+ */
 public interface IdsService {
+    /**
+     * Creates a particular offer
+     * @param title
+     * @param offer
+     * @return
+     */
     Offer getOrCreateOffer(String title, Offer offer);
+
+    /**
+     * presents a self-description
+     * @return
+     */
     Object getSelfDescription();
 }

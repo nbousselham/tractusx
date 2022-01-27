@@ -17,6 +17,7 @@ import net.catenax.semantics.idsadapter.restapi.dto.Contract;
 
 @Data
 public class BaseIdsAdapterConfigProperties {
+    private String connectorType;
     private String connectorUrl;
     private String connectorId;
     private String serviceUrl;

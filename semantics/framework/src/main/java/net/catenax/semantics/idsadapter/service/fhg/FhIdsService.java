@@ -6,7 +6,7 @@ information regarding authorship.
 See the LICENSE file(s) distributed with this work for
 additional information regarding license terms.
 */
-package net.catenax.semantics.idsadapter.service;
+package net.catenax.semantics.idsadapter.service.fhg;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -43,12 +43,15 @@ import net.catenax.semantics.idsadapter.restapi.dto.ContractRule;
 import net.catenax.semantics.idsadapter.restapi.dto.Offer;
 import net.catenax.semantics.idsadapter.restapi.dto.Representation;
 import net.catenax.semantics.idsadapter.restapi.dto.Source;
+import net.catenax.semantics.idsadapter.service.IdsService;
+import org.springframework.context.annotation.Conditional;
 
 /**
- * A service that manages the interaction with the connector
+ * A service implementation that manages the interaction with the Fraunhofer connector
  */
 @RequiredArgsConstructor
 @Slf4j
+@Conditional(FhIdsCondition.class)
 public class FhIdsService implements IdsService {
 
     /** these are clients to the different endpoints of the connector */
