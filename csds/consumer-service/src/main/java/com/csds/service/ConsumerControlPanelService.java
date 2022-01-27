@@ -3,149 +3,224 @@ package com.csds.service;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.nio.file.Path;
 import java.nio.file.StandardOpenOption;
+import java.time.LocalDate;
 import java.util.Base64;
+import java.util.Date;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpMethod;
-import org.springframework.http.MediaType;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 
+import com.csds.api.ConsumerArtifactAPI;
+import com.csds.api.ConsumerContractAPI;
+import com.csds.api.ConsumerDescriptionAPI;
+import com.csds.api.ProviderOfferDetailsAPI;
+import com.csds.entity.ContractAgreementsInformation;
+import com.csds.exception.NoDataFoundException;
 import com.csds.model.ConsumerOfferDescriptionResponseCatalog;
 import com.csds.model.ConsumerOfferDescriptionResponseOffer;
 import com.csds.model.ConsumerOfferResource;
 import com.csds.model.ConsumerOfferResourceContractPermission;
 import com.csds.model.ConsumerOfferResourceRepresentationArtifact;
+import com.csds.model.ContractAgreementsResponse;
+import com.csds.model.DataOfferDetails;
+import com.csds.model.OrganizationDetails;
+import com.csds.model.QueryDataOfferModel;
+import com.csds.repository.ContractAgreementsInformationMongoRepository;
+import com.csds.response.ResponseObject;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import lombok.RequiredArgsConstructor;
+import lombok.val;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 @Service
 @RequiredArgsConstructor
-public class ConsumerControlPanelService {
+public class ConsumerControlPanelService implements ProcessOnDataOffer {
 
-	@Value("${connector.consumer.baseUrl}")
-	private URI consumerConnectorBaseUrl;
-
-	@Value("${connector.consumer.recipient}")
-	private String recipient;
-
-	@Value("${connector.username}")
-	private String username;
-
-	@Value("${connector.password}")
-	private String password;
-
-	@Value("${connector.consumer.geopoint}")
-	private List<String> geopoints;
+	private static final String IDS_DATA_URI = "/ids/data";
 
 	private static final String NEGOTIATE_CONTRACT_PART1 = "{\n" + "    \"@type\": \"ids:Permission\",\n"
 			+ "    \"@id\": \"";
 
 	private static final String NEGOTIATE_CONTRACT_PART2 = "\",\n   \"ids:description\": [\n" + "      {\n"
-			+ "        \"@value\": \"provide-access\",\n"
-			+ "        \"@type\": \"http://www.w3.org/2001/XMLSchema#string\"\n" + "      }\n" + "    ],\n"
-			+ "    \"ids:title\": [\n" + "      {\n" + "        \"@value\": \"Allow Data Usage\",\n"
+			+ "        \"@value\": \"";
+
+	private static final String NEGOTIATE_CONTRACT_PART3 = "\",\n \"@type\": \"http://www.w3.org/2001/XMLSchema#string\"\n"
+			+ "      }\n" + "    ],\n" + "    \"ids:title\": [\n" + "      {\n"
+			+ "        \"@value\": \"Allow Data Usage\",\n"
 			+ "        \"@type\": \"http://www.w3.org/2001/XMLSchema#string\"\n" + "      }\n" + "    ],\n"
 			+ "    \"ids:action\": [\n" + "      {\n" + "        \"@id\": \"https://w3id.org/idsa/code/USE\"\n"
 			+ "      }\n" + "    ],\n" + "    \"ids:postDuty\": [],\n" + "    \"ids:assignee\": [],\n"
 			+ "    \"ids:assigner\": [],\n" + "    \"ids:constraint\": [],\n" + "    \"ids:preDuty\": [],\n"
 			+ "    \"ids:target\":\"";
 
-	private static final String NEGOTIATE_CONTRACT_PART3 = "\"\n" + "}";
+	private static final String NEGOTIATE_CONTRACT_PART4 = "\"\n" + "}";
 
 	private static final ObjectMapper mapper = new ObjectMapper();
 
-	public void configureAndReadProviderData() {
-		try {
-			String allCatalog = Optional.ofNullable(readDescriptionAPI(consumerConnectorBaseUrl, recipient, ""))
-					.orElseThrow(() -> new RuntimeException("Couldn't found catalog from UI"));
+	private final ConsumerDescriptionAPI consumerDescriptionAPI;
+	private final ConsumerContractAPI consumerContractAPI;
+	private final ConsumerArtifactAPI consumerArtifactAPI;
+	private final ProviderOfferDetailsAPI providerOfferDetailsAPI;
 
-			JsonNode catalogresponseObj = mapper.readTree(allCatalog);
-			ConsumerOfferDescriptionResponseCatalog catalogResponse = mapper.treeToValue(catalogresponseObj,
-					ConsumerOfferDescriptionResponseCatalog.class);
-			log.info("Base connector ID:" + catalogResponse.getId());
+	@Autowired
+	private ContractAgreementsInformationMongoRepository contractAgreementsInformationMongoRepository;
 
-			for (Object catlog : catalogResponse.getResourceCatalog()) {
+	public List<ContractAgreementsResponse> readContractAgreementsInformation() {
 
-				@SuppressWarnings("unchecked")
-				LinkedHashMap<String, String> catObj = (LinkedHashMap<String, String>) catlog;
+		List<ContractAgreementsResponse> contractAgreementsResponseList = Optional
+				.ofNullable(contractAgreementsInformationMongoRepository.findAll().stream().map(contractInfo -> {
+					return ContractProcessFunction.apply(contractInfo);
+				}).collect(Collectors.toList())).orElseThrow(
+						() -> new NoDataFoundException("Couldn't found contract agreement information in mongodb"));
 
-				var catalogId = catObj.get("@id").toString();
-
-				String allOffer = Optional
-						.ofNullable(readDescriptionAPI(consumerConnectorBaseUrl, recipient, catalogId))
-						.orElseThrow(() -> new RuntimeException(
-								"Couldn't found valid offer in catalog from UI" + catalogId));
-
-				JsonNode responseObj = mapper.readTree(allOffer);
-				ConsumerOfferDescriptionResponseOffer offerResponse = mapper.treeToValue(responseObj,
-						ConsumerOfferDescriptionResponseOffer.class);
-				log.info("Base catalog ID:" + offerResponse.getId());
-
-				for (ConsumerOfferResource offer : offerResponse.getOfferedResource()) {
-					var offerId = offer.getId();
-					ConsumerOfferResourceRepresentationArtifact artifact = null;
-
-					if (offer.getRepresentation() != null && offer.getRepresentation().size() > 0) {
-						artifact = offer.getRepresentation().get(0).getArtifacts().get(0);
-					}
-
-					ConsumerOfferResourceContractPermission ruleId = null;
-
-					if (offer.getContractOffer() != null && offer.getContractOffer().size() > 0) {
-						ruleId = offer.getContractOffer().get(0).getPermission().get(0);
-					}
-
-					JsonNode contrRes = negotiateContract(recipient, offerId, artifact.getId(), ruleId.getId());
-					log.info(contrRes.toPrettyString());
-
-					var agreementRemoteId = contrRes.get("remoteId").asText();
-					log.info(agreementRemoteId);
-
-					var agreementSelfhref = contrRes.get("_links").get("self").get("href").asText();
-					log.info(agreementSelfhref);
-
-					var artifactDetails = Optional.ofNullable(getArtifactDetailsBasedonAgreement(agreementSelfhref))
-							.orElseThrow(() -> new RuntimeException(
-									"Couldn't found valid artifact details in NPM for" + agreementSelfhref));
-
-					log.info(artifactDetails.toPrettyString());
-
-					var dataUrl = Optional.ofNullable(artifactDetails).map(aj -> aj.get("_embedded"))
-							.map(em -> em.get("artifacts")).map(a -> a.get(0)).map(z -> z.get("_links"))
-							.map(l -> l.get("self")).map(s -> s.get("href")).map(JsonNode::asText)
-							.map(s -> s.concat("/data/**")).orElseThrow(() -> new RuntimeException(
-									"Couldn't construct data retrieval URL from Artifact JSON"));
-
-					readData(agreementRemoteId, dataUrl);
-				}
-			}
-		} catch (RuntimeException e) {
-			log.error("Exception in registerAndreadUIParkingData" + e.getMessage());
-		} catch (Exception e) {
-			log.error("Exception in registerAndreadUIParkingData" + e.getMessage());
-		}
+		return contractAgreementsResponseList;
 	}
 
-	public String readData(String agreementRemoteId, String dataUrl)
+	public List<QueryDataOfferModel> queryOnDataOffers(OrganizationDetails consumer, String recipient, String elementId)
+			throws Exception {
+
+		var recipientURL = recipient + IDS_DATA_URI;
+		List<QueryDataOfferModel> queryOfferResposne = null;
+
+		String allCatalog = Optional.ofNullable(readCatalogeAPI(consumer, recipientURL, ""))
+				.orElseThrow(() -> new NoDataFoundException("Couldn't found catalog from data provider"));
+
+		JsonNode catalogresponseObj = mapper.readTree(allCatalog);
+		ConsumerOfferDescriptionResponseCatalog catalogResponse = mapper.treeToValue(catalogresponseObj,
+				ConsumerOfferDescriptionResponseCatalog.class);
+		log.info("Base connector ID:" + catalogResponse.getId());
+
+		for (Object catlog : catalogResponse.getResourceCatalog()) {
+
+			@SuppressWarnings("unchecked")
+			LinkedHashMap<String, String> catObj = (LinkedHashMap<String, String>) catlog;
+
+			var catalogId = catObj.get("@id").toString();
+
+			String allOffer = Optional.ofNullable(readDescriptionAPI(consumer, recipientURL, catalogId))
+					.orElseThrow(() -> new NoDataFoundException(
+							"Couldn't found valid offer in catalog from data provider" + catalogId));
+
+			JsonNode responseObj = mapper.readTree(allOffer);
+			ConsumerOfferDescriptionResponseOffer offerResponse = mapper.treeToValue(responseObj,
+					ConsumerOfferDescriptionResponseOffer.class);
+			log.info("Base catalog ID:" + offerResponse.getId());
+
+			queryOfferResposne = Optional
+					.ofNullable(offerResponse.getOfferedResource().stream().map(offerResource -> {
+						return OfferProcessFunction.apply(offerResource);
+					}).collect(Collectors.toList())).orElseThrow(
+							() -> new NoDataFoundException("Couldn't found offer information in data provider"));
+
+		}
+
+		return queryOfferResposne;
+	}
+
+	public ContractAgreementsResponse establishContractbetweenconsumerAndProvider(OrganizationDetails consumer,
+			String recipient, String elementId) {
+		ContractAgreementsInformation contractInformation = null;
+		LocalDate ld = LocalDate.now();
+		String dateEstablished = ld.getMonthValue() + "/" + ld.getDayOfMonth() + "/" + ld.getYear();
+		DataOfferDetails offerData = null;
+		try {
+			var recipientURL = recipient + IDS_DATA_URI;
+
+			ResponseEntity<ResponseObject> dataOfferDetailsResponse = providerOfferDetailsAPI
+					.getOfferDetails(elementId);
+
+			if (dataOfferDetailsResponse.getStatusCodeValue() == 200) {
+				offerData = (mapper.convertValue(dataOfferDetailsResponse.getBody().getData(), DataOfferDetails.class));
+			}
+
+			String offerStr = Optional
+					.ofNullable(readDescriptionAPI(consumer, recipientURL, recipient + "/offers/" + elementId))
+					.orElseThrow(() -> new NoDataFoundException(
+							"Couldn't found valid offer from data provider" + elementId));
+
+			JsonNode responseObj = mapper.readTree(offerStr);
+			ConsumerOfferResource OfferDetails = mapper.treeToValue(responseObj, ConsumerOfferResource.class);
+
+			if (OfferDetails != null) {
+
+				var offerId = OfferDetails.getId();
+				ConsumerOfferResourceRepresentationArtifact artifact = null;
+
+				if (OfferDetails.getRepresentation() != null && OfferDetails.getRepresentation().size() > 0) {
+					artifact = OfferDetails.getRepresentation().get(0).getArtifacts().get(0);
+				}
+
+				List<ConsumerOfferResourceContractPermission> ruleList = null;
+
+				if (OfferDetails.getContractOffer() != null && OfferDetails.getContractOffer().size() > 0) {
+					ruleList = OfferDetails.getContractOffer().get(0).getPermission();
+				}
+
+				String contrResponse = negotiateContract(consumer, recipientURL, offerId, artifact.getId(), ruleList);
+				JsonNode contrRes = mapper.readTree(contrResponse);
+				log.info(contrRes.toPrettyString());
+
+				var agreementRemoteId = contrRes.get("remoteId").asText();
+				log.info(agreementRemoteId);
+
+				var agreementSelfhref = contrRes.get("_links").get("self").get("href").asText();
+				log.info(agreementSelfhref);
+
+				var artifactDetails = Optional
+						.ofNullable(mapper.readTree(getArtifactDetailsBasedonAgreement(consumer, agreementSelfhref)))
+						.orElseThrow(() -> new NoDataFoundException(
+								"Couldn't found valid artifact details in connectors" + agreementSelfhref));
+
+				log.info(artifactDetails.toPrettyString());
+
+				var dataUrl = Optional.ofNullable(artifactDetails).map(aj -> aj.get("_embedded"))
+						.map(em -> em.get("artifacts")).map(a -> a.get(0)).map(z -> z.get("_links"))
+						.map(l -> l.get("self")).map(s -> s.get("href")).map(JsonNode::asText)
+						.map(s -> s.concat("/data/**")).orElseThrow(
+								() -> new RuntimeException("Couldn't construct data retrieval URL from Artifact JSON"));
+
+				contractInformation = ContractAgreementsInformation.builder().dateEstablished(dateEstablished)
+						.status("Accepted").dataConsumer(consumer.getName())
+						.contractName("Contract " + consumer.getName() + "-" + ld.getMonth() + "/" + ld.getYear())
+						.dataOfferDetails(offerData).createdTimeStamp(new Date()).modifiedTimeStamp(new Date())
+						.agreementRemoteId(agreementRemoteId).dataUrl(dataUrl).build();
+			}
+
+		} catch (Exception e) {
+			contractInformation = ContractAgreementsInformation.builder().dateEstablished(dateEstablished)
+					.dataConsumer(consumer.getName())
+					.contractName("Contract " + consumer.getName() + "-" + ld.getMonth() + "/" + ld.getYear())
+					.createdTimeStamp(new Date()).modifiedTimeStamp(new Date()).status("Rejected")
+					.dataOfferDetails(offerData).build();
+			log.error("Exception in establishContractbetweenconsumerAndProvider" + e.getMessage());
+		} finally {
+			contractAgreementsInformationMongoRepository.save(contractInformation);
+		}
+
+		return ContractProcessFunction.apply(contractInformation);
+	}
+
+	public String readData(OrganizationDetails consumer, String agreementRemoteId, String dataUrl)
 			throws FileNotFoundException, IOException, Exception {
+
 		String data = "{}";
 		try {
 			// Point example "{Longitude Latitude}=>{9.97375 53.56093}";
@@ -153,7 +228,7 @@ public class ConsumerControlPanelService {
 					.queryParam("download", true);
 			log.info("Read Data :" + url.toUriString());
 
-			String userCredentials = username + ":" + password;
+			String userCredentials = consumer.getUsername() + ":" + consumer.getPassword();
 			String basicAuth = "Basic " + new String(Base64.getEncoder().encode(userCredentials.getBytes()));
 
 			HttpClient client = HttpClient.newHttpClient();
@@ -170,6 +245,7 @@ public class ConsumerControlPanelService {
 				log.debug("Path:" + path);
 				data = readFileAsString(path.toString());
 			}
+
 		} catch (Exception e) {
 			log.error("Exception in readData" + e.getMessage());
 			throw e;
@@ -189,65 +265,57 @@ public class ConsumerControlPanelService {
 		return data;
 	}
 
-	private HttpHeaders prepareHttpHeader() {
-		HttpHeaders headers = new HttpHeaders();
-		headers.setBasicAuth(username, password);
-		return headers;
-	}
-
-	private JsonNode getArtifactDetailsBasedonAgreement(String agreementSelfhref) {
-
-		var builder = UriComponentsBuilder.fromHttpUrl(agreementSelfhref + "/artifacts");
-		var body = "";
-		RestTemplate restTemplateDefault = new RestTemplate();
-		HttpHeaders headers = prepareHttpHeader();
-		headers.add("Content-Type", "application/json");
-		headers.setAccept(List.of(MediaType.APPLICATION_JSON));
-		log.info("ArtifactDetailsBasedonAgreement:" + builder.toUriString());
-		var entity = new HttpEntity<>(body, headers);
-		ResponseEntity<JsonNode> responseEntity = restTemplateDefault.exchange(builder.toUriString(), HttpMethod.GET,
-				entity, JsonNode.class);
-		if (responseEntity.getStatusCodeValue() == 200) {
-			return responseEntity.getBody();
+	private String getAuthHeader(OrganizationDetails consumer) {
+		val auth = consumer.getUsername() + ":" + consumer.getPassword();
+//		val auth = "admin:password";
+		String encoding1 = "";
+		try {
+			encoding1 = Base64.getEncoder().encodeToString((auth.toString()).getBytes("UTF-8"));
+		} catch (UnsupportedEncodingException e) {
+			e.printStackTrace();
 		}
-		return null;
+		return "Basic " + encoding1;
 	}
 
-	private String readDescriptionAPI(URI baseUrl, String recipient, String elementId) {
-		var url = consumerConnectorBaseUrl + "/ids/description";
-		var builder = UriComponentsBuilder.fromHttpUrl(url).queryParam("recipient", recipient).queryParam("elementId",
+	private String readCatalogeAPI(OrganizationDetails consumer, String recipient, String elementId) {
+		var url = consumer.getBaseUrl();
+		var body = consumerDescriptionAPI.getCatalogDetails(URI.create(url), getAuthHeader(consumer), recipient,
 				elementId);
-		var body = "";
-		RestTemplate restTemplateDefault = new RestTemplate();
-		HttpHeaders headers = prepareHttpHeader();
-		headers.add("Content-Type", "application/json");
-		headers.setAccept(List.of(MediaType.APPLICATION_JSON));
-		log.info("ReadDescriptionAPI:" + builder.toUriString());
-		var entity = new HttpEntity<>(body, headers);
-		ResponseEntity<String> responseEntity = restTemplateDefault.exchange(builder.toUriString(), HttpMethod.POST,
-				entity, String.class);
-		if (responseEntity.getStatusCodeValue() == 200) {
-			return responseEntity.getBody();
+		return body.toString();
+	}
+
+	private String readDescriptionAPI(OrganizationDetails consumer, String recipient, String elementId) {
+		var url = consumer.getBaseUrl();
+		var body = consumerDescriptionAPI.getDescriptionDetails(URI.create(url), getAuthHeader(consumer), recipient,
+				elementId);
+		return body.toString();
+	}
+
+	private String negotiateContract(OrganizationDetails consumer, String recipient, String offerId, String artifactId,
+			List<ConsumerOfferResourceContractPermission> ruleList)
+			throws JsonMappingException, JsonProcessingException {
+		StringBuilder body = new StringBuilder();
+		for (ConsumerOfferResourceContractPermission consumerOfferResourceContractPermission : ruleList) {
+
+			String descriptionValue = consumerOfferResourceContractPermission.getDescription().get(0).getValue();
+
+			if (body.length() == 0)
+				body.append(NEGOTIATE_CONTRACT_PART1 + consumerOfferResourceContractPermission.getId()
+						+ NEGOTIATE_CONTRACT_PART2 + descriptionValue + NEGOTIATE_CONTRACT_PART3 + artifactId
+						+ NEGOTIATE_CONTRACT_PART4);
+			else
+				body.append("," + NEGOTIATE_CONTRACT_PART1 + consumerOfferResourceContractPermission.getId()
+						+ NEGOTIATE_CONTRACT_PART2 + descriptionValue + NEGOTIATE_CONTRACT_PART3 + artifactId
+						+ NEGOTIATE_CONTRACT_PART4);
 		}
-		return null;
+
+		String bodyStr = "[" + body.toString() + "]";
+
+		return consumerContractAPI.negotiateContract(URI.create(consumer.getBaseUrl()), getAuthHeader(consumer),
+				bodyStr, recipient, offerId, artifactId, false);
 	}
 
-	private JsonNode negotiateContract(String recipient, String offerId, String artifactId, String ruleId) {
-
-		var url = consumerConnectorBaseUrl + "/ids/contract";
-		var builder = UriComponentsBuilder.fromHttpUrl(url).queryParam("recipient", recipient)
-				.queryParam("resourceIds", offerId).queryParam("artifactIds", artifactId).queryParam("download", false);
-
-		var body = "[" + NEGOTIATE_CONTRACT_PART1 + ruleId + NEGOTIATE_CONTRACT_PART2 + artifactId
-				+ NEGOTIATE_CONTRACT_PART3 + "]";
-
-		RestTemplate restTemplateDefault = new RestTemplate();
-		HttpHeaders headers = prepareHttpHeader();
-		headers.add("Content-Type", "application/json");
-		log.info("NegotiateContract" + builder.toUriString());
-		headers.setAccept(List.of(MediaType.APPLICATION_JSON));
-		var entity = new HttpEntity<>(body, headers);
-		return restTemplateDefault.postForObject(builder.toUriString(), entity, JsonNode.class);
+	private String getArtifactDetailsBasedonAgreement(OrganizationDetails consumer, String agreementSelfhref) {
+		return consumerArtifactAPI.artifactDetails(URI.create(agreementSelfhref), getAuthHeader(consumer));
 	}
-
 }

@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<title>Consumer Control panel page</title>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<link
+	href="http://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css"
+	rel="stylesheet">
+<script
+	src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
+<link rel="stylesheet"
+	href="http://cdn.datatables.net/1.10.2/css/jquery.dataTables.min.css">
+
+<script type="text/javascript"
+	src="http://cdn.datatables.net/1.10.2/js/jquery.dataTables.min.js"></script>
+<script type="text/javascript"
+	src="http://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js"></script>
+</head>
+
+<body>
+
+	<div class="container" style="width: 86%;">
+		<h3>Consumer Control Panel</h3>
+		<ul class="nav nav-tabs">
+			<li class="active"><a data-toggle="tab" href="#home">Offer
+					Details</a></li>
+			<li><a data-toggle="tab" href="#menu1" id="contract_details">Contract
+					Details</a></li>
+		</ul>
+
+
+		<div class="tab-content">
+			<div id="home" class="tab-pane fade in active">
+				<span>GDS Environment url: <input type="text" name="envurl" id="envurl" size="20" value="http://localhost:9092" /></span>
+				<h3>Select option to query on data provider</h3>
+				<div id="div_source1">
+					<b>Consumer Organizations: </b> <select id="organizations">
+						<option value="">--Please select--</option>
+					</select> ===> <input type="button" value="Query On Data Provider"
+						id="dataproviderbutton" /> ===> <span>Data Provider Recipient:<input type="text" name="recipient" id="recipient" size="20" value="https://localhost:8081/api" /></span>
+					 <br /> <br />
+					<div id="orgdetails"></div>
+				</div>
+
+				<div id="result_div">
+					<span id="contract_msg" style="color: red; font-size: large;"></span>
+					<hr />
+					<div>
+						<h4>Offer Details</h4>
+					</div>
+					<div class="table-responsive">
+						<table id="result_table" class="display table" width="100%">
+							<thead>
+								<tr>
+									<th>Sr.No</th>
+									<th>Offer Info</th>
+									<th>ContractOffer</th>
+									<th>Representation</th>
+									<th>Action</th>
+								</tr>
+							</thead>
+						</table>
+					</div>
+				</div>
+			</div>
+			<div id="menu1" class="tab-pane fade">
+				<h3>Contract Details</h3>
+				<table id="contract_result_table"
+					class="table table-striped table-bordered" style="width: 100%">
+					<thead>
+						<tr>
+							<th>Sr.No</th>
+							<th>Contract Name</th>
+							<th>Status</th>
+							<th>Date established</th>
+							<th>Data consumer</th>
+							<th>Access Limited by Use case</th>
+							<th>Access Limited by company role</th>
+							<th>Usage control</th>
+						</tr>
+				</table>
+			</div>
+
+		</div>
+
+	</div>
+
+
+
+<script type="text/javascript">
+
+
+var hostName= $('#envurl').val();
+var orgdata;
+
+var recipient= $('#recipient').val();
+var organizaitionData;
+
+$(document).ready(function() 
+{ 
+
+	
+
+	$.get(hostName+"/core/api/v1/organizations", function (data) {
+		  //console.log(data.data);
+			organizaitionData= data.data;
+		    $.each(data.data,function(i,data)
+		    {
+		      var div_data="<option value="+data.id+">"+data.name+"</option>";
+		      $(div_data).appendTo('#organizations'); 
+		    });  
+            }
+      );
+
+   
+   $("#organizations").change(function(){
+	
+		var selectedOrg= $('#organizations').val();
+		if(selectedOrg==""){
+			 alert("Please select consumer organizations");
+			 return;
+		 }
+		 for(var i=0;i< organizaitionData.length;i++){
+		   if(organizaitionData[i].id==selectedOrg){
+		   orgdata= organizaitionData[i];
+		   break;
+		   }
+		}
+	
+		 $("#orgdetails").html('<b>Name</b>: '+orgdata.name+', <b>Role</b>: '+orgdata.role+', <b>Base URL</b>:'+orgdata.baseUrl);
+		 
+	});
+	
+	
+	$('#dataproviderbutton').click(function(){
+	
+	var selectedOrg= $('#organizations').val();
+	if(selectedOrg==""){
+		 alert("Please select consumer organizations");
+		 return;
+	 }
+	
+	$.ajax({
+				contentType: 'application/json',
+				data: JSON.stringify(orgdata),
+				dataType: 'json',
+				success: function(data) {
+				
+				    $('#result_div').show();
+							
+					$('#result_table').append('<tbody></tbody>');
+						
+					$('#result_table').DataTable().clear();
+					
+					var index=1;
+					 $.each(data.data,function(i,data)
+					{	
+						var rules="";
+						$.each(data.contractRules,function(ruleindex, rule){
+										if(rules=="")
+											rules=(ruleindex+1)+" : "+rule.ruleValue+" => "+rule.ruleId;
+											else
+											rules=rules+"<br/>"+(ruleindex+1)+" : "+rule.ruleValue+"=>"+rule.ruleId;
+							});
+							
+							 $('#result_table').dataTable().fnAddData( [
+								index,
+								'<span id="offer_'+index+'">'+data.id+'</span>',
+								'<b>Contract</b>: '+data.contractInfo+'<br/><b>Rules:</b></br>' +rules ,
+								'<b>Representation</b>: '+data.representation+'<br/><b>Artifacts</b>: '+data.artifact ,
+								'<button id="select_'+index+'" onclick="selectOffer('+index+')">Select Offer for Contract Negotiation</button>'
+							  ]);
+							 						
+							index++;
+					});
+					
+					$('#result_table').dataTable();
+					
+				},
+				error: function(){
+					alert("Unable to process request")
+					$('#result_table').DataTable().clear();
+					console.log("Unable to process request");
+				},
+				processData: false,
+				type: 'POST',
+				url: hostName+"/consumer/api/v1/query-data-Offers?recipient="+recipient+"&elementId="
+			});
+	});
+	
+	
+	
+	$('#contract_details').click(function(){
+	
+			$.get(hostName+"/consumer/api/v1/read-contract-agreements", function (data) {
+					
+					$('#contract_result_table table>tbody').remove()
+					$('#contract_result_table').append('<tbody></tbody>');
+						var index=1;		
+						
+						$('#contract_result_table').DataTable().clear();
+						
+						
+						$.each(data.data,function(i,data)
+						{
+							//console.log(data);
+							var status= data.status;
+							
+							var statusSpan = status==="Accepted"? status+' <br/><a href="'+data.dataUrl+'?download=true&agreementUri='+data.agreementInformation+'">Data offer file</a>'  : status;
+							
+							
+							 $('#contract_result_table').dataTable().fnAddData( [
+								index,
+								data.contractName,
+								statusSpan,
+								data.dateEstablished,
+								data.dataConsumer,
+								data.accessLimitedByUsecase,
+								data.accessLimitedByCompanyRole,
+								data.usageControl
+							  ]);
+							index++;
+						});  
+					}
+			  );
+	  
+	});
+	
+});
+
+function selectOffer(dataindex){
+		var offer=$('#offer_'+dataindex).html();
+		//console.log(offer);
+		offer=offer.replace(recipient+'/offers/', '');
+
+		 $.ajax({
+						contentType: 'application/json',
+						data: JSON.stringify(orgdata),
+						dataType: 'json',
+						success: function(data) {
+						   $('#contract_msg').html("Contract "+data.data.status);
+						   alert("Contract :"+data.data.status);
+						},
+						error: function(){
+							console.log("Error in request process");
+							alert("Error in contract processing ");
+						},
+						processData: false,
+						type: 'POST',
+						url: hostName+"/consumer/api/v1/establish-data-Offers-contract?recipient="+recipient+"&elementId="+offer
+					});
+}
+</script>
+
+</body>
+</html>

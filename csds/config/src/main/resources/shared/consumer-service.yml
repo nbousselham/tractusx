@@ -1,0 +1,15 @@
+server:
+  port: 9096
+  servlet:
+    context-path: /consumer
+
+spring:
+   data: 
+    mongodb:
+      host: mongo 
+      port: 27017
+      database: csds-mongo
+   servlet:
+    multipart: 
+     maxFileSize: 10MB
+     maxRequestSize: 10MB

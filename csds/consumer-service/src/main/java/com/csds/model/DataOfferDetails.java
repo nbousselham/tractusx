@@ -1,31 +1,20 @@
-package com.csds.entity;
+package com.csds.model;
 
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
-import org.springframework.data.mongodb.core.mapping.Document;
-
-import com.csds.model.OrganizationDetails;
-import com.csds.model.UsagePolicyDetails;
-
-import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Data;
-import lombok.NoArgsConstructor;
 
-@AllArgsConstructor
-@NoArgsConstructor
-@Builder
 @Data
-@Document(collection = "data_offer")
-public class DataOfferEntity {
+public class DataOfferDetails {
 
 	private String _id;
-	
+
 	private String title;
 
 	private String fileName;
-	
+
 	private String fileId;
 
 	private String description;
@@ -42,10 +31,14 @@ public class DataOfferEntity {
 
 	private Integer contractEndsinDays;
 
-	private Map<String,Object> offerIDSdetails;
-	
+	private Map<String, Object> offerIDSdetails;
+
 	private String accessControlByRoleType;
-	
+
 	private String usageControlType;
+	
+	private Date createdTimeStamp;
+	
+	private Date modifiedTimeStamp;
 
 }

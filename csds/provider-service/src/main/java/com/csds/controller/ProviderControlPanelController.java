@@ -50,6 +50,16 @@ public class ProviderControlPanelController {
 		return ResponseEntity.ok(response);
 	}
 
+	@GetMapping(value = "/data-Offers/{id}")
+	public ResponseEntity<ResponseObject> getDataOffersDetails(@PathVariable String id) {
+		logger.info("Request recevied : /api/v1/getDataOffersDetails");
+		ResponseObject response = new ResponseObject();
+		response.setData(providerControlPanelService.getDataOffersDetailsbyOfferId(id));
+		response.setStatus(ApplicationMessageConstant.SUCCESS);
+		response.setMessage(String.format(ApplicationMessageConstant.SUCCESS_OPERATION, "read data offer"));
+		return ResponseEntity.ok(response);
+	}
+
 	@RequestMapping(path = "/create-data-offer", method = RequestMethod.POST, consumes = {
 			MediaType.MULTIPART_FORM_DATA_VALUE })
 	public ResponseEntity<ResponseObject> createDataOffer(@RequestPart("offerRequest") String offerRequest,
@@ -73,7 +83,6 @@ public class ProviderControlPanelController {
 			throw err;
 		}
 	}
-
 
 	@RequestMapping(path = "/update-data-offer", method = RequestMethod.POST, consumes = {
 			MediaType.MULTIPART_FORM_DATA_VALUE })

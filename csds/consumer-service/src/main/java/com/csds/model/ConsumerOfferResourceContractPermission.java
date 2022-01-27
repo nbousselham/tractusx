@@ -19,4 +19,7 @@ public class ConsumerOfferResourceContractPermission extends CommonDTO {
 
 	@JsonProperty("ids:title")
 	private List<Object> title;
+	
+	@JsonProperty("ids:description")
+	private List<ConsumerOfferResourceContractPermissionDescription> description;
 }

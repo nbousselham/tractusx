@@ -129,6 +129,8 @@ public class OrganizationServicesImpl implements OrganizationServices {
 		}
 		organizationDetails.setUseCase(organizationRequest.getUseCase());
 		organizationDetails.setBaseUrl(organizationRequest.getBaseUrl());
+		organizationDetails.setUsername(organizationRequest.getUsername());
+		organizationDetails.setPassword(organizationRequest.getPassword());
 		organizationDetails.setStatus(organizationRequest.getStatus());
 		organizationRepository.saveAndFlush(organizationDetails);
 
