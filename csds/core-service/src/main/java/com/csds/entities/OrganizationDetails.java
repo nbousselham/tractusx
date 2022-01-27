@@ -23,6 +23,8 @@ public class OrganizationDetails {
 	private String name;
 	private String role;
 	private String baseUrl;
+	private String username;
+	private String password;
 	private String status;
 	
 	@ElementCollection(targetClass = String.class)

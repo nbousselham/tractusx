@@ -33,12 +33,13 @@
 
 		<div class="tab-content">
 			<div id="home" class="tab-pane fade in active">
+				<span>GDS Environment url: <input type="text" name="envurl" id="envurl" size="20" value="http://localhost:9092" /></span>
 				<h3>Select option to query on data provider</h3>
 				<div id="div_source1">
 					<b>Consumer Organizations: </b> <select id="organizations">
 						<option value="">--Please select--</option>
 					</select> ===> <input type="button" value="Query On Data Provider"
-						id="dataproviderbutton" /> ===> <span><input type="text" name="recipient" id="recipient" size="20" value="https://localhost:8081/api" /></span>
+						id="dataproviderbutton" /> ===> <span>Data Provider Recipient:<input type="text" name="recipient" id="recipient" size="20" value="https://localhost:8081/api" /></span>
 					 <br /> <br />
 					<div id="orgdetails"></div>
 				</div>
@@ -91,7 +92,7 @@
 <script type="text/javascript">
 
 
-var hostName="http://localhost:9092";
+var hostName= $('#envurl').val();
 var orgdata;
 
 var recipient= $('#recipient').val();
