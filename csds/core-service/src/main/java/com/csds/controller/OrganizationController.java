@@ -4,6 +4,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -21,7 +22,6 @@ public class OrganizationController {
 
 	private static final Logger logger = LoggerFactory.getLogger(OrganizationController.class);
 
-
 	@Autowired
 	private OrganizationServices orgService;
 
@@ -33,12 +33,11 @@ public class OrganizationController {
 	}
 
 	@GetMapping(value = "role/{role}/organizations")
-	public ResponseEntity<ResponseObject> getOrganizationByRole(@PathVariable ("role") String role) {
+	public ResponseEntity<ResponseObject> getOrganizationByRole(@PathVariable("role") String role) {
 
 		logger.info("Started Organization Controller  for : getCompanies by role");
 		return ResponseEntity.ok(orgService.getAllOrgnizationByRole(role));
 	}
-	
 
 	@GetMapping(value = "/organizations")
 	public ResponseEntity<ResponseObject> getOrganizationDetails() {
@@ -53,15 +52,12 @@ public class OrganizationController {
 		logger.info("Started Organization Controller  for : addORUpdateCompany");
 		return ResponseEntity.ok(orgService.getAddAndUpdateOrgnizationDetials(organizationRequest));
 	}
-	
-	//@DeleteMapping(value = "delete/{id}/organizations")
-		/*
-		 * public ResponseEntity<ResponseObject> getDeleteOrganizationById(@PathVariable
-		 * ("id") long id) {
-		 * 
-		 * logger.
-		 * info("Started Organization Controller  for : get Delete Organization By Id");
-		 * return ResponseEntity.ok(orgService.getDeleteOrgnization(id)); }
-		 */
+
+	@DeleteMapping(value = "delete/organizations/{id}")
+	public ResponseEntity<ResponseObject> getDeleteOrganizationById(@PathVariable("id") long id) {
+
+		logger.info("Started Organization Controller  for : get Delete Organization By Id");
+		return ResponseEntity.ok(orgService.getDeleteOrgnization(id));
+	}
 
 }

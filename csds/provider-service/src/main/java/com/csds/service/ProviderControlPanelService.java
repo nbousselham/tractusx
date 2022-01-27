@@ -9,6 +9,7 @@ import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.Base64;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -103,6 +104,10 @@ public class ProviderControlPanelService {
 
 	public List<DataOfferEntity> getAllDataOffers() {
 		return dataOfferMongoRepository.findAll();
+	}
+
+	public DataOfferEntity getDataOffersDetailsbyOfferId(String offerId) {
+		return dataOfferMongoRepository.getofferIDSdetails(offerId);
 	}
 
 	public OfferFile getOfferFile(String id) throws IllegalStateException, IOException {
@@ -216,15 +221,15 @@ public class ProviderControlPanelService {
 			offersApi.linkRepresentations(connectorProviderBaseUrl, getAuthHeader(), offerId,
 					List.of(representationSelfHref));
 
-			offerIDSdetails.put("offerId", offerId);
+			offerIDSdetails.put("offerId", offerId.toString());
 			offerIDSdetails.put("offerSelfHref", offerSelfHref);
-			offerIDSdetails.put("catalogId", catalogId);
+			offerIDSdetails.put("catalogId", catalogId.toString());
 			offerIDSdetails.put("ruleIdList", ruleIdList);
 			offerIDSdetails.put("ruleSelfHref", ruleSelfHref);
-			offerIDSdetails.put("contractId", contractId);
-			offerIDSdetails.put("representationId", representationId);
+			offerIDSdetails.put("contractId", contractId.toString());
+			offerIDSdetails.put("representationId", representationId.toString());
 			offerIDSdetails.put("representationSelfHref", representationSelfHref);
-			offerIDSdetails.put("artifactId", artifactId);
+			offerIDSdetails.put("artifactId", artifactId.toString());
 			offerIDSdetails.put("artifactSelfHref", artifactSelfHref);
 
 			log.info(
@@ -348,17 +353,17 @@ public class ProviderControlPanelService {
 			offersApi.linkRepresentations(connectorProviderBaseUrl, getAuthHeader(), offerId,
 					List.of(representationSelfHref));
 
-			offerIDSdetails.put("offerId", offerId);
+			offerIDSdetails.put("offerId", offerId.toString());
 			offerIDSdetails.put("offerSelfHref", offerSelfHref);
-			offerIDSdetails.put("catalogId", catalogId);
+			offerIDSdetails.put("catalogId", catalogId.toString());
 			offerIDSdetails.put("ruleIdList", ruleIdList);
 			offerIDSdetails.put("ruleSelfHref", ruleSelfHref);
-			offerIDSdetails.put("contractId", contractId);
-			offerIDSdetails.put("representationId", representationId);
+			offerIDSdetails.put("contractId", contractId.toString());
+			offerIDSdetails.put("representationId", representationId.toString());
 			offerIDSdetails.put("representationSelfHref", representationSelfHref);
-			offerIDSdetails.put("artifactId", artifactId);
+			offerIDSdetails.put("artifactId", artifactId.toString());
 			offerIDSdetails.put("artifactSelfHref", artifactSelfHref);
-
+			
 			log.info(
 					"Updated details: \n-------------------Offer: {}\n" + "-------------------Catalog: {}\n"
 							+ "-------------------Rule: {}\n" + "-------------------Contract: {}\n"
@@ -376,6 +381,7 @@ public class ProviderControlPanelService {
 			dataOffer.setOfferIDSdetails(offerIDSdetails);
 			dataOffer.setAccessControlByRoleType(offerRequest.getAccessControlByRoleType());
 			dataOffer.setUsageControlType(offerRequest.getUsageControlType());
+			dataOffer.setModifiedTimeStamp(new Date());
 
 			return dataOfferMongoRepository.save(dataOffer);
 
@@ -393,6 +399,8 @@ public class ProviderControlPanelService {
 
 		DataOfferEntity dataOfferEntity = DataOfferEntity.builder().title(offerRequest.getTitle()).fileName(fileName)
 				.fileId(id.toString()).description(offerRequest.getDescription())
+				.createdTimeStamp(new Date())
+				.modifiedTimeStamp(new Date())
 				.accessControlUseCase(offerRequest.getAccessControlUseCase())
 				.accessControlUseCaseType(offerRequest.getAccessControlUseCaseType())
 				.byOrganization(offerRequest.getByOrganization())
@@ -542,12 +550,12 @@ public class ProviderControlPanelService {
 			throw new ValidationException(
 					String.format(ApplicationMessageConstant.REQUIRED_FIELD, "access control by role type"));
 		}
-		
+
 		if (offerRequest.getUsageControlType().isBlank()) {
 			throw new ValidationException(
 					String.format(ApplicationMessageConstant.REQUIRED_FIELD, "usage control type"));
 		}
-		
+
 		if (offerRequest.getAccessControlByRoleType().equals(ApplicationMessageConstant.LIMITED)) {
 
 			if (offerRequest.getByOrganizationRole() == null) {

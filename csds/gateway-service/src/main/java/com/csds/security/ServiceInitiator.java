@@ -17,7 +17,10 @@ public class ServiceInitiator {
 		openServiceIntiator.put("core", uuid.toString());
 		uuid = UUID.randomUUID();
 		openServiceIntiator.put("provider", uuid.toString());
-
+		
+		uuid = UUID.randomUUID();
+		openServiceIntiator.put("consumer", uuid.toString());
+		
 	}
 
 	public boolean isInternalServiceIntiator(ServerHttpRequest request) {

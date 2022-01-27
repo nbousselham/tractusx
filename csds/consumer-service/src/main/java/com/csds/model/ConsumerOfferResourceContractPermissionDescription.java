@@ -13,9 +13,12 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class ConsumerOfferResourceRepresentationArtifact extends CommonDTO {
+public class ConsumerOfferResourceContractPermissionDescription {
 
-	@JsonProperty("ids:fileName")
-	private String fileName;
+	@JsonProperty("@value")
+	private String value;
 
+	@JsonProperty("@type")
+	private String type;
+	
 }

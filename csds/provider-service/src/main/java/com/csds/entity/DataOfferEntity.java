@@ -1,5 +1,6 @@
 package com.csds.entity;
 
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -47,5 +48,8 @@ public class DataOfferEntity {
 	private String accessControlByRoleType;
 	
 	private String usageControlType;
+	
+	private Date createdTimeStamp;
+	private Date modifiedTimeStamp;
 
 }
