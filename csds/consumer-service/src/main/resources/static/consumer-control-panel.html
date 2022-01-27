@@ -180,7 +180,9 @@ $(document).ready(function()
 					
 				},
 				error: function(){
-					console.log("Device control failed");
+					alert("Unable to process request")
+					$('#result_table').DataTable().clear();
+					console.log("Unable to process request");
 				},
 				processData: false,
 				type: 'POST',
@@ -243,7 +245,7 @@ function selectOffer(dataindex){
 						},
 						error: function(){
 							console.log("Error in request process");
-							alert("error in contract processing ");
+							alert("Error in contract processing ");
 						},
 						processData: false,
 						type: 'POST',
