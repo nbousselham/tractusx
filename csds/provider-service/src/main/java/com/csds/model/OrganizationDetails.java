@@ -11,6 +11,8 @@ public class OrganizationDetails {
 	private String name;
 	private String role;
 	private String baseUrl;
+	private String username;
+	private String password;
 	private String status;
 	private Set<String> useCase;
 }

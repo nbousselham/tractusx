@@ -101,18 +101,16 @@ var organizaitionData;
 $(document).ready(function() 
 { 
 
+	$("#envurl").blur(function(){
+		hostName= $('#envurl').val();
+		loadOrganization();
+	});
 	
+	$("#recipient").blur(function(){
+		recipient= $('#recipient').val();
+	});
 
-	$.get(hostName+"/core/api/v1/organizations", function (data) {
-		  //console.log(data.data);
-			organizaitionData= data.data;
-		    $.each(data.data,function(i,data)
-		    {
-		      var div_data="<option value="+data.id+">"+data.name+"</option>";
-		      $(div_data).appendTo('#organizations'); 
-		    });  
-            }
-      );
+	loadOrganization();
 
    
    $("#organizations").change(function(){
@@ -229,6 +227,20 @@ $(document).ready(function()
 	});
 	
 });
+
+function loadOrganization(){
+
+	$.get(hostName+"/core/api/v1/organizations", function (data) {
+		  //console.log(data.data);
+			organizaitionData= data.data;
+		    $.each(data.data,function(i,data)
+		    {
+		      var div_data="<option value="+data.id+">"+data.name+"</option>";
+		      $(div_data).appendTo('#organizations'); 
+		    });  
+            }
+      );
+}
 
 function selectOffer(dataindex){
 		var offer=$('#offer_'+dataindex).html();
