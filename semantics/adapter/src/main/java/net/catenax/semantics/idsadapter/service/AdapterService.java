@@ -14,6 +14,7 @@ import java.util.Map;
 
 import javax.annotation.PostConstruct;
 
+import net.catenax.semantics.idsadapter.service.fhg.FhIdsService;
 import org.springframework.stereotype.Service;
 
 import lombok.RequiredArgsConstructor;

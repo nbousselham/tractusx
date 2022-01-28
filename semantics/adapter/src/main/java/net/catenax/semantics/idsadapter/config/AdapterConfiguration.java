@@ -14,7 +14,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
 
 @Configuration
-@Import({ FhIdsConfiguration.class, SimpleAdapterConfiguration.class})
+@Import({ SimpleAdapterConfiguration.class})
 @AllArgsConstructor
 public class AdapterConfiguration {
 
