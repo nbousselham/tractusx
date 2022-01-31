@@ -32,6 +32,7 @@ public class ServiceDescriptionUpdater {
 	static {
 		urlMapping.put("CORE-SERVICE", "/core");
 		urlMapping.put("PROVIDER-SERVICE", "/provider");
+		urlMapping.put("CONSUMER-SERVICE", "/consumer");
 		notToDocumentedMapping.put("DOCUMENTATION-SERVICE", "/documentation");
 		notToDocumentedMapping.put("GATEWAY-SERVICE", "");
 	}
