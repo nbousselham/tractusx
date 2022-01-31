@@ -33,13 +33,13 @@
 
 		<div class="tab-content">
 			<div id="home" class="tab-pane fade in active">
-				<span>GDS Environment url: <input type="text" name="envurl" id="envurl" size="20" value="http://localhost:9092" /></span>
+				<span>GDS Environment url: <input type="text" name="envurl" id="envurl" size="20" value="http://20.79.229.181:8888" /></span>
 				<h3>Select option to query on data provider</h3>
 				<div id="div_source1">
 					<b>Consumer Organizations: </b> <select id="organizations">
 						<option value="">--Please select--</option>
 					</select> ===> <input type="button" value="Query On Data Provider"
-						id="dataproviderbutton" /> ===> <span>Data Provider Recipient:<input type="text" name="recipient" id="recipient" size="20" value="https://localhost:8081/api" /></span>
+						id="dataproviderbutton" /> ===> <span>Data Provider Recipient:<input type="text" name="recipient" id="recipient" size="20" value="https://20.79.199.149:8080/api" /></span>
 					 <br /> <br />
 					<div id="orgdetails"></div>
 				</div>
@@ -101,18 +101,16 @@ var organizaitionData;
 $(document).ready(function() 
 { 
 
+	$("#envurl").blur(function(){
+		hostName= $('#envurl').val();
+		loadOrganization();
+	});
 	
+	$("#recipient").blur(function(){
+		recipient= $('#recipient').val();
+	});
 
-	$.get(hostName+"/core/api/v1/organizations", function (data) {
-		  //console.log(data.data);
-			organizaitionData= data.data;
-		    $.each(data.data,function(i,data)
-		    {
-		      var div_data="<option value="+data.id+">"+data.name+"</option>";
-		      $(div_data).appendTo('#organizations'); 
-		    });  
-            }
-      );
+	loadOrganization();
 
    
    $("#organizations").change(function(){
@@ -128,6 +126,7 @@ $(document).ready(function()
 		   break;
 		   }
 		}
+		console.log(orgdata)
 	
 		 $("#orgdetails").html('<b>Name</b>: '+orgdata.name+', <b>Role</b>: '+orgdata.role+', <b>Base URL</b>:'+orgdata.baseUrl);
 		 
@@ -229,6 +228,20 @@ $(document).ready(function()
 	});
 	
 });
+
+function loadOrganization(){
+
+	$.get(hostName+"/core/api/v1/organizations", function (data) {
+		  //console.log(data.data);
+			organizaitionData= data.data;
+		    $.each(data.data,function(i,data)
+		    {
+		      var div_data="<option value="+data.id+">"+data.name+"</option>";
+		      $(div_data).appendTo('#organizations'); 
+		    });  
+            }
+      );
+}
 
 function selectOffer(dataindex){
 		var offer=$('#offer_'+dataindex).html();
