@@ -10,7 +10,7 @@ export default class ContractAgreementsService {
 
   static getContractAgreements(): Promise<any> {
     return axios.get(
-      Util.getRestApiUrl("read-contract-information", ServiceUrlType.CONSUMER)
+      Util.getRestApiUrl("read-contract-agreements", ServiceUrlType.CONSUMER)
     );
   }
 }
