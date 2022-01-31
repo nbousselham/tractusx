@@ -1,7 +1,7 @@
 <template>
   <v-data-table
     :headers="headers"
-    :items="contractAgreementItems"
+    :items="contractAgreements"
     :items-per-page="5"
     class="contract-agreements-list elevation-0 mb-3"
   >
@@ -20,10 +20,10 @@
           </td>
           <td class="d-block d-sm-table-cell">
             <p class="mb-0">
-              <span v-if="item.status === 'accepted'">
+              <span v-if="item.status === CONTRACT_AGREEMENT_STATUS.ACCEPTED">
                 <v-icon small color="black"> mdi-check-circle </v-icon></span
               >
-              <span v-if="item.status === 'suspended'">
+              <span v-if="item.status === CONTRACT_AGREEMENT_STATUS.SUSPENDED">
                 <v-icon small color="#ffa600" dark>
                   mdi-alert-circle
                 </v-icon></span
@@ -39,17 +39,13 @@
           </td>
           <td class="d-block d-sm-table-cell">
             <p class="mb-0">
-              <span>{{
-                item.dataConsumerName ? item.dataConsumerName : ""
-              }}</span>
+              <span>{{ item.dataConsumer ? item.dataConsumer : "" }}</span>
             </p>
           </td>
           <td class="d-block d-sm-table-cell">
             <p class="mb-0">
               <span>{{
-                item.accessLimitedByUsecase
-                  ? item.accessLimitedByUsecase.join(", ")
-                  : ""
+                item.accessLimitedByUsecase ? item.accessLimitedByUsecase : ""
               }}</span>
             </p>
           </td>
@@ -57,16 +53,14 @@
             <p class="mb-0">
               <span>{{
                 item.accessLimitedByCompanyRole
-                  ? item.accessLimitedByCompanyRole.join(", ")
+                  ? item.accessLimitedByCompanyRole
                   : ""
               }}</span>
             </p>
           </td>
           <td class="d-block d-sm-table-cell">
             <p class="mb-0">
-              <span>{{
-                item.usageControl ? item.usageControl.join(", ") : ""
-              }}</span>
+              <span>{{ item.usageControl ? item.usageControl : "" }}</span>
             </p>
           </td>
           <td width="15%" class="d-block d-sm-table-cell">
@@ -96,7 +90,7 @@
                     v-bind="attrs"
                     v-on="on"
                     class="mr-2"
-                    v-if="item.status === 'suspended'"
+                    v-if="item.status === CONTRACT_AGREEMENT_STATUS.SUSPENDED"
                     @click="acceptContractAgreement(item)"
                   >
                     <v-icon color="#b3cb2d" large dark
@@ -108,7 +102,7 @@
                     v-bind="attrs"
                     v-on="on"
                     class="mr-2"
-                    v-if="item.status === 'accepted'"
+                    v-if="item.status === CONTRACT_AGREEMENT_STATUS.ACCEPTED"
                     disabled
                     @click="acceptContractAgreement(item)"
                   >
@@ -124,7 +118,7 @@
                     v-bind="attrs"
                     v-on="on"
                     class="mr-2"
-                    v-if="item.status === 'accepted'"
+                    v-if="item.status === CONTRACT_AGREEMENT_STATUS.ACCEPTED"
                     @click="suspendContractAgreement(item)"
                   >
                     <v-icon color="#b3cb2d" large dark
@@ -136,7 +130,7 @@
                     v-bind="attrs"
                     v-on="on"
                     class="mr-2"
-                    v-if="item.status === 'suspended'"
+                    v-if="item.status === CONTRACT_AGREEMENT_STATUS.SUSPENDED"
                     disabled
                     @click="acceptContractAgreement(item)"
                   >
@@ -154,21 +148,22 @@
 </template>
 <script lang="ts">
 import Vue from "vue";
+import { CONTRACT_AGREEMENTS_TABLE_HEADERS } from "@/common/util/ContractAgreementsUtil";
 import {
-  CONTRACT_AGREEMENTS_TABLE_HEADERS,
-  contractAgreementItems,
-} from "@/common/util/ContractAgreementsUtil";
+  iContractAgreements,
+  CONTRACT_AGREEMENT_STATUS,
+} from "@/common/interfaces/contractAgreements/IContractAgreements";
 
 export default Vue.extend({
   name: "ContractAgreementsList",
   data: () => ({
     headers: CONTRACT_AGREEMENTS_TABLE_HEADERS,
     selectedItem: [],
-    contractAgreementItems,
+    CONTRACT_AGREEMENT_STATUS,
   }),
   props: {
     contractAgreements: {
-      type: Array as () => Array<any>,
+      type: Array as () => Array<iContractAgreements>,
       default: () => [],
     },
   },

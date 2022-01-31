@@ -18,6 +18,7 @@
           class="d-inline contract-sortby black--text font-weight-bold"
           v-model="sortContractsBy"
           :items="sortContractsByItems"
+          @change="sortContracts"
         ></v-select>
       </div>
     </v-toolbar>
@@ -55,6 +56,8 @@ import {
   FETCH_CONTRACT_AGREEMENTS,
   IS_CONTRACT_AGREEMENTS_LOADING,
 } from "@/store/modules/contractagreements/getters/getter-types";
+import { iContractAgreements } from "@/common/interfaces/contractAgreements/IContractAgreements";
+import { SORT_BY } from "@/common/util/index";
 
 export default Vue.extend({
   name: "ContractAgreements",
@@ -70,11 +73,28 @@ export default Vue.extend({
     this.$store.dispatch(GET_CONTRACT_AGREEMENTS);
   },
   computed: {
-    contractAgreements(): Array<any> {
+    contractAgreements(): Array<iContractAgreements> {
       return this.$store.getters[FETCH_CONTRACT_AGREEMENTS];
     },
     isContractAgreementsLoading(): boolean {
       return this.$store.getters[IS_CONTRACT_AGREEMENTS_LOADING];
+    },
+  },
+  methods: {
+    sortContracts(sortByKey: string) {
+      if (sortByKey === SORT_BY.NEWEST) {
+        this.contractAgreements.sort((a, b) => {
+          const d1 = new Date(a.modifiedTimeStamp).valueOf();
+          const d2 = new Date(b.modifiedTimeStamp).valueOf();
+          return d2 - d1;
+        });
+      } else if (sortByKey === SORT_BY.OLDEST) {
+        this.contractAgreements.sort((a, b) => {
+          const d1 = new Date(a.modifiedTimeStamp).valueOf();
+          const d2 = new Date(b.modifiedTimeStamp).valueOf();
+          return d1 - d2;
+        });
+      }
     },
   },
 });

@@ -35,6 +35,8 @@ export interface iDataOffers {
   title: string;
   _id: string;
   usageControl: iUsageControl[];
+  modifiedTimeStamp: string;
+  createdTimeStamp: string;
 }
 
 export interface iUseCase {

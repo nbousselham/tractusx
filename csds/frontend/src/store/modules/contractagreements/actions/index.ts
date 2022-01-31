@@ -6,6 +6,7 @@ import {
   SET_CONTRACT_AGREEMENTS,
   SET_CONTRACT_AGREEMENTS_LOADING,
 } from "../mutations/mutation-types";
+import { iContractAgreements } from "@/common/interfaces/contractAgreements/IContractAgreements";
 
 export const actions: ActionTree<
   contractAgreementsState,
@@ -17,10 +18,15 @@ export const actions: ActionTree<
       .then((res) => {
         const { data } = res;
         const contractAgreementsList = data.data;
-        const filteredContractAgreementsList = JSON.parse(
-          JSON.stringify(contractAgreementsList)
-        );
-        commit(SET_CONTRACT_AGREEMENTS, filteredContractAgreementsList);
+        const filteredContractAgreements: Array<iContractAgreements> =
+          contractAgreementsList.sort(
+            (a: iContractAgreements, b: iContractAgreements) => {
+              const d1 = new Date(a.modifiedTimeStamp).valueOf();
+              const d2 = new Date(b.modifiedTimeStamp).valueOf();
+              return d2 - d1;
+            }
+          );
+        commit(SET_CONTRACT_AGREEMENTS, filteredContractAgreements);
         commit(SET_CONTRACT_AGREEMENTS_LOADING, false);
       })
       .catch((error) => {

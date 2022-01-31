@@ -17,6 +17,7 @@ import {
   IS_NEW_DATA_OFFER_LOADING,
   SET_CREATE_OFFER_ERROR,
 } from "../mutations/mutation-types";
+import { iDataOffers } from "@/common/interfaces/dataOffers/IDataOffers";
 
 export const actions: ActionTree<dataOfferState, Record<string, never>> = {
   [GET_DATA_OFFERS]({ commit }) {
@@ -27,7 +28,11 @@ export const actions: ActionTree<dataOfferState, Record<string, never>> = {
         const dataOffersList = data.data;
         const filteredDataOffersList = JSON.parse(
           JSON.stringify(dataOffersList)
-        );
+        ).sort((a: iDataOffers, b: iDataOffers) => {
+          const d1 = new Date(a.modifiedTimeStamp).valueOf();
+          const d2 = new Date(b.modifiedTimeStamp).valueOf();
+          return d2 - d1;
+        });
         commit(SET_DATA_OFFERS, filteredDataOffersList);
         commit(SET_DATA_OFFERS_LOADING, false);
       })
@@ -67,7 +72,8 @@ export const actions: ActionTree<dataOfferState, Record<string, never>> = {
     const formDataObj = new FormData();
     formDataObj.append("file", offer.file);
     formDataObj.append("offerRequest", JSON.stringify(offer.offerRequest));
-    return DataOfferService.createDataOffer(formDataObj).then((res) => {
+    return DataOfferService.createDataOffer(formDataObj)
+      .then((res) => {
         const { data } = res;
         const createOfferResData = data.data;
         if (

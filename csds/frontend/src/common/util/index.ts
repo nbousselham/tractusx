@@ -7,6 +7,11 @@ export enum ServiceUrlType {
   CONSUMER = "CONSUMER",
 }
 
+export enum SORT_BY {
+  NEWEST = "newest",
+  OLDEST = "oldest",
+}
+
 interface QueryObj {
   /* eslint-disable-next-line */
   [key: string]: any;

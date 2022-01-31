@@ -1,9 +1,8 @@
 <template>
   <div class="data-offers-panel">
-    <v-toolbar class="data-offer-toolbar" color="#F5F5F5" elevation="0">
-      <h2 class="mb-4">Data offers</h2>
+    <v-row justify="end">
       <v-spacer></v-spacer>
-      <template>
+      <v-col cols="auto">
         <v-tooltip bottom>
           <template v-slot:activator="{ on, attrs }">
             <v-btn
@@ -28,7 +27,23 @@
           <span>Add new data offer</span>
         </v-tooltip>
         <CreateDataOfferModal :isOpen.sync="showCreateOfferDialog" />
-      </template>
+      </v-col>
+    </v-row>
+    <v-toolbar class="data-offer-toolbar" color="#F5F5F5" elevation="0">
+      <h2 class="mb-4">Data offers</h2>
+      <v-spacer></v-spacer>
+      <v-subheader
+        class="d-inline text--disabled mt-2"
+        v-text="'Sort by'"
+      ></v-subheader>
+      <div>
+        <v-select
+          class="d-inline dataoffer-sortby black--text font-weight-bold"
+          v-model="sortDataOffersBy"
+          :items="sortDataOffersByItems"
+          @change="sortDataOffers"
+        ></v-select>
+      </div>
     </v-toolbar>
     <h5 class="mb-4 ml-2 contract-agreement-info">
       Data offers represent data of your organization that other ecosystem
@@ -70,6 +85,7 @@ import {
 import DataOffersList from "../dataoffer/DataOffersList.vue";
 import { iDataOffers } from "@/common/interfaces/dataOffers/IDataOffers";
 import CreateDataOfferModal from "@/views/createdataoffer/CreateDataOfferModal.vue";
+import { SORT_BY } from "@/common/util/index";
 
 export default Vue.extend({
   name: "DataOffers",
@@ -80,6 +96,8 @@ export default Vue.extend({
   },
   data: () => ({
     showCreateOfferDialog: false,
+    sortDataOffersBy: "newest",
+    sortDataOffersByItems: ["newest", "oldest"],
   }),
   created() {
     this.$store.dispatch(GET_DATA_OFFERS);
@@ -87,11 +105,28 @@ export default Vue.extend({
     this.$store.dispatch(GET_ORG_ROLES);
   },
   computed: {
-    dataOffers(): iDataOffers {
+    dataOffers(): Array<iDataOffers> {
       return this.$store.getters[FETCH_DATA_OFFERS];
     },
     isDataOffersLoading(): boolean {
       return this.$store.getters[IS_OFFER_LOADING];
+    },
+  },
+  methods: {
+    sortDataOffers(sortByKey: string) {
+      if (sortByKey === SORT_BY.NEWEST) {
+        this.dataOffers.sort((a, b) => {
+          const d1 = new Date(a.modifiedTimeStamp).valueOf();
+          const d2 = new Date(b.modifiedTimeStamp).valueOf();
+          return d2 - d1;
+        });
+      } else if (sortByKey === SORT_BY.OLDEST) {
+        this.dataOffers.sort((a, b) => {
+          const d1 = new Date(a.modifiedTimeStamp).valueOf();
+          const d2 = new Date(b.modifiedTimeStamp).valueOf();
+          return d1 - d2;
+        });
+      }
     },
   },
 });
@@ -110,5 +145,10 @@ export default Vue.extend({
 }
 .add-offer-icon {
   background: white;
+}
+.v-select.dataoffer-sortby.v-text-field {
+  & input {
+    width: 10px;
+  }
 }
 </style>
