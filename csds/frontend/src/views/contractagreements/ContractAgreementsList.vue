@@ -28,6 +28,9 @@
                   mdi-alert-circle
                 </v-icon></span
               >
+              <span v-if="item.status === CONTRACT_AGREEMENT_STATUS.REJECTED">
+                <v-icon small color="red" dark> mdi-close-circle </v-icon></span
+              >
             </p>
           </td>
           <td class="d-block d-sm-table-cell">
@@ -90,7 +93,10 @@
                     v-bind="attrs"
                     v-on="on"
                     class="mr-2"
-                    v-if="item.status === CONTRACT_AGREEMENT_STATUS.SUSPENDED"
+                    v-if="
+                      item.status === CONTRACT_AGREEMENT_STATUS.SUSPENDED ||
+                      item.status === CONTRACT_AGREEMENT_STATUS.REJECTED
+                    "
                     @click="acceptContractAgreement(item)"
                   >
                     <v-icon color="#b3cb2d" large dark
@@ -104,7 +110,6 @@
                     class="mr-2"
                     v-if="item.status === CONTRACT_AGREEMENT_STATUS.ACCEPTED"
                     disabled
-                    @click="acceptContractAgreement(item)"
                   >
                     <v-icon large dark>$vuetify.icons.playIconGrayed</v-icon>
                   </v-btn>
@@ -130,9 +135,11 @@
                     v-bind="attrs"
                     v-on="on"
                     class="mr-2"
-                    v-if="item.status === CONTRACT_AGREEMENT_STATUS.SUSPENDED"
+                    v-if="
+                      item.status === CONTRACT_AGREEMENT_STATUS.SUSPENDED ||
+                      item.status === CONTRACT_AGREEMENT_STATUS.REJECTED
+                    "
                     disabled
-                    @click="acceptContractAgreement(item)"
                   >
                     <v-icon large dark>$vuetify.icons.pauseIconGrayed</v-icon>
                   </v-btn>
