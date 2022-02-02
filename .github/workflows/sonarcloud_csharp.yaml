@@ -1,6 +1,9 @@
 name: Build
 
 on: 
+  push:
+    branches: 
+    - sonarcloud_integration
   workflow_dispatch:
 
 jobs:
