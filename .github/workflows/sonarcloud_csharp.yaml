@@ -50,7 +50,7 @@ jobs:
           # The organization and project arguments (see /o and /k) are displayed
           # on the project dashboard in SonarCloud.
         run: |
-          dotnet sonarscanner begin /o:"catenax" /k:"CatenaX-Portal-CSharp" /d:sonar.host.url="https://sonarcloud.io" /d:sonar.login="${{ secrets.SONAR_TOKEN }}"
-          dotnet build "coreservices/invitation/src/keycloak.net-branch/Keycloak.Net.sln"
-          dotnet build "coreservices/CatenaX.NetworkServices.sln"
-          dotnet sonarscanner end /d:sonar.login="${{ secrets.SONAR_TOKEN }}"
+          .\.sonar\scanner\dotnet-sonarscanner begin /o:"catenax" /k:"CatenaX-Portal-CSharp" /d:sonar.host.url="https://sonarcloud.io" /d:sonar.login="${{ secrets.SONAR_TOKEN }}"
+          dotnet build "coreservices\invitation\src\keycloak.net-branch\Keycloak.Net.sln"
+          dotnet build "coreservices\CatenaX.NetworkServices.sln"
+           .\.sonar\scanner\dotnet-sonarscanner end /d:sonar.login="${{ secrets.SONAR_TOKEN }}"
