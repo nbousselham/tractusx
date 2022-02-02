@@ -55,18 +55,18 @@ export default function DashboardFilter(props) {
     {auth.isAdmin() &&
       <>
         <Grid item xs={3}>
-          <Datepicker title="Start Date" maxDate={maxStartDate} setValue={onStartDateChange} value={filterStartDate}></Datepicker>
+          <Datepicker fullWidth title="Start Date" maxDate={maxStartDate} setValue={onStartDateChange} value={filterStartDate}></Datepicker>
         </Grid>
         <Grid item xs={3}>
-          <Datepicker title="End Date" minDate={filterStartDate} maxDate={maxEndDate} setValue={onEndDateChange} value={filterEndDate}></Datepicker>
+          <Datepicker fullWidth title="End Date" minDate={filterStartDate} maxDate={maxEndDate} setValue={onEndDateChange} value={filterEndDate}></Datepicker>
         </Grid>
       </>
     }
     <Grid item xs={1}>
-      <Button variant="contained" color="primary" onClick={onFilter} >Search</Button>
+      <Button fullWidth variant="contained" color="primary" onClick={onFilter} >Search</Button>
     </Grid>
     <Grid item xs={1}>
-      <Button variant="contained" color="primary" onClick={reset}>Reset</Button>
+      <Button fullWidth variant="contained" color="primary" onClick={reset}>Reset</Button>
     </Grid>
   </Grid>)
 }
