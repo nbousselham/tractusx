@@ -20,10 +20,12 @@ import io.openmanufacturing.sds.metamodel.Aspect;
 import io.vavr.control.Try;
 import net.catenax.semantics.hub.api.ModelsApiDelegate;
 import net.catenax.semantics.hub.bamm.BammHelper;
+import net.catenax.semantics.hub.domain.ModelPackageStatus;
 import net.catenax.semantics.hub.domain.ModelPackageUrn;
 import net.catenax.semantics.hub.model.NewSemanticModel;
 import net.catenax.semantics.hub.model.SemanticModel;
 import net.catenax.semantics.hub.model.SemanticModelList;
+import net.catenax.semantics.hub.model.SemanticModelStatus;
 import net.catenax.semantics.hub.persistence.PersistenceLayer;
 
 public class AspectModelService implements ModelsApiDelegate {
@@ -42,7 +44,7 @@ public class AspectModelService implements ModelsApiDelegate {
          String namespaceFilter,
          String nameFilter,
          String nameType,
-         String status ) {
+         SemanticModelStatus status ) {
 
       try {
          String decodedType = null;
@@ -54,8 +56,12 @@ public class AspectModelService implements ModelsApiDelegate {
          final String decodedName = java.net.URLDecoder.decode( nameFilter,
                StandardCharsets.UTF_8.name() );
 
+         ModelPackageStatus modelPackageStatus = null;
+         if ( status != null ) {
+            modelPackageStatus = ModelPackageStatus.valueOf( status.name() );
+         }
          final SemanticModelList list = persistenceLayer.getModels( decodedNamespace, decodedName, decodedType,
-               status, page,
+               modelPackageStatus, page,
                pageSize );
 
          return new ResponseEntity<>( list, HttpStatus.OK );

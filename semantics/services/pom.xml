@@ -135,21 +135,26 @@
             <groupId>org.openapitools</groupId>
             <artifactId>jackson-databind-nullable</artifactId>
         </dependency>
+        <!-- Jena -->
         <dependency>
             <groupId>org.apache.jena</groupId>
-            <artifactId>jena-core</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.jena</groupId>
-            <artifactId>jena-arq</artifactId>
+            <artifactId>jena-fuseki-main</artifactId>
+            <version>${jena.version}</version>
         </dependency>
         <dependency>
             <groupId>org.apache.jena</groupId>
             <artifactId>jena-querybuilder</artifactId>
+            <version>${jena.version}</version>
         </dependency>
         <dependency>
             <groupId>org.apache.jena</groupId>
-            <artifactId>jena-fuseki-main</artifactId>
+            <artifactId>jena-core</artifactId>
+            <version>${jena.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.jena</groupId>
+            <artifactId>jena-arq</artifactId>
+            <version>${jena.version}</version>
         </dependency>
         <!-- Tests -->
         <dependency>
