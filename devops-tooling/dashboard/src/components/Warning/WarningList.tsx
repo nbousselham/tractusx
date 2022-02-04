@@ -1,11 +1,10 @@
-import WarningListItem from "./WarningListItem";
+/* eslint-disable react/no-array-index-key */
+import WarningListItem from './WarningListItem';
 
-export default function WarningList(){
-
+export default function WarningList() {
   return (
     <>
-      {Array(4).fill(0).map((item,index)=> <WarningListItem key={index} /> )}
+      {Array(4).fill(0).map((item, index) => <WarningListItem key={index} />)}
     </>
-  )
-
+  );
 }
