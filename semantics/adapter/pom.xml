@@ -1,3 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+    Copyright (c) 2021-2022 T-Systems International GmbH (Catena-X Consortium)
+
+    See the AUTHORS file(s) distributed with this work for additional
+    information regarding authorship.
+
+    See the LICENSE file(s) distributed with this work for
+    additional information regarding license terms.
+-->
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <parent>
@@ -7,7 +17,7 @@
         <relativePath>../pom.xml</relativePath>
     </parent>
     <groupId>net.catenax.semantics</groupId>
-    <artifactId>adapterApp</artifactId>
+    <artifactId>adapter</artifactId>
     <name>Catena-X Semantic Layer Adapter</name>
     <description>Root Module of the Catena-X Semantic Layer Adapter</description>
     <packaging>jar</packaging>

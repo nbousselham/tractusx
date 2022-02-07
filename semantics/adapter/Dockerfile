@@ -1,5 +1,5 @@
 #
-# Copyright (c) 2021 T-Systems International GmbH (Catena-X Consortium)
+# Copyright (c) 2021-2022 T-Systems International GmbH (Catena-X Consortium)
 #
 # See the AUTHORS file(s) distributed with this work for additional
 # information regarding authorship.
@@ -46,9 +46,9 @@ WORKDIR /adapter
 
 RUN mkdir persistence
 
-COPY --from=maven /app/adapter/target/adapterApp*.jar app.jar
+COPY --from=maven /app/adapter/target/adapter*.jar app.jar
 
-ENV SERVER_PORT 4242
+ENV SERVER_PORT 4243
 ENV SPRING_DATASOURCE_URL "jdbc:h2:file:/adapter/persistence/persistence"
 ENV SPRING_DATASOURCE_DRIVERCLASSNAME "org.h2.Driver"
 ENV SPRING_DATASOURCE_USERNAME "sa"
@@ -62,7 +62,7 @@ ENV SPRING_JPA_HIBERNATE_DDL-AUTO "update"
 ENV IDSADAPTER_CONNECTORUSER "admin"
 ENV IDSADAPTER_CONNECTORPASSWORD "password"
 
-EXPOSE 4242
+EXPOSE 4243
 
 ENTRYPOINT [ "java","-Dspring.jpa.hibernate.ddl-auto=${SPRING_JPA_HIBERNATE_DDL-AUTO}","-Dspring.sql.init.platform=${SPRING_SQL_INIT_PLATFORM}","-Didsadapter.portalUrl=${IDSADAPTER_PORTALURL}","-Didsadapter.serviceUrl=${IDSADAPTER_SERVICEURL}","-Didsadapter.adapterUrl=${IDSADAPTER_ADAPTERURL}", "-Didsadapter.connectorUrl=${IDSADAPTER_CONNECTORURL}", "-Didsadapter.connectorUser=${IDSADAPTER_CONNECTORUSER}", "-Didsadapter.connectorPassword=${IDSADAPTER_CONNECTORPASSWORD}" ,"-Dspring.datasource.url=${SPRING_DATASOURCE_URL}","-Dspring.datasource.driverClassName=${SPRING_DATASOURCE_DRIVERCLASSNAME}","-Dspring.datasource.username=${SPRING_DATASOURCE_USERNAME}","-Dspring.datasource.password=${SPRING_DATASOURCE_PASSWORD}","-jar","/adapter/app.jar" ]
 #ENTRYPOINT [ "/bin/bash" ]

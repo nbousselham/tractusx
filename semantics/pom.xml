@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- 
-    Copyright (c) 2021 T-Systems International GmbH (Catena-X Consortium)
+    Copyright (c) 2021-2022 T-Systems International GmbH (Catena-X Consortium)
 
     See the AUTHORS file(s) distributed with this work for additional
     information regarding authorship.
@@ -43,6 +43,7 @@
 		<maven.minimum.version>3.3.9</maven.minimum.version>
 		<spring.cloud.version>2020.0.3</spring.cloud.version>
 		<spring.boot.version>2.5.6</spring.boot.version>
+		<spring.version>5.3.12</spring.version>
 		<ids-framework.version>4.0.3</ids-framework.version>
 		<collection-utlis.version>4.4</collection-utlis.version>
 		<bamm.version>1.0.0</bamm.version>
@@ -110,6 +111,16 @@
 				<artifactId>spring-boot-starter-test</artifactId>
 				<version>${spring.boot.version}</version>
 				<scope>test</scope>
+				<exclusions>
+					<exclusion>
+						<groupId>com.vaadin.external.google</groupId>
+						<artifactId>android-json</artifactId>
+					</exclusion>
+					<exclusion>
+						<groupId>org.springframework.boot</groupId>
+						<artifactId>spring-boot-starter-logging</artifactId>
+					</exclusion>
+				</exclusions>
 			</dependency>
 			<dependency>
 				<groupId>org.springframework.cloud</groupId>
@@ -127,6 +138,13 @@
 						<artifactId>spring-boot-starter-logging</artifactId>
 					</exclusion>
 				</exclusions>
+			</dependency>
+
+			<dependency>
+				<groupId>org.springframework</groupId>
+				<artifactId>spring-test</artifactId>
+				<version>${spring.version}</version>
+				<scope>test</scope>
 			</dependency>
 
 			<dependency>
@@ -261,7 +279,6 @@
 				<scope>test</scope>
 			</dependency>
 
-
 		</dependencies>
 	</dependencyManagement>
 
@@ -283,9 +300,6 @@
        <id>github</id>
        <name>Catena-X Maven Repository on Github</name>
        <url>https://maven.pkg.github.com/catenax/tractusx</url>
-       <snapshots>
-         <enabled>true</enabled>
-       </snapshots>
      </repository>
     </distributionManagement>
 

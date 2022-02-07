@@ -1,5 +1,5 @@
 #
-# Copyright (c) 2021 T-Systems International GmbH (Catena-X Consortium)
+# Copyright (c) 2021-2022 T-Systems International GmbH (Catena-X Consortium)
 #
 # See the AUTHORS file(s) distributed with this work for additional
 # information regarding authorship.
@@ -46,7 +46,7 @@ WORKDIR /services
 
 RUN mkdir persistence
 
-COPY --from=maven /app/services/target/servicesApp*.jar app.jar
+COPY --from=maven /app/services/target/services*.jar app.jar
 
 ENV SERVER_PORT 4242
 ENV SPRING_DATASOURCE_URL "jdbc:h2:file:/services/persistence/persistence"

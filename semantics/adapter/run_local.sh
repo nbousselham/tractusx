@@ -1,5 +1,5 @@
 #
-# Copyright (c) 2021 T-Systems International GmbH (Catena-X Consortium)
+# Copyright (c) 2021-2022 T-Systems International GmbH (Catena-X Consortium)
 #
 # See the AUTHORS file(s) distributed with this work for additional
 # information regarding authorship.
@@ -52,7 +52,7 @@ if [ "$CLEAN_DB" == "y" ]; then
   rm -f ${DB_FILE}*
 fi
 
-CALL_ARGS="-classpath ./src/main/resources;target/adapterApp-1.0.0-SNAPSHOT.jar \
+CALL_ARGS="-classpath ./src/main/resources;target/adapter-1.2.0-SNAPSHOT.jar \
            -Dspring.datasource.url=$H2_URL\
            -Dserver.ssl.enabled=false $DEBUG_OPTIONS\
            org.springframework.boot.loader.JarLauncher" 
