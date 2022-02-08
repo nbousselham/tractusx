@@ -4,7 +4,8 @@ import ErrorMessage from "../ErrorMessage";
 import DescriptionList from "../lists/descriptionlist"
 import Loading from "../loading";
 import BackLink from "../navigation/BackLink"
-import { DigitalTwin, getTwinById } from "./data"
+import { getTwinById } from "./data"
+import { DigitalTwin } from "./interfaces";
 
 export function DigitalTwinDetail(props){
   const id = props.match.params.id;
