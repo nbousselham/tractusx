@@ -40,8 +40,8 @@ export default function DashboardFilter({ onFilter: onFilterProp }) {
   };
 
   return (
-    <Grid container spacing={1} sx={{ mb: 4 }} alignItems="center">
-      <Grid item xs={4}>
+    <Grid container spacing={1} sx={{ mb: 4 }} alignItems="center" flexWrap="wrap">
+      <Grid item md={3} lg={4}>
         <TextField
           label="Search Connector"
           variant="outlined"
@@ -54,18 +54,16 @@ export default function DashboardFilter({ onFilter: onFilterProp }) {
       {auth.isAdmin()
       && (
       <>
-        <Grid item xs={3}>
+        <Grid item md={3}>
           <Datepicker fullWidth title="Start Date" maxDate={maxStartDate} setValue={onStartDateChange} value={filterStartDate} />
         </Grid>
-        <Grid item xs={3}>
+        <Grid item md={3}>
           <Datepicker fullWidth title="End Date" minDate={filterStartDate} maxDate={maxEndDate} setValue={onEndDateChange} value={filterEndDate} />
         </Grid>
       </>
       )}
-      <Grid item xs={1}>
-        <Button fullWidth variant="contained" color="primary" onClick={onFilter}>Search</Button>
-      </Grid>
-      <Grid item xs={1}>
+      <Grid item md={3} lg={2} sx={{ display: 'flex' }}>
+        <Button fullWidth variant="contained" color="primary" onClick={onFilter} sx={{ mr: 1 }}>Search</Button>
         <Button fullWidth variant="contained" color="primary" onClick={reset}>Reset</Button>
       </Grid>
     </Grid>
