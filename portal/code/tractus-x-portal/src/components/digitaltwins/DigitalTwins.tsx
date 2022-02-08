@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import { Dropdown, IContextualMenuItem, IDropdownOption, IDropdownStyles, PrimaryButton, SearchBox } from '@fluentui/react';
+import { IContextualMenuItem, PrimaryButton, SearchBox } from '@fluentui/react';
 import * as React from 'react';
 import { Link } from 'react-router-dom';
 import ErrorMessage from '../ErrorMessage';
@@ -30,13 +30,11 @@ export default class DigitalTwins extends React.Component<DigitalTwin, any>{
       filteredTwins: null,
       error: null,
       searchInput: '',
-      manufacturer: ''
     };
 
     this.onClearFilter = this.onClearFilter.bind(this);
     this.onSearchChange = this.onSearchChange.bind(this);
     this.onSearchClear = this.onSearchClear.bind(this);
-    this.onDropdownChange = this.onDropdownChange.bind(this);
   }
 
   componentDidMount() {
@@ -52,28 +50,23 @@ export default class DigitalTwins extends React.Component<DigitalTwin, any>{
   }
 
   onClearFilter() {
-    this.doSearch('','');
+    this.doSearch('');
   }
 
   onSearchChange(value){
     this.setState({searchInput:value});
-    this.doSearch(value,this.state.manufacturer);
+    this.doSearch(value);
   }
 
   onSearchClear(){
-    this.doSearch('',this.state.manufacturer);
+    this.doSearch('');
   }
 
-  doSearch(searchInput,manufacturer) {
-    console.log(`Filtering ${this.state.twins.length} twins using manufacturer ${manufacturer} and search ${searchInput}`);
-    const filteredTwins = this.state.twins.filter(twin => twin.manufacturer.includes(manufacturer) && (twin.description.includes(searchInput) || twin.localIdentifiers.some(key => key.value.includes(searchInput))));
+  doSearch(searchInput) {
+    console.log(`Filtering ${this.state.twins.length} twins using search ${searchInput}`);
+    const filteredTwins = this.state.twins.filter(twin =>  (twin.description.includes(searchInput) || twin.localIdentifiers.some(key => key.value.includes(searchInput))));
     console.log(`FOund ${filteredTwins.length} twins.`);
-    this.setState({searchInput:searchInput,manufacturer:manufacturer,filteredTwins: filteredTwins});
-  }
-
-  onDropdownChange(ev, option){
-    console.log(`Dropdown option key ${option.key} and value ${option.text}`)
-    this.doSearch(this.state.searchInput,option.key);
+    this.setState({searchInput: searchInput, filteredTwins: filteredTwins});
   }
 
   public render() {
@@ -91,17 +84,7 @@ export default class DigitalTwins extends React.Component<DigitalTwin, any>{
         target: '_blank',
       },
     ];
-    const dropdownStyles: Partial<IDropdownStyles> = {
-      dropdown: { width: 150, marginRight: 20 },
-    };
-    const manufacturerOptions: IDropdownOption[] = [
-      { key: '', text: 'All' },
-      { key: 'BMW', text: 'BMW' },
-      { key: 'BOSCH', text: 'Bosch' },
-      { key: 'T-Systems', text: 'T-Systems' },
-      { key: 'SAMSUNG', text: 'Samsung' },
-      { key: 'ZF', text: 'ZF' }
-    ];
+
     return (
       <div className='p44 df fdc'>
         <HelpContextMenu menuItems={helpMenuItems}></HelpContextMenu>
@@ -109,13 +92,6 @@ export default class DigitalTwins extends React.Component<DigitalTwin, any>{
           <div>
             <h1 className="fs24 bold mb20">Digital Twins</h1>
             <div className="df aife jcfe mb20">
-              <Dropdown placeholder="Filter"
-                selectedKey={this.state.manufacturer}
-                label="Twin Manufacturer"
-                options={manufacturerOptions}
-                styles={dropdownStyles}
-                onChange={this.onDropdownChange}
-              />
               <SearchBox className="w300"
                 placeholder="Filter ID or description"
                 value={this.state.searchInput}
@@ -129,7 +105,6 @@ export default class DigitalTwins extends React.Component<DigitalTwin, any>{
                     pathname: `/home/digitaltwin/${twin.id}`
                   }}>
                     <h2 className='fs24 fg191 bold mb20'>{twin.description}</h2>
-                    <DescriptionList title="Manufacturer:" description={twin.manufacturer}/>
                     <DescriptionList title="Aspects count:" description={twin.aspects.length}/>
                     <DescriptionList title="local Identifiers count:" description={twin.localIdentifiers.length}/>
                   </Link>
