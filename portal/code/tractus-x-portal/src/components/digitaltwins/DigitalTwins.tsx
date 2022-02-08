@@ -19,7 +19,8 @@ import ErrorMessage from '../ErrorMessage';
 import DescriptionList from '../lists/descriptionlist';
 import Loading from '../loading';
 import HelpContextMenu from '../navigation/HelpContextMenu/HelpContextMenu';
-import { DigitalTwin, getTwins } from './data';
+import { getTwins } from './data';
+import { DigitalTwin } from './interfaces';
 
 export default class DigitalTwins extends React.Component<DigitalTwin, any>{
 

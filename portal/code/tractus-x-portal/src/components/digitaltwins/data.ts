@@ -13,33 +13,6 @@
 // limitations under the License.
 const TWIN_URL = `${process.env.REACT_APP_SEMANTIC_SERVICE_LAYER_URL}registry/shell-descriptors`;
 
-interface httpEndpoint {
-  id: string,
-  method: string,
-  url: string
-}
-
-interface aspect {
-  httpEndpoints: httpEndpoint[],
-  id: string,
-  modelReference: {
-    urn: string
-  }
-}
-
-export interface DigitalTwin {
-  aspects: aspect[],
-  description: string,
-  id: string,
-  localIdentifiers: [
-    {
-      key: string,
-      value: string
-    }
-  ],
-  manufacturer: string
-}
-
 function handleRequest(res: Response){
   if(res.status >= 400) {
     throw new Error(`Server responds with ${res.status} error!`);
