@@ -93,8 +93,8 @@ module "aks_services" {
   location                         = azurerm_resource_group.default_rg.location
   # client_id                        = "your-service-principal-client-appid"
   # client_secret                    = "your-service-principal-client-password"
-  kubernetes_version               = "1.20.7"
-  orchestrator_version             = "1.20.7"
+  kubernetes_version               = "1.22.4"
+  orchestrator_version             = "1.22.4"
   prefix                           = "${var.prefix}-${var.environment}-aks-services"
   cluster_name                     = "${var.prefix}-${var.environment}-aks-services"
   dns_prefix                       = "${var.prefix}${var.environment}akssrv"
@@ -189,6 +189,7 @@ resource "kubernetes_namespace" "ingress_service_namespace" {
 resource "helm_release" "nginx_ingress_service" {
   name       = "ingress-service"
   chart      = "ingress-nginx"
+  version    = "v4.0.13"
   namespace  = kubernetes_namespace.ingress_service_namespace.metadata[0].name
   repository = "https://kubernetes.github.io/ingress-nginx"
   timeout    = 300
@@ -232,6 +233,7 @@ resource "kubernetes_namespace" "ingress_portal_namespace" {
 resource "helm_release" "nginx_ingress_portal" {
   name       = "ingress-portal"
   chart      = "ingress-nginx"
+  version    = "v4.0.13"
   namespace  = kubernetes_namespace.ingress_portal_namespace.metadata[0].name
   repository = "https://kubernetes.github.io/ingress-nginx"
   timeout    = 300
@@ -278,7 +280,7 @@ resource "kubernetes_namespace" "cert_manager_namespace" {
   }
 }
 
-# Deploy cert-manager for TLS with Helm
+# Deploy cert-manager with Helm
 resource "helm_release" "cert-manager" {
   name       = "cert-manager"
   chart      = "cert-manager"
