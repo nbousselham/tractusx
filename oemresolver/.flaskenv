@@ -1,0 +1,3 @@
+FLASK_APP=__main__.py
+FLASK_ENV=production
+FLASK_DEBUG=FALSE

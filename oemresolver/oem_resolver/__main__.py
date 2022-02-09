@@ -1,8 +1,12 @@
 #!/usr/bin/env python3
 
 import connexion
+from dotenv import load_dotenv
 
 from oem_resolver import encoder
+
+load_dotenv()
+
 
 
 def main():
