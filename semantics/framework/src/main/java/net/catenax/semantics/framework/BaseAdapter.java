@@ -15,7 +15,7 @@ import org.slf4j.LoggerFactory;
 public abstract class BaseAdapter<Cmd extends Command, O extends Offer, Ct extends Catalog, Co extends Contract, T extends Transformation>
         implements IdsAdapter {
 
-    protected final ConfigurationData<Cmd,O,Ct,Co,T> configurationData;
+    protected final Config<Cmd,O,Ct,Co,T> configurationData;
     protected IdsConnector idsConnector;
     protected final Logger log = LoggerFactory.getLogger(getClass());
 

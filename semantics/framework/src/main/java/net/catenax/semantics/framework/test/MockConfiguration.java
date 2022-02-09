@@ -14,30 +14,12 @@ import org.springframework.context.annotation.Bean;
 /**
  * helper to build mock configurations
  */
-public class MockConfiguration<Cm extends Command, O extends Offer, Ct extends Catalog, Co extends Contract, T extends Transformation, Cd extends ConfigurationData<Cm,O,Ct,Co,T>> {
-
-    /**
-     * internal creation
-     * @return a configuration
-     */
-    protected Cd createConfigurationData() {
-        return (Cd) new ConfigurationData<Cm,O,Ct,Co,T>();
-    }
-
-    /**
-     * @return default configuration
-     */
-    public Cd getConfigurationData() {
-        Cd configurationData= createConfigurationData();
-        configurationData.setConnectorUser("user");
-        configurationData.setConnectorPassword("password");
-        configurationData.setConnectorUrl("http://localhost:4242");
-        return configurationData;
-    }
+public class MockConfiguration {
 
     /**
      * no default data source
      */
+    @Bean
     public javax.sql.DataSource getDataSource() {
         return new MockDataSource();
     }

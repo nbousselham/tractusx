@@ -85,7 +85,7 @@ public class AdapterController {
      * @param parameters
      * @return register response
      */
-    @PostMapping(value = "/register/{protocol}/{command}", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    @PostMapping(value = "/register/{protocol}/{command}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<String> registerTwins(@PathVariable("protocol") String protocol, @PathVariable("command") String command, @RequestParam Map<String, String> parameters) {
         try {
             return ResponseEntity.ok(twinService.registerTwins(protocol,command,parameters));
@@ -109,7 +109,7 @@ public class AdapterController {
      * @param name  source specification
      * @return register response
      */
-    @PostMapping(value = "/offer/{name}", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    @PostMapping(value = "/offer/{name}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Offer> offerResource(@PathVariable("name") String name) {
         return ResponseEntity.ok(idsConnector.getOrCreateOffer(name));
     }

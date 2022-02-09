@@ -27,15 +27,18 @@ import java.util.logging.Logger;
 @Configuration
 @Import({HttpClientConfiguration.class})
 @ComponentScan(basePackages = {"net.catenax.semantics.framework"})
-public class FrameworkConfiguration extends MockConfiguration<Command,Offer,Catalog,Contract,Transformation,ConfigurationData<Command, Offer, Catalog, Contract, Transformation>> {
+public class FrameworkConfiguration extends MockConfiguration {
 
     /**
      * @return default configuration
      */
     @Bean
-    @Override
-    public ConfigurationData<Command, Offer, Catalog, Contract, Transformation> getConfigurationData() {
-        return super.getConfigurationData();
+    public Config<Command, Offer, Catalog, Contract, Transformation> getConfigurationData() {
+        ConfigurationData<Command, Offer, Catalog, Contract, Transformation> configurationData= new ConfigurationData<Command, Offer, Catalog, Contract, Transformation>();
+        configurationData.setConnectorUser("user");
+        configurationData.setConnectorPassword("password");
+        configurationData.setConnectorUrl("http://localhost:4242");
+        return configurationData;
     }
 
     /**

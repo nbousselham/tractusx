@@ -1,3 +1,11 @@
+/*
+Copyright (c) 2021-2022 T-Systems International GmbH (Catena-X Consortium)
+See the AUTHORS file(s) distributed with this work for additional
+information regarding authorship.
+
+See the LICENSE file(s) distributed with this work for
+additional information regarding license terms.
+*/
 package net.catenax.semantics.adapter.test;
 
 import net.catenax.semantics.framework.IdsConnector;
@@ -5,6 +13,7 @@ import net.catenax.semantics.framework.config.*;
 import net.catenax.semantics.framework.dsc.DsConnector;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
@@ -24,7 +33,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 /**
  * Tests setting up a default adapter wo special config
  */
-@ExtendWith(SpringExtension.class)
+@SpringBootTest
 @ContextConfiguration(classes = { AdapterConfiguration.class })
 class AdapterConfigurationTest {
 

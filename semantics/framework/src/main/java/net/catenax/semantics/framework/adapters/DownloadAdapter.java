@@ -21,15 +21,14 @@ import org.springframework.stereotype.Service;
  * data read APIs e.g. through a REST controller
  */
 @Service
-public class DownloadAdapter<Cmd extends Command, O extends Offer, Ct extends Catalog, Co extends Contract, T extends Transformation>
-        extends BaseAdapter<Cmd,O,Ct,Co,T> {
+public class DownloadAdapter<Cmd extends Command, O extends Offer, Ct extends Catalog, Co extends Contract, T extends Transformation> extends BaseAdapter<Cmd,O,Ct,Co,T> {
 
     /**
      * delegate to super
      * @param configurationData
      * @param connector
      */
-    public DownloadAdapter(ConfigurationData<Cmd,O,Ct,Co,T> configurationData, IdsConnector connector) {
+    public DownloadAdapter(Config<Cmd,O,Ct,Co,T> configurationData, IdsConnector connector) {
         super(configurationData);
         setIdsConnector(connector);
     }
@@ -46,11 +45,15 @@ public class DownloadAdapter<Cmd extends Command, O extends Offer, Ct extends Ca
         IdsRequest request=new IdsRequest();
         request.setProtocol("HTTP");
         request.setCommand(method);
-
         request.setParameters(params);
+
         if(params.containsKey("protocol")) {
             request.setProtocol(params.get("protocol"));
         }
+        if(params.containsKey("command")) {
+            request.setCommand(params.get("command"));
+        }
+
         request.setAccepts(mediaType);
         request.setOffer(params.get("offer"));
         request.setRepresentation(params.get("representation"));

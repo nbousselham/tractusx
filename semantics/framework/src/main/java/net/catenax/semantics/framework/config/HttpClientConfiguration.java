@@ -24,6 +24,7 @@ import java.security.NoSuchAlgorithmException;
 
 import java.net.Proxy;
 import java.net.InetSocketAddress;
+import java.util.function.Predicate;
 
 /**
  * A spring configuration / bean factory for creating typed and proxiable http client objects
@@ -32,19 +33,27 @@ import java.net.InetSocketAddress;
 @Configuration
 @AllArgsConstructor
 public class HttpClientConfiguration {
-    private final ConfigurationData configurationData;
+    private final Config configurationData;
 
     @Bean
     Feign.Builder feignBuilder() throws NoSuchAlgorithmException, KeyManagementException {
         ApiClient apiClient = new ApiClient();
         NaiveSSLSocketFactory naiveSSLSocketFactory = new NaiveSSLSocketFactory("localhost");
 
-        Client client;
+        Client client=null;
         
         if(configurationData.getProxyUrl()!=null) {
-            client=new Client.Proxied(naiveSSLSocketFactory, null, new Proxy(Proxy.Type.HTTP, 
-                new InetSocketAddress(configurationData.getProxyUrl(), configurationData.getProxyPort())));
-        } else {
+            boolean noProxy = false;
+            for (Object noProxyHost : configurationData.getNoProxyHosts()) {
+                noProxy = noProxy || configurationData.getConnectorUrl().contains(noProxyHost.toString());
+            }
+            if (!noProxy) {
+                client = new Client.Proxied(naiveSSLSocketFactory, null, new Proxy(Proxy.Type.HTTP,
+                        new InetSocketAddress(configurationData.getProxyUrl(), configurationData.getProxyPort())));
+            }
+        }
+
+        if(client==null) {
             client = new Client.Default(naiveSSLSocketFactory,null);
         }
 

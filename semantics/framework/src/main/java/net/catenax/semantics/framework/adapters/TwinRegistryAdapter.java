@@ -34,15 +34,14 @@ import javax.annotation.PostConstruct;
  * adapts a remote twin registry to the IDS connector.
  */
 @Service
-public class TwinRegistryAdapter<Cmd extends Command, O extends Offer, Ct extends Catalog, Co extends Contract, T extends Transformation>
-        extends BaseAdapter<Cmd,O,Ct,Co,T> {
+public class TwinRegistryAdapter<Cmd extends Command, O extends Offer, Ct extends Catalog, Co extends Contract, T extends Transformation> extends BaseAdapter<Cmd,O,Ct,Co,T> {
 
     /**
      * delegate to super
      * @param configurationData
      * @param connector
      */
-    public TwinRegistryAdapter(ConfigurationData<Cmd,O,Ct,Co,T> configurationData, IdsConnector connector) {
+    public TwinRegistryAdapter(Config<Cmd,O,Ct,Co,T> configurationData, IdsConnector connector) {
         super(configurationData);
         setIdsConnector(connector);
     }
@@ -81,14 +80,22 @@ public class TwinRegistryAdapter<Cmd extends Command, O extends Offer, Ct extend
         IdsResponse response = idsConnector.perform(request);
         try {
             IdsMessage responseMessage = response.getMessage().get();
-            HttpClient httpclient;
+            HttpClient httpclient=null;
             if(configurationData.getProxyUrl()!=null) {
-                HttpHost proxyHost = new HttpHost(configurationData.getProxyUrl(), configurationData.getProxyPort());
-                DefaultProxyRoutePlanner routePlanner = new DefaultProxyRoutePlanner(proxyHost);
-                HttpClientBuilder clientBuilder = HttpClients.custom();
-                clientBuilder = clientBuilder.setRoutePlanner(routePlanner);
-                httpclient = clientBuilder.build();
-            } else {
+                boolean noProxy = false;
+                for (String noProxyHost : configurationData.getNoProxyHosts()) {
+                    noProxy = noProxy || configurationData.getServiceUrl().contains(noProxyHost);
+                }
+                if (!noProxy) {
+                    HttpHost proxyHost = new HttpHost(configurationData.getProxyUrl(), configurationData.getProxyPort());
+                    DefaultProxyRoutePlanner routePlanner = new DefaultProxyRoutePlanner(proxyHost);
+                    HttpClientBuilder clientBuilder = HttpClients.custom();
+                    clientBuilder = clientBuilder.setRoutePlanner(routePlanner);
+                    httpclient = clientBuilder.build();
+                }
+            }
+
+            if(httpclient==null) {
                 httpclient = HttpClients.createDefault();
             }
             HttpPost httppost = new HttpPost(configurationData.getServiceUrl() + "/twins");

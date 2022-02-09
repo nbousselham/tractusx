@@ -11,11 +11,12 @@ package net.catenax.semantics.adapter;
 import lombok.Data;
 import net.catenax.semantics.framework.config.*;
 import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.context.annotation.Configuration;
 
 /**
  * Simple Adapter uses the default configuration
  */
-@ConfigurationProperties("idsadapter")
+@ConfigurationProperties(prefix="idsadapter")
 @Data
 public class ConfigurationData
         extends net.catenax.semantics.framework.config.ConfigurationData<Command, Offer, Catalog, Contract, Transformation> {

@@ -20,7 +20,7 @@ import org.springframework.stereotype.Service;
  * A backend adapter sitting on a database
  */
 @Service
-public class DatabaseAdapter extends BaseAdapter<Command,Offer,Catalog,Contract,Transformation> implements BackendAdapter {
+public class DatabaseAdapter<Cmd extends Command, O extends Offer, Ct extends Catalog, Co extends Contract, T extends Transformation> extends BaseAdapter<Cmd,O,Ct,Co,T> implements BackendAdapter {
 
     private final javax.sql.DataSource defaultDataSource;
 
@@ -28,7 +28,7 @@ public class DatabaseAdapter extends BaseAdapter<Command,Offer,Catalog,Contract,
      * creates a new database adapter
      * @param configurationData
      */
-    public DatabaseAdapter(ConfigurationData<Command,Offer,Catalog,Contract,Transformation> configurationData, javax.sql.DataSource defaultDataSource) {
+    public DatabaseAdapter(Config<Cmd,O,Ct,Co,T> configurationData, javax.sql.DataSource defaultDataSource) {
         super(configurationData);
         this.defaultDataSource=defaultDataSource;
     }

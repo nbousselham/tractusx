@@ -16,6 +16,7 @@
 #    Registering Owned Digital Twins
 ###########################################################
 
+---
 #  Endpoint configuration for service provisioning and data pull
 server:
   port: 4243
@@ -82,8 +83,16 @@ contact_url: '@project.url@'
 organization_name: '@project.organization.name@'
 version: '@project.version@'
 management:
+  endpoint:
+    info:
+      enabled: true
+    health:
+      enabled: true
   endpoints:
-    enabled-by-default: false       
+    enabled-by-default: false
+    web:
+      exposure:
+        include: info,health
     
 #
 # Configuration of the Semantic Adapter
@@ -107,19 +116,22 @@ idsadapter:
   portalUrl: http://localhost:3000
   # Under which catalogs do we publish our data offerings?
   catalogs:
-    catenax-catalog:
-        description: Catena-X Data Offering Catalog
+    "[urn:catalog:catenax]":
+      description: Catena-X Data Offering Catalog
   # Under which conditions and to whom do we publish our data offerings
   contracts:
-     contract-readall:
+    contract-readall:
       description: A sample contract with a consumer that may read everything.
       # this is the ID of the "consuming" semantic data connector
-      consumer: https://w3id.org/idsa/autogen/baseConnector/7b934432-a85e-41c5-0000-669219dde4ea
+      consumer: "https://w3id.org/idsa/autogen/baseConnector/\
+         7b934432-a85e-41c5-0000-669219dde4ea"
       start: 2021-01-01T18:35:29.921Z
       end: 2021-12-31T07:11:13.569Z
       rules:
         rule1:
-          description: Sample read all permission. Due to a connector ?bug?, action field must stay empty.
+          description: >
+             Sample read all permission.
+             Due to a connector ?bug?, action field must stay empty.
           value: "{ \"@type\":\"ids:Permission\", \"ids:action\":[] }"
   #
   # Part 2 - IDS Offer/Representation/Artifact Provisioning + Aspect Implementation
@@ -133,7 +145,7 @@ idsadapter:
       # reference to the contract
       contract: contract-readall
       # reference to the catalogue
-      catalog: catenax-catalog
+      catalog: "urn:catalog:catenax"
       paymentMethod: free
       # The representations correspond to aspects/semantic models supported
       representations:
@@ -167,7 +179,7 @@ idsadapter:
       # reference to the contract
       contract: contract-readall
       # reference to the catalog
-      catalog: catenax-catalog
+      catalog: "urn:catalog:catenax"
       paymentMethod: free
       # The representations correspond to all Speedboat aspects/semantic models
       representations:
@@ -338,3 +350,15 @@ idsadapter:
                  partStaticData_partNumberManufacturer AS partNumber, 
                  twinData_uuid AS uuid 
             FROM traceability
+  #
+  # Part 5 - Automated Twin Sources
+  #
+twinSources:
+  -
+    protocol: FILE
+    command: brake-file
+    parameters:
+  -
+    protocol: SQL
+    command: twin-sql
+    parameters:

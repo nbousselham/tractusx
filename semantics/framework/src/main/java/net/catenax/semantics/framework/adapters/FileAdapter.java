@@ -21,15 +21,15 @@ import java.net.URL;
  * containing (parameter-indexed) files.
  */
 @Service
-public class FileAdapter
-    extends BaseAdapter<Command, Offer, Catalog, Contract, Transformation> implements BackendAdapter {
+public class FileAdapter<Cmd extends Command, O extends Offer, Ct extends Catalog, Co extends Contract, T extends Transformation>
+    extends BaseAdapter<Cmd,O,Ct,Co,T> implements BackendAdapter {
 
     @Override
     public String getProtocol() {
         return "FILE";
     }
 
-    public FileAdapter(ConfigurationData<Command,Offer,Catalog,Contract,Transformation> configurationData) {
+    public FileAdapter(Config<Cmd,O,Ct,Co,T> configurationData) {
         super(configurationData);
     }
 

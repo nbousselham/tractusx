@@ -14,7 +14,6 @@ import net.catenax.semantics.framework.*;
 import net.catenax.semantics.framework.config.*;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
-import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
 import org.springframework.stereotype.Service;
 import org.springframework.xml.transform.StringResult;
 import org.springframework.xml.transform.StringSource;
@@ -37,7 +36,7 @@ import java.util.Map;
 @Service
 @Slf4j
 @RequiredArgsConstructor
-public class XmlTransformer implements Transformer {
+public class XmlTransformer<Cmd extends Command, O extends Offer, Ct extends Catalog, Co extends Contract, T extends Transformation> implements Transformer {
 
     /**
      * the transformation helper
@@ -47,14 +46,13 @@ public class XmlTransformer implements Transformer {
     /**
      * needs a configuration
      */
-    protected final ConfigurationData<Command, Offer, Catalog, Contract,Transformation> configuration;
+    protected final Config<Cmd, O, Ct, Co,T> configuration;
 
     /**
      * the names in this map are of form "sourceModel;targetMediaType;targetModel"
      */
     protected Map<String, Templates> transTemplates = new HashMap<>();
 
-    protected PathMatchingResourcePatternResolver resolver = new PathMatchingResourcePatternResolver();
     /**
      * initialises the bean
      * @throws TransformerConfigurationException
@@ -62,7 +60,7 @@ public class XmlTransformer implements Transformer {
     @PostConstruct
     public void initTransTemplates() throws TransformerConfigurationException {
         if(configuration.getTransformations()!=null) {
-            for (Map.Entry<String, Transformation> transformation : configuration.getTransformations().entrySet()) {
+            for (Map.Entry<String, T> transformation : configuration.getTransformations().entrySet()) {
                 try {
                     String file=transformation.getValue().getFile();
                     InputStream inputStream=null;
@@ -78,7 +76,7 @@ public class XmlTransformer implements Transformer {
                     transTemplates.put(transformation.getKey(), templates);
                     transTemplates.put(transformation.getValue().getSourceModel() + ";" + transformation.getValue().getTargetMediaType() + ";" + transformation.getValue().getTargetModel(), templates);
                 } catch(NullPointerException | IOException e)  {
-                    log.error("can not initialize transformation: '{}' because of '{}' skipping", transformation, e);
+                    log.warn(String.format("can not initialize transformation: '%s' because of '%s' skipping", transformation, e.getMessage()));
                 }
             }
         }

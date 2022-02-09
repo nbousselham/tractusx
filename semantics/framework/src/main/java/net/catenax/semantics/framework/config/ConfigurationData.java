@@ -19,7 +19,7 @@ import lombok.Data;
  * represents a (part) of a configuration file, such as a spring boot yml.
  */
 @Data
-public class ConfigurationData<Cmd extends Command, O extends Offer, Ct extends Catalog, Co extends Contract, T extends Transformation> {
+public class ConfigurationData<Cmd extends Command, O extends Offer, Ct extends Catalog, Co extends Contract, T extends Transformation> implements Config<Cmd,O,Ct,Co,T> {
     private String connectorType;
     private String connectorUrl;
     private String connectorId;
@@ -30,12 +30,12 @@ public class ConfigurationData<Cmd extends Command, O extends Offer, Ct extends 
     private String connectorPassword;
     private String publisher;
     private String proxyUrl;
+    private int proxyPort;
+    private List<String> noProxyHosts=List.of("localhost");
     /**
      * determines the callback method to access artifacts
      */
     private String callbackPattern="%1$s/%2$s/download?offer=%3$s&representation=%4$s&artifact=%5$s";
-
-    private int proxyPort;
     private String serviceName = "adapter";
     private boolean offerOnStart=false;
     private boolean registerOnStart=false;

@@ -37,7 +37,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 @ContextConfiguration(classes = { FrameworkConfiguration.class })
 class FrameworkConfigurationTest {
 
-
 	/**
 	 * the actual test code is rather small ;-)
 	 * @param context created spring context

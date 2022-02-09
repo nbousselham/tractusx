@@ -50,7 +50,7 @@ import javax.annotation.PostConstruct;
 @Slf4j
 @Conditional(DscConfigurationCondition.class)
 @Service
-public class DsConnector implements IdsConnector {
+public class DsConnector<Cmd extends Command, O extends Offer, Ct extends Catalog, Co extends Contract, T extends Transformation> implements IdsConnector {
 
     /** these are clients to the different endpoints of the connector */
     final private ContractsApi contractsApi;
@@ -61,7 +61,7 @@ public class DsConnector implements IdsConnector {
     final private ArtifactsApi artifactsApi;
     final private ConnectorApi connectorApi;
 
-    final private ConfigurationData<Command,Offer,Catalog,Contract, Transformation> configurationData;
+    final private Config<Cmd,O,Ct,Co, T> configurationData;
     final private List<BackendAdapter> adapters;
     final private List<Transformer> transformers;
 
@@ -398,6 +398,7 @@ public class DsConnector implements IdsConnector {
             if (o == null) {
                 response.setStatus(404);
                 setError("Offer " + request.getOffer() + " not found", realResponse, request.getAccepts());
+                return response;
             } else {
                 Representation r = o.getRepresentations().
                         get(request.getRepresentation());
@@ -405,12 +406,14 @@ public class DsConnector implements IdsConnector {
                     response.setStatus(404);
                     setError("Representation " + request.getRepresentation() + " not found in offer " + request.getOffer(),
                             realResponse, request.getAccepts());
+                    return response;
                 } else {
                     model=r.getModel();
-                    if(accepts!=null && (!accepts.contains("*/*") || !accepts.contains(r.getMediaType()))) {
+                    if(accepts!=null && !accepts.contains("*/*") && !accepts.contains(r.getMediaType())) {
                         response.setStatus(415);
                         setError("Mediatype "+r.getMediaType()+ "of representation " + request.getRepresentation() + " in offer " + request.getOffer(),
                                 realResponse, request.getAccepts());
+                        return response;
                     }
                     accepts=r.getMediaType();
                     Artifact a = r.getArtifacts().get(request.getArtifact());
@@ -418,6 +421,7 @@ public class DsConnector implements IdsConnector {
                         response.setStatus(404);
                         setError("Artifact "+ request.getArtifact()+ " not found in representation " + request.getRepresentation() + " in offer " + request.getOffer(),
                                 realResponse, request.getAccepts());
+                        return response;
                     } else {
                         request.setCommand(a.getCommand());
                         protocol=a.getProtocol();
