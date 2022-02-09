@@ -23,7 +23,7 @@ import HelpContextMenu from '../navigation/HelpContextMenu/HelpContextMenu';
 import ListCountSelector from '../navigation/ListCountSelector';
 import Pagination from '../navigation/Pagination';
 import { getTwins } from './data';
-import { DigitalTwin, TwinList } from './interfaces';
+import { TwinList } from './interfaces';
 
 const helpMenuItems: IContextualMenuItem[] = [
   {
