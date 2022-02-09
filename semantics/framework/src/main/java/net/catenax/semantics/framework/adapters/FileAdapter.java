@@ -10,6 +10,8 @@ package net.catenax.semantics.framework.adapters;
 
 import net.catenax.semantics.framework.*;
 import net.catenax.semantics.framework.config.*;
+import org.springframework.core.io.ClassPathResource;
+import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Service;
 
 import java.io.*;
@@ -55,16 +57,25 @@ public class FileAdapter<Cmd extends Command, O extends Offer, Ct extends Catalo
         }
         response.setModel(model);
 
-        URL resource = getClass().getClassLoader().getResource(file);
-        try (BufferedReader resourceStream=new BufferedReader(new InputStreamReader(resource.openStream()))) {
-            StringBuilder contentBuilder = new StringBuilder();
-            String sCurrentLine;
-            while ((sCurrentLine = resourceStream.readLine()) != null)
-            {
-                contentBuilder.append(sCurrentLine).append("\n");
+        InputStream inputStream=null;
+        try {
+            if (file.startsWith("classpath:")) {
+                String resFile = file.substring(10);
+                Resource res = new ClassPathResource(resFile, getClass().getClassLoader().getParent());
+                inputStream = res.getInputStream();
+            } else {
+                inputStream = new URL(file).openStream();
             }
-            response.setPayload(contentBuilder.toString());
-        } catch (IOException e) {
+            try (BufferedReader resourceStream = new BufferedReader(new InputStreamReader(inputStream))) {
+                StringBuilder contentBuilder = new StringBuilder();
+                String sCurrentLine;
+                while ((sCurrentLine = resourceStream.readLine()) != null) {
+                    contentBuilder.append(sCurrentLine).append("\n");
+                }
+                response.setPayload(contentBuilder.toString());
+            } finally {
+            }
+        } catch(IOException e) {
             throw new StatusException("download & transform error.", e);
         }
         return response;

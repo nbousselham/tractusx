@@ -247,7 +247,7 @@ idsadapter:
   #
   commands:
     brake-file:
-      file: Bremse_Windchill.xml
+      file: classpath:Bremse_Windchill.xml
       model: http://pwc.t-systems.com/datamodel/common
     material-sql:
       aliases:
