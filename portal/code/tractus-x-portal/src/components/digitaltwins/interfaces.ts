@@ -1,8 +1,8 @@
 export interface TwinList {
-  currentPage: number,
-  itemCount: number,
   items: DigitalTwin[],
   totalItems: number,
+  itemCount: number,
+  currentPage: number,
   totalPages: number
 }
 
