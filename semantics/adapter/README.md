@@ -28,7 +28,7 @@ The run script accepts the following command line options:
  
 ### Build Docker:
 
-Run `docker build -f ./Dockerfile -t $REGISTRY/semantics/adapter:$VERSION .`
+Run `cd ..;docker build -f ./adapter/Dockerfile -t $REGISTRY/semantics/adapter:$VERSION .;cd ..`
 RUN `docker push $REGISTRY/semantics/adapter:$VERSION`
 
 where $REGISTRY is set to the target container/docker repository (like `tsicatenaxdevacr.azurecr.io`) and $VERSION is set to the 

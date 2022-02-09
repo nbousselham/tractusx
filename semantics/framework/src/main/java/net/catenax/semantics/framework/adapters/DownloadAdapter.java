@@ -65,13 +65,12 @@ public class DownloadAdapter<Cmd extends Command, O extends Offer, Ct extends Ca
         try {
             IdsMessage responseMessage = idsResponse.getMessage().get();
             mediaType=responseMessage.getMediaType();
-            try (BufferedWriter writer=new BufferedWriter(new OutputStreamWriter(response))) {
-                writer.write(responseMessage.getPayload());
-            } catch(IOException e) {
-                throw new StatusException("Could not synchronize on IDS",e,500);
-            }
-            if(idsResponse.getStatus()!=200) {
-                throw new StatusException("Ids call was unsuccessful",200);
+            if(responseMessage.getPayload()!=null) {
+                try (BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(response))) {
+                    writer.write(responseMessage.getPayload());
+                } catch (IOException e) {
+                    throw new StatusException("Could not synchronize on IDS", e, 500);
+                }
             }
         } catch(InterruptedException | ExecutionException e) {
             throw new StatusException("Could not synchronize on IDS",e,409);

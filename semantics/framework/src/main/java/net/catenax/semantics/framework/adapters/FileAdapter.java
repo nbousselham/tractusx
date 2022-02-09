@@ -46,8 +46,6 @@ public class FileAdapter<Cmd extends Command, O extends Offer, Ct extends Catalo
             model=co.getModel();
         }
 
-        log.info("Accessing FILE source "+file+ " under assumed model "+model);
-
         BaseIdsMessage response = new BaseIdsMessage();
 
         if(file.endsWith("xml")) {
@@ -57,11 +55,22 @@ public class FileAdapter<Cmd extends Command, O extends Offer, Ct extends Catalo
         }
         response.setModel(model);
 
+        log.info("Accessing FILE source "+file+ " under assumed model "+model+" and media type "+response.getMediaType());
+
         InputStream inputStream=null;
         try {
             if (file.startsWith("classpath:")) {
                 String resFile = file.substring(10);
-                Resource res = new ClassPathResource(resFile, getClass().getClassLoader().getParent());
+                Resource res=new ClassPathResource(resFile,getClass().getClassLoader());
+                if(!res.exists()) {
+                    res=new ClassPathResource(resFile,getClass().getClassLoader().getParent());
+                    if(!res.exists()) {
+                        res = new ClassPathResource(resFile, Thread.currentThread().getContextClassLoader());
+                        if (!res.exists()) {
+                            throw new IOException("Could not find " + resFile + " in the classloader environment.");
+                        }
+                    }
+                }
                 inputStream = res.getInputStream();
             } else {
                 inputStream = new URL(file).openStream();
@@ -76,7 +85,8 @@ public class FileAdapter<Cmd extends Command, O extends Offer, Ct extends Catalo
             } finally {
             }
         } catch(IOException e) {
-            throw new StatusException("download & transform error.", e);
+            log.error("Could not access FILE source "+file,e);
+            throw new StatusException("Could not access FILE source "+file,e);
         }
         return response;
     }

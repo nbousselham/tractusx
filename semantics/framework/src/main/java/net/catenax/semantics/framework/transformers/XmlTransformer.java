@@ -66,7 +66,16 @@ public class XmlTransformer<Cmd extends Command, O extends Offer, Ct extends Cat
                     InputStream inputStream=null;
                     if(file.startsWith("classpath:")) {
                         String resFile=file.substring(10);
-                        Resource res=new ClassPathResource(resFile,getClass().getClassLoader().getParent());
+                        Resource res=new ClassPathResource(resFile,getClass().getClassLoader());
+                        if(!res.exists()) {
+                            res=new ClassPathResource(resFile,getClass().getClassLoader().getParent());
+                            if(!res.exists()) {
+                                res = new ClassPathResource(resFile, Thread.currentThread().getContextClassLoader());
+                                if (!res.exists()) {
+                                    throw new IOException("Could not find " + resFile + " in the classloader environment.");
+                                }
+                            }
+                        }
                         inputStream=res.getInputStream();
                     } else {
                         inputStream=new URL(file).openStream();
@@ -84,20 +93,25 @@ public class XmlTransformer<Cmd extends Command, O extends Offer, Ct extends Cat
 
     @Override
     public boolean canHandle(IdsMessage incoming, IdsRequest request, String targetModel) {
-        if (!incoming.getMediaType().endsWith("xml")) {
+        String sourceMediaType=incoming.getMediaType();
+        if (!sourceMediaType.endsWith("xml")) {
+            log.debug("check failed because of non-xml media type source "+sourceMediaType);
             return false;
         }
-        if(transTemplates.containsKey(request.getParameters().get("transformation"))) {
+        String immediateTransformation=request.getParameters().get("transformation");
+        if(transTemplates.containsKey(immediateTransformation)) {
+            log.debug("xml transformation has been directly chosen: "+immediateTransformation);
             return true;
         }
         String[] targetMedia = request.getAccepts().split(";");
         for(String target : targetMedia) {
             if(target.equals("*/*")) {
-                return transTemplates.keySet().stream().anyMatch(key -> {
+                boolean foundWildcard= transTemplates.keySet().stream().anyMatch(key -> {
                     boolean rightModel = key.startsWith(incoming.getModel()+";");
                     boolean rightTarget = key.endsWith(";"+targetModel);
                     return rightModel && rightTarget;
                 });
+                return foundWildcard;
             } else {
                 String key = incoming.getModel() + ";" + target + ";" + targetModel;
                 if (transTemplates.containsKey(key)) {
@@ -133,6 +147,8 @@ public class XmlTransformer<Cmd extends Command, O extends Offer, Ct extends Cat
                     result.setMediaType(target);
                     result.setModel(targetModel);
                     extracted(incoming, result, transTemplates.get(key));
+                } else {
+                    throw new StatusException("Assumed transformation with key "+key+" could not be found");
                 }
             }
         }

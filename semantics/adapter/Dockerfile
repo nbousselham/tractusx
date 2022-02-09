@@ -15,11 +15,13 @@ FROM maven:3-jdk-11 AS maven
 
 ARG MAVEN_OPTS=""
 
+ARG MAVEN_PROFILE=""
+
 WORKDIR /app
 
 COPY . .
 
-RUN mvn clean install -Dmaven.javadoc.skip=true -DskipTests -q
+RUN mvn clean install -Dmaven.javadoc.skip=true -DskipTests -q ${MAVEN_PROFILE}
 
 # Deploy the service
 FROM openjdk:11-jre-buster
@@ -34,7 +36,6 @@ RUN apt-get -y update
 RUN if [[ -n "${HTTP_PROXY}"  ]]; then rm -f /etc/apt/apt.conf.d/proxy.conf; fi
 
 RUN adduser --system --group spring
-
 
 RUN mkdir -p /adapter
 
@@ -64,5 +65,5 @@ ENV IDSADAPTER_CONNECTORPASSWORD "password"
 
 EXPOSE 4243
 
-ENTRYPOINT [ "java","-Dspring.jpa.hibernate.ddl-auto=${SPRING_JPA_HIBERNATE_DDL-AUTO}","-Dspring.sql.init.platform=${SPRING_SQL_INIT_PLATFORM}","-Didsadapter.portalUrl=${IDSADAPTER_PORTALURL}","-Didsadapter.serviceUrl=${IDSADAPTER_SERVICEURL}","-Didsadapter.adapterUrl=${IDSADAPTER_ADAPTERURL}", "-Didsadapter.connectorUrl=${IDSADAPTER_CONNECTORURL}", "-Didsadapter.connectorUser=${IDSADAPTER_CONNECTORUSER}", "-Didsadapter.connectorPassword=${IDSADAPTER_CONNECTORPASSWORD}" ,"-Dspring.datasource.url=${SPRING_DATASOURCE_URL}","-Dspring.datasource.driverClassName=${SPRING_DATASOURCE_DRIVERCLASSNAME}","-Dspring.datasource.username=${SPRING_DATASOURCE_USERNAME}","-Dspring.datasource.password=${SPRING_DATASOURCE_PASSWORD}","-jar","/adapter/app.jar" ]
+ENTRYPOINT [ "java","-Dspring.jpa.hibernate.ddl-auto=${SPRING_JPA_HIBERNATE_DDL-AUTO}","-Dspring.sql.init.platform=${SPRING_SQL_INIT_PLATFORM}","-Didsadapter.portalUrl=${IDSADAPTER_PORTALURL}","-Didsadapter.serviceUrl=${IDSADAPTER_SERVICEURL}","-Didsadapter.adapterUrl=${IDSADAPTER_ADAPTERURL}", "-Didsadapter.connectorUrl=${IDSADAPTER_CONNECTORURL}", "-Didsadapter.connectorUser=${IDSADAPTER_CONNECTORUSER}", "-Didsadapter.connectorPassword=${IDSADAPTER_CONNECTORPASSWORD}" ,"-Dspring.datasource.url=${SPRING_DATASOURCE_URL}","-Dspring.datasource.driverClassName=${SPRING_DATASOURCE_DRIVERCLASSNAME}","-Dspring.datasource.username=${SPRING_DATASOURCE_USERNAME}","-Dspring.datasource.password=${SPRING_DATASOURCE_PASSWORD}","-classpath","/adapter/app.jar","org.springframework.boot.loader.JarLauncher"]
 #ENTRYPOINT [ "/bin/bash" ]
