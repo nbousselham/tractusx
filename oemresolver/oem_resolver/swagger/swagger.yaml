@@ -1,0 +1,119 @@
+openapi: 3.0.0
+info:
+  title: VIN to VIN/VAN Converter Resolver API
+  description: "Resolves VINs to the VIN/VAN converter URL of OEMs based on its first\
+    \ three digits. For v1 the connection between OEM and address shall be taken from\
+    \ a config file. In later versions, OEMs shall be able to change the URL by themselfs."
+  contact:
+    name: Catena-X
+    url: ""
+  version: "1.0"
+#servers:
+#- url: https://api.resolvevin.example/v1
+paths:
+  /resolve:
+    post:
+      tags:
+      - Business-API
+      summary: Resolves one or more VINs to the VIN/VAN Converter URL of OEMs.
+      description: "Creates a list of VIN/VAN converter addresses of OEMs based on\
+        \ a list of VINs. Those URLs could be pointing to simple REST interfaces,\
+        \ but most likely will point to a data asset URL of a connector (EDC).\nIf\
+        \ there is no registered converter URL for a specific VIN, null will be returned\
+        \ for this value. \nCurrently only resolving of VIN17 and VIN23 is supported.\n"
+      operationId: resolve
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/resolveBulkRequest'
+        required: true
+      responses:
+        "200":
+          description: Returns list of URLs.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/resolveBulkResponse'
+        default:
+          description: Unexpected error and HTTP status code 4xx.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+#      security:
+#      - bearerAuth: ['secret']
+      x-openapi-router-controller: oem_resolver.controllers.business_api_controller
+  /auth/{user_id}:
+    get:
+      summary: Return JWT token
+      operationId: oem_resolver.controllers.authorization_controller.generate_token
+      parameters:
+      - name: user_id
+        description: User unique identifier
+        in: path
+        required: true
+        example: 12
+        schema:
+          type: integer
+      responses:
+        '200':
+          description: JWT token
+          content:
+            'text/plain':
+              schema:
+                type: string
+components:
+  schemas:
+    ErrorResponse:
+      required:
+      - message
+      properties:
+        message:
+          type: string
+          description: Error message description.
+    resolveBulkRequest:
+      required:
+      - identifiers
+      type: object
+      properties:
+        identifiers:
+          maxItems: 1000
+          minItems: 1
+          uniqueItems: true
+          type: array
+          description: List of VINs to be resolved to converter URL
+          example:
+          - VIN0001
+          - VIN0002
+          - VIN0003
+          items:
+            maxLength: 60
+            minLength: 1
+            type: string
+            description: "A non-empty, US-ASCII string of a VIN"
+    resolveBulkResponse:
+      type: object
+      properties:
+        resolved:
+          maxItems: 1000
+          minItems: 1
+          uniqueItems: true
+          type: array
+          description: "List of URLs correlating to request VINs, of same size and\
+            \ order. Returns null if input value cannot be processed."
+          items:
+            maxLength: 180
+            minLength: 1
+            type: string
+      example:
+        resolved:
+        - "https://connector.example.com/asset1"
+        - "https://connector2.example.com/asset1"
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+      x-bearerInfoFunc: oem_resolver.controllers.authorization_controller.check_bearerAuth
+
