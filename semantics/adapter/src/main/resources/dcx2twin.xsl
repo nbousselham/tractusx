@@ -28,7 +28,7 @@
             "httpEndpoints": [
                 {
                     "method": "GET",
-                    "url": "urn:Vocabulary:com.ids:Connector?recipient=</xsl:text><xsl:value-of select="$CONNECTOR_ID"/><xsl:text>&amp;offer=offer-windchill&amp;representation=bom-aspect&amp;artifact=bom-brake"
+                    "url": "urn:Vocabulary:com.ids:Connector?recipient=</xsl:text><xsl:value-of select="$CONNECTOR_ID"/><xsl:text>&amp;offer=offer-windchill&amp;representation=bom-aspect&amp;artifact=brake"
                 }
             ],
             "modelReference": {
@@ -39,7 +39,7 @@
             "httpEndpoints": [
                 {
                     "method": "GET",
-                    "url": "urn:Vocabulary:com.ids:Connector?recipient=</xsl:text><xsl:value-of select="$CONNECTOR_ID"/><xsl:text>&amp;offer=offer-windchill&amp;representation=material-aspect&amp;artifact=material-brake"
+                    "url": "urn:Vocabulary:com.ids:Connector?recipient=</xsl:text><xsl:value-of select="$CONNECTOR_ID"/><xsl:text>&amp;offer=offer-windchill&amp;representation=material-aspect&amp;artifact=brake"
                 }
             ],
             "modelReference": {

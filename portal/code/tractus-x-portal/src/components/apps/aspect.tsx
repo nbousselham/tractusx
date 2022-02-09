@@ -28,7 +28,7 @@ export default class Aspect extends React.Component<any, any> {
   );
 
   mounted = false
-  catalog = 'catenax-catalog'
+  catalog = 'urn:catalog:catenax'
 
   constructor(props) {
     super(props);
@@ -441,22 +441,21 @@ export default class Aspect extends React.Component<any, any> {
       { key: 'offer-aras', text: 'Live Construction Data From PDM Web Connector.' },
       { key: 'offer-sap', text: 'Live Manufacturing Data From PDM Web Connector.' }
     ];
+
     const availableRepresentations: IDropdownOption[] = [
       { key: 'material-aspect', text: 'Catena-X Material JSON payload.' },
       { key: 'bom-aspect', text: 'Catena-X Bill-Of-Material JSON payload.' },
       { key: 'pt-aspect', text: 'Catena-X PartTypization JSON payload.' },
-      { key: 'apr-aspect', text: 'Catena-X AssemblyPartRelationship JSON payload.' }
+      { key: 'apr-aspect', text: 'Catena-X AssemblyPartRelationship JSON payload.' },
+      { key: 'bdr-aspect', text: 'Catena-X AsBuiltAsDesignedRelationship JSON payload.' }
     ];
 
     let availableArtifacts: IDropdownOption[] = [
-      { key: 'material-brake', text: 'Sample XML/XSLT-Based Aspect Implementation.' },
-      { key: 'bom-brake', text: 'SampleXML/XSLT-Based Aspect Implementation.' },
+      { key: 'brake', text: 'Sample XML/XSLT-Based Aspect Implementations.' },
       { key: 'material-vehicle', text: 'Relational SQL-Based Aspect Implementation.' },
       { key: 'bom-vehicle', text: 'Relational SQL-Based Aspect Implementation.' },
-      { key: 'aras-pt', text: 'PartTypization Aspect "AS-DESIGNED" Implementation by PDM Web Connector.' },
-      { key: 'aras-apr', text: 'AssemblyPartRelationship Aspect "AS-DESIGNED" Implementation by PDM Web Connector.' },
-      { key: 'sap-pt', text: 'PartTypization Aspect "AS-PLANNED" Implementation by PDM Web Connector.' },
-      { key: 'sap-apr', text: 'AssemblyPartRelationship Aspect "AS-PLANNED" Implementation by PDM Web Connector.' },
+      { key: 'constructed', text: '"AS-DESIGNED" PLM Aspect Implementations by PDM Web Connector.' },
+      { key: 'planned', text: '"AS-PLANNED" ERP Aspect Implementations by PDM Web Connector.' },
     ];
 
     let offer=this.state.params.offer
@@ -464,15 +463,13 @@ export default class Aspect extends React.Component<any, any> {
     let artifact=this.state.params.artifact
 
     if(offer==='offer-windchill') {
-      if(representation==='material-aspect') {
-        availableArtifacts = [
-          { key: 'material-brake', text: 'Sample Material-Transformed File Source.' },
-        ];    
-      } else if(representation==='bom-aspect') {
-        availableArtifacts = [
-          { key: 'bom-brake', text: 'Sample BOM-Transformed File Source.' },
-        ];    
-      }
+        if(representation=='material-aspect' || representation=='bom-aspect') {
+            availableArtifacts = [
+                { key: 'brake', text: 'Sample XML/XSLT-Based Aspect Implementations.' },
+            ];
+          } else {
+            availableArtifacts = [];
+          }
     } else if(offer==='offer-tdm') {
       if(representation==='material-aspect') {
         availableArtifacts = [
@@ -482,28 +479,26 @@ export default class Aspect extends React.Component<any, any> {
         availableArtifacts = [
           { key: 'bom-vehicle', text: 'Relational SQL-Transformed Traceability Info.' }
         ];    
-      } 
-     } else if(offer==='offer-aras') {
-        if(representation==='pt-aspect') {
-          availableArtifacts = [
-            { key: 'aras-pt', text: 'PartTypization Aspect "AS-DESIGNED" Implementation by PDM Web Connector.' },
-          ];    
-        } else if (representation==='apr-aspect') {
-          availableArtifacts = [
-            { key: 'aras-apr', text: 'AssemblyPartRelationship Aspect "AS-DESIGNED" Implementation by PDM Web Connector.' },
-          ];    
-        }
-     } else if(offer==='offer-sap') {
-      if(representation==='pt-aspect') {
-        availableArtifacts = [
-          { key: 'sap-pt', text: 'PartTypization Aspect "AS-PLANNED" Implementation by PDM Web Connector.' },
-        ];    
-      } else if (representation==='apr-aspect') {
-        availableArtifacts = [
-          { key: 'sap-apr', text: 'AssemblyPartRelationship Aspect "AS-PLANNED"  Implementation by PDM Web Connector.' },
-        ];    
+      } else {
+        availableArtifacts = [];
       }
-   }
+    } else if(offer==='offer-aras') {
+        if(representation=='apr-aspect' || representation=='pt-aspect' || representation=='bdr-aspect' ) {
+           availableArtifacts = [
+            { key: 'constructed', text: '"AS-DESIGNED" PLM Aspect Implementations by PDM Web Connector.' },
+            ];
+         } else {
+            availableArtifacts = [];
+         }
+    } else if(offer==='offer-sap') {
+        if(representation=='apr-aspect' || representation=='pt-aspect' ) {
+            availableArtifacts = [
+                { key: 'planned', text: '"AS-PLANNED" ERP Aspect Implementations by PDM Web Connector.' },
+            ];
+        } else {
+            availableArtifacts = [];
+         }
+    }
 
     let consoleClass={ backgroundColor: '#0052C9', color:'white' };
     let frameStyle  = { backgroundColor: '', color:'black' };
