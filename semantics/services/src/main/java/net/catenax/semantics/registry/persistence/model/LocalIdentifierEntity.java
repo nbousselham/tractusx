@@ -37,9 +37,9 @@ public class LocalIdentifierEntity {
     @GenericGenerator(name = "uuid", strategy = "uuid")
     private String id;
 
-    @Column(length = 200)
+    @Column(name="thekey", length = 200)
     private String key;
 
-    @Column(length = 200)
+    @Column(name="avalue", length = 200)
     private String value;
 }
