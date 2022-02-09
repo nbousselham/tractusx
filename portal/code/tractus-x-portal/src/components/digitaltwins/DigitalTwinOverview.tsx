@@ -20,8 +20,10 @@ import ErrorMessage from '../ErrorMessage';
 import DescriptionList from '../lists/descriptionlist';
 import Loading from '../loading';
 import HelpContextMenu from '../navigation/HelpContextMenu/HelpContextMenu';
+import ListCountSelector from '../navigation/ListCountSelector';
+import Pagination from '../navigation/Pagination';
 import { getTwins } from './data';
-import { DigitalTwin } from './interfaces';
+import { DigitalTwin, TwinList } from './interfaces';
 
 const helpMenuItems: IContextualMenuItem[] = [
   {
@@ -38,18 +40,26 @@ const helpMenuItems: IContextualMenuItem[] = [
   },
 ];
 
+const DEFAULT_PAGE_SIZE = 10;
+const DEFAULT_PAGE = 0;
+
 function DigitalTwinOverview(){
-  const [twins, setTwins] = useState<DigitalTwin[]>();
+  const [data, setData] = useState<TwinList>();
+  const [filterParams, setFilterParams] = useState(new URLSearchParams(`page=${DEFAULT_PAGE}&pageSize=${DEFAULT_PAGE_SIZE}`))
   const [error, setError] = useState<[]>();
-  const [searchInput, setSearchInput] = useState<string>()
+  const [searchInput, setSearchInput] = useState<string>('')
 
   React.useEffect(()=>{
-    getTwins()
+    updateTwins();
+  }, [filterParams]);
+
+  const updateTwins = () => {
+    getTwins(filterParams)
       .then(
-        res => {console.log(res); setTwins(res.items)},
+        res => setData(res),
         error => setError(error.message)
       );
-  })
+  }
 
   const onClearFilter = () => {
     doSearch('');
@@ -65,13 +75,29 @@ function DigitalTwinOverview(){
   }
 
   const doSearch = (searchInput) => {
-    console.log(`Filtering ${twins.length} twins using search ${searchInput}`);
+    console.log(`Filtering ${data.items.length} twins using search ${searchInput}`);
+  }
+
+  const updateFilterParams = (params: string) => {
+    setFilterParams(new URLSearchParams(params));
+  }
+
+  const onItemCountClick = (count: number) => {
+    updateFilterParams(`page=${data.currentPage}&pageSize=${count}`);
+  }
+
+  const onPageBefore = () => {
+    updateFilterParams(`page=${data.currentPage - 1}&pageSize=${data.itemCount}`);
+  }
+
+  const onPageNext = () => {
+    updateFilterParams(`page=${data.currentPage + 1}&pageSize=${data.itemCount}`);
   }
 
   return (
     <div className='p44 df fdc'>
       <HelpContextMenu menuItems={helpMenuItems}></HelpContextMenu>
-      {twins ?
+      {data ?
         <div>
           <h1 className="fs24 bold mb20">Digital Twins</h1>
           <div className="df aife jcfe mb20">
@@ -81,9 +107,10 @@ function DigitalTwinOverview(){
               onClear={onSearchClear}
               onChange={(_, newValue) => onSearchChange(newValue)}/>
           </div>
-          {twins ?
+          <ListCountSelector activeCount={data.totalPages} onCountClick={onItemCountClick}/>
+          {data.items.length > 0 ?
             <div className="df fwrap">
-              {twins.map(twin => (
+              {data.items.map(twin => (
                 <Link key={twin.globalAssetId[0]} className="m5 p20 bgpanel flex40 br4 bsdatacatalog tdn" to={{
                   pathname: `/home/digitaltwin/${twin.globalAssetId[0]}`
                 }}>
@@ -92,6 +119,11 @@ function DigitalTwinOverview(){
                   <DescriptionList title="specific assets count:" description={twin.specificAssetIds.length}/>
                 </Link>
               ))}
+              <Pagination pageNumber={data.currentPage + 1}
+                onPageBefore={onPageBefore}
+                onPageNext={onPageNext}
+                totalPages={data.totalPages}>
+              </Pagination>
             </div> :
             <div className="df fdc aic">
               <span className="fs20">No matches found!</span>
