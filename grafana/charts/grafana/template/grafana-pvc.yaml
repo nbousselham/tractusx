@@ -1,0 +1,15 @@
+{{- if .Values.global.grafana.enabled -}}
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  labels:
+    app: {{ .Values.appspec.name }}
+  name: {{ .Values.appspec.name }}
+  namespace: {{ .Values.global.namespace }}
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: "8Gi"
+{{- end -}}
