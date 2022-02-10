@@ -1,0 +1,13 @@
+{{- if .Values.global.grafana.enabled -}}
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: grafana-dashboard
+  namespace: {{ .Values.global.namespace }}
+  labels:
+    app: grafana
+data:
+#Loads the preconfigured dashboards
+#Mount this ConfigMap on the path specified in grafana-dashboard-conf.yaml
+{{ (.Files.Glob "dashboards/*").AsConfig | indent 4 }}  
+{{- end -}}
