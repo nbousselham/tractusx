@@ -8,7 +8,7 @@ on:
 
 jobs:
  build:
-    name: Build
+    name: SonarCloudCSharp
     runs-on: windows-latest
     steps:
       - name: Set up JDK 11
