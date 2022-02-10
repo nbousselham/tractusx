@@ -1,0 +1,20 @@
+{{- if .Values.global.grafana.enabled -}}
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: grafana-datasource
+  namespace: {{ .Values.global.namespace }}
+  labels:
+    app: grafana
+data:
+  datasource.yaml: |
+    datasources:
+      #Add one or more datasources here. These will be added on grafana startup.
+      - name: prometheus
+        type: prometheus
+        access: proxy
+        #If prometheus server is setup on same cluster, use Kubernetes service discovery
+        #If prometheus server is on another cluster, user GCP Internal Loadbalancer to avoid exposing service to public
+        url: http://prometheus-server:80
+        editable: true
+{{- end -}}  
