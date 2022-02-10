@@ -1,0 +1,42 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: oemresolver-deployment
+  labels:
+    app: oemresolver
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: oemresolver
+  template:
+    metadata:
+      labels:
+        app: oemresolver
+    spec:
+      containers:
+        - name: oemresolver
+          image: oem_resolver:latest
+          imagePullPolicy: Never
+          ports:
+            - containerPort: 8080
+          env:
+            - name: API_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: oemresolver-apikey
+                  key: api-key
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: oemresolver-service
+spec:
+  ports:
+  - port: 8080
+    protocol: TCP
+    targetPort: 8080
+  selector:
+    app: oemresolver
+  type: LoadBalancer

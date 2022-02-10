@@ -1,5 +1,11 @@
 FROM python:3.9.1
 
+RUN apt-get clean \
+    && apt-get -y update
+
+RUN apt-get -y install \
+    nginx 
+
 RUN mkdir -p /usr/src/app
 WORKDIR /usr/src/app
 
@@ -10,9 +16,9 @@ RUN pip3 install --no-cache-dir -r requirements.txt
 COPY . /usr/src/app
 
 #FLASK CONFIG
-ENV FLASK_APP=__main__.py
-ENV FLASK_ENV=development
-ENV FLASK_DEBUG=FALSE
+#ENV FLASK_APP=__main__.py
+#ENV FLASK_ENV=development
+#ENV FLASK_DEBUG=FALSE
 
 EXPOSE 8080
 

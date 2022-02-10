@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+
 import connexion
 from dotenv import load_dotenv
 

@@ -41,28 +41,28 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
-#      security:
-#      - bearerAuth: ['secret']
+      security:
+        - api_key: []
       x-openapi-router-controller: oem_resolver.controllers.business_api_controller
-  /auth/{user_id}:
-    get:
-      summary: Return JWT token
-      operationId: oem_resolver.controllers.authorization_controller.generate_token
-      parameters:
-      - name: user_id
-        description: User unique identifier
-        in: path
-        required: true
-        example: 12
-        schema:
-          type: integer
-      responses:
-        '200':
-          description: JWT token
-          content:
-            'text/plain':
-              schema:
-                type: string
+  # /auth/{user_id}:
+  #   get:
+  #     summary: Return JWT token
+  #     operationId: oem_resolver.controllers.authorization_controller.generate_token
+  #     parameters:
+  #     - name: user_id
+  #       description: User unique identifier
+  #       in: path
+  #       required: true
+  #       example: 12
+  #       schema:
+  #         type: integer
+  #     responses:
+  #       '200':
+  #         description: JWT token
+  #         content:
+  #           'text/plain':
+  #             schema:
+  #               type: string
 components:
   schemas:
     ErrorResponse:
@@ -111,9 +111,13 @@ components:
         - "https://connector.example.com/asset1"
         - "https://connector2.example.com/asset1"
   securitySchemes:
-    bearerAuth:
-      type: http
-      scheme: bearer
-      bearerFormat: JWT
-      x-bearerInfoFunc: oem_resolver.controllers.authorization_controller.check_bearerAuth
-
+    # bearerAuth:
+    #   type: http
+    #   scheme: bearer
+    #   bearerFormat: JWT
+    #   x-bearerInfoFunc: oem_resolver.controllers.authorization_controller.check_bearerAuth
+    api_key:
+      type: apiKey
+      name: X-Auth
+      in: header
+      x-apikeyInfoFunc: oem_resolver.controllers.authorization_controller.apikey_auth
