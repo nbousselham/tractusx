@@ -57,7 +57,7 @@ function DigitalTwinOverview(){
   const updateTwins = () => {
     getTwins(filterParams)
       .then(
-        res => {setData(res); console.log(res)},
+        res => setData(res),
         error => setError(error.message)
       );
   }
