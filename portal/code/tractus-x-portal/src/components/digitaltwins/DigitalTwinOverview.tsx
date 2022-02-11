@@ -103,15 +103,15 @@ function DigitalTwinOverview(){
         <div>
           <h1 className="fs24 bold mb20">Digital Twins</h1>
           <div className="df aife jcfe mb20">
-            <SearchBox className="w300"
+            {/* <SearchBox className="w300"
               placeholder="Filter ID or description"
               value={searchInput}
               onClear={onSearchClear}
-              onChange={(_, newValue) => onSearchChange(newValue)}/>
+              onChange={(_, newValue) => onSearchChange(newValue)}/> */}
           </div>
           <ListCountSelector activeCount={selectedPageSize} onCountClick={onItemCountClick}/>
           {data.items.length > 0 ?
-            <div className="df fwrap">
+            <div className="df fwrap mt20">
               {data.items.map(twin => (
                 <Link key={twin.identification} className="m5 p20 bgpanel flex40 br4 bsdatacatalog tdn" to={{
                   pathname: `/home/digitaltwin/${twin.identification}`
