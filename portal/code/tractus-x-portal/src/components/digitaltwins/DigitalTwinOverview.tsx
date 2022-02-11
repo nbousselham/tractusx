@@ -47,7 +47,8 @@ function DigitalTwinOverview(){
   const [data, setData] = useState<TwinList>();
   const [filterParams, setFilterParams] = useState(new URLSearchParams(`page=${DEFAULT_PAGE}&pageSize=${DEFAULT_PAGE_SIZE}`))
   const [error, setError] = useState<[]>();
-  const [searchInput, setSearchInput] = useState<string>('')
+  const [searchInput, setSearchInput] = useState<string>('');
+  const [selectedPageSize, setSelectedPageSize] = useState<number>(DEFAULT_PAGE_SIZE);
 
   React.useEffect(()=>{
     updateTwins();
@@ -56,7 +57,7 @@ function DigitalTwinOverview(){
   const updateTwins = () => {
     getTwins(filterParams)
       .then(
-        res => setData(res),
+        res => {setData(res); console.log(res)},
         error => setError(error.message)
       );
   }
@@ -83,15 +84,16 @@ function DigitalTwinOverview(){
   }
 
   const onItemCountClick = (count: number) => {
-    updateFilterParams(`page=${data.currentPage}&pageSize=${count}`);
+    setSelectedPageSize(count);
+    updateFilterParams(`page=0&pageSize=${count}`);
   }
 
   const onPageBefore = () => {
-    updateFilterParams(`page=${data.currentPage - 1}&pageSize=${data.itemCount}`);
+    updateFilterParams(`page=${data.currentPage - 1}&pageSize=${selectedPageSize}`);
   }
 
   const onPageNext = () => {
-    updateFilterParams(`page=${data.currentPage + 1}&pageSize=${data.itemCount}`);
+    updateFilterParams(`page=${data.currentPage + 1}&pageSize=${selectedPageSize}`);
   }
 
   return (
@@ -107,16 +109,16 @@ function DigitalTwinOverview(){
               onClear={onSearchClear}
               onChange={(_, newValue) => onSearchChange(newValue)}/>
           </div>
-          <ListCountSelector activeCount={data.totalPages} onCountClick={onItemCountClick}/>
+          <ListCountSelector activeCount={selectedPageSize} onCountClick={onItemCountClick}/>
           {data.items.length > 0 ?
             <div className="df fwrap">
               {data.items.map(twin => (
-                <Link key={twin.globalAssetId[0]} className="m5 p20 bgpanel flex40 br4 bsdatacatalog tdn" to={{
-                  pathname: `/home/digitaltwin/${twin.globalAssetId[0]}`
+                <Link key={twin.identification} className="m5 p20 bgpanel flex40 br4 bsdatacatalog tdn" to={{
+                  pathname: `/home/digitaltwin/${twin.identification}`
                 }}>
                   <h2 className='fs24 fg191 bold mb20'>{twin.idShort}</h2>
-                  <DescriptionList title="Submodel count:" description={twin.submodelDescriptors.length}/>
-                  <DescriptionList title="specific assets count:" description={twin.specificAssetIds.length}/>
+                  {twin.submodelDescriptors && <DescriptionList title="Submodel count:" description={twin.submodelDescriptors.length}/>}
+                  {twin.specificAssetIds && <DescriptionList title="specific assets count:" description={twin.specificAssetIds.length}/>}
                 </Link>
               ))}
               <Pagination pageNumber={data.currentPage + 1}
