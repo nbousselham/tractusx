@@ -6,41 +6,31 @@ information regarding authorship.
 See the LICENSE file(s) distributed with this work for
 additional information regarding license terms.
 */
-package net.catenax.semantics.adapter.test;
+package net.catenax.semantics.framework.edc.test;
 
 import net.catenax.semantics.framework.IdsConnector;
-import net.catenax.semantics.framework.config.*;
-import net.catenax.semantics.framework.dsc.DsConnector;
 import net.catenax.semantics.framework.edc.EdcService;
+import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.ApplicationContext;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.ComponentScan;
-import org.springframework.context.annotation.Import;
 import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
-
-import javax.sql.DataSource;
-import java.io.PrintWriter;
-import java.sql.Connection;
-import java.sql.SQLException;
-import java.sql.SQLFeatureNotSupportedException;
-import java.util.logging.Logger;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
 /**
  * Tests setting up a default adapter wo special config
  */
-@SpringBootTest
-@ContextConfiguration(classes = { AdapterConfiguration.class })
-class AdapterConfigurationTest {
+@ExtendWith(SpringExtension.class)
+@ContextConfiguration(classes = { EdcConfiguration.class })
+@TestPropertySource("classpath:application.properties")
+class EdcConfigurationTest {
 
 	/**
-	 * initialize EDC
+	 * make sure the bootstrapping has been done
 	 */
 	@BeforeAll
 	public static void bootstrap() {
@@ -54,9 +44,18 @@ class AdapterConfigurationTest {
 	@Test
 	public void contextLoads(ApplicationContext context) {
 		assertThat(context).isNotNull();
-		assertThat(context.getBean(IdsConnector.class)).isNotNull();
-		assertThat(context.getBean(IdsConnector.class).getClass()).isEqualTo(DsConnector.class);
+		IdsConnector connector=context.getBean(IdsConnector.class);
+		assertThat(connector).isNotNull();
+		assertThat(connector.getClass()).isEqualTo(EdcService.class);
+		assertThat(connector.getSelfDescription()).isNotNull();
+
 	}
 
+	/**
+	 * teardown edc after tests
+	 */
+	@AfterAll
+	public static void tearDown() {
+		EdcService.tearDown();
+	}
 }
-

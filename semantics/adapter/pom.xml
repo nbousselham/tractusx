@@ -54,9 +54,22 @@
     </dependencyManagement>
 
     <dependencies>
+
         <dependency>
             <groupId>net.catenax.semantics</groupId>
             <artifactId>framework</artifactId>
+            <version>${project.parent.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>net.catenax.semantics.framework</groupId>
+            <artifactId>dsc</artifactId>
+            <version>${project.parent.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>net.catenax.semantics.framework</groupId>
+            <artifactId>edc</artifactId>
             <version>${project.parent.version}</version>
         </dependency>
 

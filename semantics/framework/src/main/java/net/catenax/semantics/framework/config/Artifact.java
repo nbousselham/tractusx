@@ -6,7 +6,6 @@ information regarding authorship.
 See the LICENSE file(s) distributed with this work for
 additional information regarding license terms.
 */
-
 package net.catenax.semantics.framework.config;
 
 import lombok.Data;

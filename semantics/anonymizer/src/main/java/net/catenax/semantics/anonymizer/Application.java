@@ -7,9 +7,8 @@ See the LICENSE file(s) distributed with this work for
 additional information regarding license terms.
 */
 
-package net.catenax.semantics.adapter;
+package net.catenax.semantics;
 
-import net.catenax.semantics.framework.edc.EdcService;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -18,21 +17,14 @@ import org.springframework.context.annotation.ComponentScan;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
-import javax.annotation.PostConstruct;
-
 /**
  * Main Adapter Application
  * TODO make sure openapi description is correct, referrer-header should give us a hint.
  */
 @SpringBootApplication
-@EnableConfigurationProperties({ConfigurationData.class})
-@ComponentScan(basePackages = {"net.catenax.semantics.adapter", "net.catenax.semantics.framework", "org.openapitools.configuration"})
-public class Application {
+@ComponentScan(basePackages = {"net.catenax.semantics", "org.openapitools.configuration"})
+public class SemanticsServicesApplication {
 
-	/**
-	 * add a webmvc configurer allowing local cors
-	 * @return webmvc
-	 */
 	@Bean
 	public WebMvcConfigurer configurer() {
 		return new WebMvcConfigurer(){
@@ -48,9 +40,7 @@ public class Application {
 	 * @param args command line
 	 */
 	public static void main(String[] args) {
-		// bootstrap EDC
-		EdcService.bootstrap();
-		new SpringApplication(Application.class).run(args);
+		new SpringApplication(SemanticsServicesApplication.class).run(args);
 	}
 
 }

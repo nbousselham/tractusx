@@ -7,12 +7,14 @@ See the LICENSE file(s) distributed with this work for
 additional information regarding license terms.
 */
 
-package net.catenax.semantics.framework.config;
+package net.catenax.semantics.framework.dsc;
 
 import feign.Client;
 import feign.Feign;
 import feign.auth.BasicAuthRequestInterceptor;
 import lombok.AllArgsConstructor;
+import net.catenax.semantics.framework.config.Config;
+import net.catenax.semantics.framework.helpers.NaiveSSLSocketFactory;
 import net.catenax.semantics.framework.dsc.client.api.*;
 import net.catenax.semantics.framework.dsc.client.invoker.ApiClient;
 
@@ -24,7 +26,6 @@ import java.security.NoSuchAlgorithmException;
 
 import java.net.Proxy;
 import java.net.InetSocketAddress;
-import java.util.function.Predicate;
 
 /**
  * A spring configuration / bean factory for creating typed and proxiable http client objects

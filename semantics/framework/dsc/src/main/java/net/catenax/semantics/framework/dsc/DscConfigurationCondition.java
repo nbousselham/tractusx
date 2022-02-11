@@ -8,9 +8,11 @@ additional information regarding license terms.
 */
 package net.catenax.semantics.framework.dsc;
 
+import net.catenax.semantics.framework.config.ConnectorCondition;
 import org.springframework.context.annotation.Condition;
 import org.springframework.context.annotation.ConditionContext;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Import;
 import org.springframework.core.type.AnnotatedTypeMetadata;
 
 /**
@@ -19,19 +21,14 @@ import org.springframework.core.type.AnnotatedTypeMetadata;
  * provides a framework for further connector types
  */
 @Configuration
+@Import({HttpClientConfiguration.class})
 public class DscConfigurationCondition implements Condition {
 
-    public static String CONNECTOR_TYPE_PROPERTY = "idsadapter.connectortype";
     public static String FH_IDS_CONNECTOR_TYPE = "DSC";
-
-    public static String getConnectorType(ConditionContext context) {
-        String res=context.getEnvironment().getProperty(CONNECTOR_TYPE_PROPERTY,FH_IDS_CONNECTOR_TYPE);
-        return res;
-    }
 
     @Override
     public boolean matches(ConditionContext context, AnnotatedTypeMetadata metadata) {
-        boolean cond=FH_IDS_CONNECTOR_TYPE.equals(DscConfigurationCondition.getConnectorType(context));
+        boolean cond=FH_IDS_CONNECTOR_TYPE.equals(ConnectorCondition.getConnectorType(context));
         return cond;
     }
 }

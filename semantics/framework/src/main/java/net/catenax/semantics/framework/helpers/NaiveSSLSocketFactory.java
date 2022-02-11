@@ -7,7 +7,7 @@ See the LICENSE file(s) distributed with this work for
 additional information regarding license terms.
 */
 
-package net.catenax.semantics.framework.config;
+package net.catenax.semantics.framework.helpers;
 
 import java.io.IOException;
 import java.net.InetAddress;

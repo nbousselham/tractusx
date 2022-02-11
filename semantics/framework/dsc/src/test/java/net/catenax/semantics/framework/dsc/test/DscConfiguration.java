@@ -6,10 +6,12 @@ information regarding authorship.
 See the LICENSE file(s) distributed with this work for
 additional information regarding license terms.
 */
-package net.catenax.semantics.framework.test;
+package net.catenax.semantics.framework.dsc.test;
 
 import net.catenax.semantics.framework.IdsConnector;
 import net.catenax.semantics.framework.config.*;
+import net.catenax.semantics.framework.test.MockConfiguration;
+import net.catenax.semantics.framework.test.MockConnector;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
@@ -20,24 +22,17 @@ import javax.sql.DataSource;
  * spring configuration of the framework tests
  */
 @Configuration
-@ComponentScan(basePackages = {"net.catenax.semantics.framework"})
-public class FrameworkConfiguration extends MockConfiguration {
+@ComponentScan(basePackages = {"net.catenax.semantics.framework", "net.catenax.semantics.framework.dsc"})
+public class DscConfiguration extends MockConfiguration {
 
     @Bean
-    @Override
     public Config<Command, Offer, Catalog, Contract, Transformation> getConfigurationData() {
         return super.getConfigurationData();
     }
 
     @Bean
-    @Override
     public DataSource getDataSource() {
         return super.getDataSource();
-    }
-
-    @Bean
-    public IdsConnector getConnector() {
-        return super.getConnector();
     }
 
 }
