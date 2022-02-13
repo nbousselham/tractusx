@@ -107,6 +107,9 @@ public class TwinRegistryAdapter<Cmd extends Command, O extends Offer, Ct extend
             log.info("Received Twin Registry response " + twinResponse.getStatusLine());
             String finalResult = IOUtils.toString(twinResponse.getEntity().getContent());
             if (twinResponse.getStatusLine().getStatusCode() != 200) {
+                if(finalResult==null || finalResult.isEmpty()) {
+                    finalResult=twinResponse.getStatusLine().getReasonPhrase();
+                }
                 throw new StatusException(finalResult,twinResponse.getStatusLine().getStatusCode());
             }
             return finalResult;

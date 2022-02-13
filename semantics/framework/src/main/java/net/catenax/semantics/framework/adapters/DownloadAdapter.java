@@ -53,6 +53,9 @@ public class DownloadAdapter<Cmd extends Command, O extends Offer, Ct extends Ca
         if(params.containsKey("command")) {
             request.setCommand(params.get("command"));
         }
+        if(params.containsKey("model")) {
+            request.setModel(params.get("model"));
+        }
 
         request.setAccepts(mediaType);
         request.setOffer(params.get("offer"));

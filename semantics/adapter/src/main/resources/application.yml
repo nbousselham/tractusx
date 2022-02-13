@@ -242,6 +242,11 @@ idsadapter:
       sourceModel: urn:com:tsystems:DataSet
       targetMediaType: application/json
       targetModel: urn:com.catenaX.semantics:1.2.0-SNAPSHOT#DigitialTwins
+  transformationParameters:
+    "[SERVICE_URL]": ${idsadapter.serviceUrl}
+    "[ADAPTER_URL]": ${idsadapter.adapterUrl}
+    "[CONNECTOR_ID]": ${idsadapter.connectorId}
+    "[PORTAL_URL]": ${idsadapter.portalUrl}
   #
   # Part 4 - Configure Backend Protocol/Commands
   #
