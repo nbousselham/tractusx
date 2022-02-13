@@ -29,7 +29,7 @@ export function DigitalTwinDetail(props){
           <div className='m5 p20 bgpanel flex40 br4 bsdatacatalog'>
             <h2 className='fs28 bold' style={{textTransform: 'uppercase'}}>{twin.idShort || twin.identification}</h2>
             <div className='mt20 mb15'>
-              {twin.description &&
+              {twin.description[0] &&
                 <DescriptionList title="Description" description={twin.description[0].text} />
               }
               {twin.submodelDescriptors && 
@@ -42,7 +42,7 @@ export function DigitalTwinDetail(props){
                   <DescriptionList title="Revision" description={twin.administration.revision} />
                 </div>
               }
-              {twin.specificAssetIds &&
+              {twin.specificAssetIds.length > 0 &&
                 <div className='mt20'>
                   <h3 className="fs20 bold">Specific Asset IDs</h3>
                   {twin.specificAssetIds.map(saId =>
@@ -81,7 +81,7 @@ export function DigitalTwinDetail(props){
               }
             </div>
           </div>
-          {twin.submodelDescriptors &&
+          {twin.submodelDescriptors.length > 0 &&
             <div className='mt20'>
               <h3 className="fs20 bold">Submodel Descriptors</h3>
               <Submodels models={twin.submodelDescriptors}></Submodels>
