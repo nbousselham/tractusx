@@ -197,17 +197,21 @@ public class ConsumerControlPanelService implements ProcessOnDataOffer {
 						.map(s -> s.concat("/data/**")).orElseThrow(
 								() -> new RuntimeException("Couldn't construct data retrieval URL from Artifact JSON"));
 
+				String contractName = getContractName(offerData.getTitle(), consumer.getName(), ld);
 				contractInformation = ContractAgreementsInformation.builder().dateEstablished(dateEstablished)
 						.status("Accepted").dataConsumer(consumer.getName())
-						.contractName("Contract " + consumer.getName() + "-" + ld.getMonth() + "/" + ld.getYear())
+						//.contractName(offerData.getTitle() + "_" + consumer.getName() + "-" + ld.getMonth() + "/" + ld.getYear())
+						.contractName(contractName)
 						.dataOfferDetails(offerData).createdTimeStamp(new Date()).modifiedTimeStamp(new Date())
 						.agreementRemoteId(agreementRemoteId).dataUrl(dataUrl).build();
 			}
 
 		} catch (Exception e) {
+			String contractName = getContractName(offerData.getTitle(), consumer.getName(), ld);
 			contractInformation = ContractAgreementsInformation.builder().dateEstablished(dateEstablished)
 					.dataConsumer(consumer.getName())
-					.contractName("Contract " + consumer.getName() + "-" + ld.getMonth() + "/" + ld.getYear())
+					//.contractName(offerData.getTitle()+ "_" + consumer.getName() + "_" + ld.getMonth() + "/" + ld.getYear())
+					.contractName(contractName)
 					.createdTimeStamp(new Date()).modifiedTimeStamp(new Date()).status("Rejected")
 					.dataOfferDetails(offerData).build();
 			log.error("Exception in establishContractbetweenconsumerAndProvider" + e.getMessage());
@@ -216,6 +220,11 @@ public class ConsumerControlPanelService implements ProcessOnDataOffer {
 		}
 
 		return ContractProcessFunction.apply(contractInformation);
+	}
+	
+	private String getContractName(String title, String consumerName, LocalDate ld ) {
+		
+		return title.trim().length() > 20 ? title + "_" + ld.getMonth() + "/" + ld.getYear():title+ "_" + consumerName + "_" + ld.getMonth() + "/" + ld.getYear();
 	}
 
 	public String readData(OrganizationDetails consumer, String agreementRemoteId, String dataUrl)
