@@ -1,4 +1,4 @@
-import DescriptionList from "../lists/descriptionlist";
+import DescriptionList from "../lists/DescriptionList";
 import { Link } from "react-router-dom";
 
 function Submodels(props){
@@ -8,7 +8,7 @@ function Submodels(props){
         <div key={submodel.identification} className='m5 p20 bgpanel flex40 br4'>
           <h3 className="fs18 bold mb10">{submodel.idShort}</h3>
           <DescriptionList title="Description" description={submodel.description[0].text}/>
-          <dl>
+          <dl className="df mb8">
             <dt className='dib minw150 fs14 fggrey'>Semantic ID</dt>
             <dd className='fs14 fg5a dib'>
               <Link
