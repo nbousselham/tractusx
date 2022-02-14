@@ -59,26 +59,6 @@ export function DigitalTwinDetail(props){
                   )}
                 </div>
               }
-              {twin.endpoints &&
-                <div className='mt20'>
-                  <h3 className="fs20 bold">Endpoints</h3>
-                  {twin.endpoints.map(twinEp => (
-                    <div key={twinEp.protocolInformation.endpointAddress}>
-                      <DescriptionList title="Interface" description={twinEp.interface}/>
-                      <dl>
-                        <dt className='dib minw150 fs14 fggrey'>Adress</dt>
-                        <dd className='fs14 fg5a dib'>
-                          <Link to={{
-                            pathname: `/home/semanticmodel/${twinEp.protocolInformation.endpointAddress}`
-                          }}>Endpoint Adress</Link>
-                        </dd>
-                      </dl>
-                      <DescriptionList title="Protocol" description={twinEp.protocolInformation.endpointProtocol}/>
-                      <DescriptionList title="Protocol Version" description={twinEp.protocolInformation.endpointProtocolVersion}/>
-                    </div>
-                  ))}
-                </div>
-              }
             </div>
           </div>
           {twin.submodelDescriptors.length > 0 &&
