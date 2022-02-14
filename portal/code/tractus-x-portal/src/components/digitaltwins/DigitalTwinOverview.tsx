@@ -61,14 +61,6 @@ function DigitalTwinOverview(){
       );
   }
 
-  const onClearFilter = () => {
-    doSearch('');
-  }
-
-  const doSearch = (searchInput) => {
-    console.log(`Filtering ${data.items.length} twins using search ${searchInput}`);
-  }
-
   const updateFilterParams = (params: string) => {
     setFilterParams(new URLSearchParams(params));
   }
@@ -112,7 +104,6 @@ function DigitalTwinOverview(){
             </div> :
             <div className="df fdc aic">
               <span className="fs20">No matches found!</span>
-              <PrimaryButton text='Reset Filter' className="mt20" onClick={onClearFilter} />
           </div>
           }
         </div> :
