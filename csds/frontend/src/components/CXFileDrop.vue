@@ -85,7 +85,7 @@ export default Vue.extend({
 @import "~@/styles/variables";
 
 #drop-zone {
-  width: 518px;
+  max-width: 518px;
   background: $grey1;
   border: 4px dashed $brand-color-green;
   box-sizing: border-box;

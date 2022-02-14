@@ -46,12 +46,12 @@
               <v-row justify="center" no-gutters>
                 <div class="d-flex col-12">
                   <v-spacer></v-spacer>
-                  <v-col cols="12" md="2">
-                    <v-subheader class="dataoffer-subheader black--text"
+                  <v-col cols="12" md="3">
+                    <v-subheader class="dataoffer-subheader black--text required-field"
                       >Title</v-subheader
                     >
                   </v-col>
-                  <v-col cols="12" md="8">
+                  <v-col cols="12" md="9">
                     <v-text-field
                       v-model="dataOfferTitle"
                       class="data-offer-title"
@@ -66,12 +66,13 @@
                 </div>
                 <div class="d-flex col-12">
                   <v-spacer></v-spacer>
-                  <v-col cols="12" md="2">
-                    <v-subheader class="dataoffer-subheader black--text"
+                  <v-col cols="12" md="3">
+                    <v-subheader
+                      class="dataoffer-subheader black--text required-field"
                       >Select file</v-subheader
                     >
                   </v-col>
-                  <v-col cols="12" md="8">
+                  <v-col cols="12" md="9">
                     <CxFileDrop ref="fileUpload" />
                   </v-col>
                   <v-spacer></v-spacer>
@@ -83,7 +84,7 @@
                 <div class="accessControlByUseCase d-flex col-12">
                   <v-spacer></v-spacer>
                   <v-col cols="12" md="4">
-                    <v-subheader class="dataoffer-subheader mt-3 black--text"
+                    <v-subheader class="dataoffer-subheader mt-3 black--text required-field"
                       >Access control by use case</v-subheader
                     >
                     <p class="px-4 text--disabled">
@@ -148,7 +149,7 @@
                 <div class="accessControlByRole d-flex col-12">
                   <v-spacer></v-spacer>
                   <v-col cols="12" md="4">
-                    <v-subheader class="dataoffer-subheader mt-3 black--text"
+                    <v-subheader class="dataoffer-subheader mt-3 black--text required-field"
                       >Access control by role</v-subheader
                     >
                     <p class="px-4 text--disabled">
@@ -288,7 +289,7 @@
                 <div class="usageControl-wrapper d-flex col-12">
                   <v-spacer></v-spacer>
                   <v-col cols="12" md="3">
-                    <v-subheader class="dataoffer-subheader mt-2 black--text"
+                    <v-subheader class="dataoffer-subheader mt-2 black--text required-field"
                       >Usage control</v-subheader
                     >
                   </v-col>
@@ -827,6 +828,7 @@ section.createOfferSection {
   height: 70vh;
 }
 .data-offer-title {
+  max-width: 518px !important;
   & .v-input__slot {
     background: $grey1 !important;
     box-shadow: none !important;
@@ -873,5 +875,9 @@ section.createOfferSection {
 }
 .red-border {
   border: 1px solid red;
+}
+.required-field::before {
+  content: "*";
+  color: red;
 }
 </style>
