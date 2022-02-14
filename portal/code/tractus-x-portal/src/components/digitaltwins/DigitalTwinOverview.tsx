@@ -12,12 +12,12 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import { IContextualMenuItem, PrimaryButton, SearchBox } from '@fluentui/react';
+import { IContextualMenuItem, PrimaryButton } from '@fluentui/react';
 import * as React from 'react';
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import ErrorMessage from '../ErrorMessage';
-import DescriptionList from '../lists/descriptionlist';
+import DescriptionList from '../lists/DescriptionList';
 import Loading from '../loading';
 import HelpContextMenu from '../navigation/HelpContextMenu/HelpContextMenu';
 import ListCountSelector from '../navigation/ListCountSelector';
@@ -47,7 +47,6 @@ function DigitalTwinOverview(){
   const [data, setData] = useState<TwinList>();
   const [filterParams, setFilterParams] = useState(new URLSearchParams(`page=${DEFAULT_PAGE}&pageSize=${DEFAULT_PAGE_SIZE}`))
   const [error, setError] = useState<[]>();
-  const [searchInput, setSearchInput] = useState<string>('');
   const [selectedPageSize, setSelectedPageSize] = useState<number>(DEFAULT_PAGE_SIZE);
 
   React.useEffect(()=>{
@@ -63,15 +62,6 @@ function DigitalTwinOverview(){
   }
 
   const onClearFilter = () => {
-    doSearch('');
-  }
-
-  const onSearchChange = (value) => {
-    setSearchInput(value);
-    doSearch(value);
-  }
-
-  const onSearchClear = () => {
     doSearch('');
   }
 
@@ -102,13 +92,6 @@ function DigitalTwinOverview(){
       {data ?
         <div>
           <h1 className="fs24 bold mb20">Digital Twins</h1>
-          <div className="df aife jcfe mb20">
-            {/* <SearchBox className="w300"
-              placeholder="Filter ID or description"
-              value={searchInput}
-              onClear={onSearchClear}
-              onChange={(_, newValue) => onSearchChange(newValue)}/> */}
-          </div>
           <ListCountSelector activeCount={selectedPageSize} onCountClick={onItemCountClick}/>
           {data.items.length > 0 ?
             <div className="df fwrap mt20">

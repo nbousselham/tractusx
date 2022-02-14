@@ -1,7 +1,6 @@
 import { useEffect, useState } from "react"
-import { Link } from "react-router-dom";
 import ErrorMessage from "../ErrorMessage";
-import DescriptionList from "../lists/descriptionlist"
+import DescriptionList from "../lists/DescriptionList"
 import Loading from "../loading";
 import BackLink from "../navigation/BackLink"
 import { getTwinById } from "./data"
@@ -30,16 +29,16 @@ export function DigitalTwinDetail(props){
             <h2 className='fs28 bold' style={{textTransform: 'uppercase'}}>{twin.idShort || twin.identification}</h2>
             <div className='mt20 mb15'>
               {twin.description[0] &&
-                <DescriptionList title="Description" description={twin.description[0].text} />
+                <DescriptionList title="Description:" description={twin.description[0].text} />
               }
               {twin.submodelDescriptors && 
-                <DescriptionList title="Submodel Endpoints Count" description={twin.submodelDescriptors.length}/>
+                <DescriptionList title="Submodel Endpoints:" description={twin.submodelDescriptors.length}/>
               }
               {twin.administration &&
                 <div className='mt20'>
                   <h3 className="fs20 bold">Administration</h3>
-                  <DescriptionList title="Version" description={twin.administration.version} />
-                  <DescriptionList title="Revision" description={twin.administration.revision} />
+                  <DescriptionList title="Version:" description={twin.administration.version} />
+                  <DescriptionList title="Revision:" description={twin.administration.revision} />
                 </div>
               }
               {twin.specificAssetIds.length > 0 &&
@@ -47,14 +46,14 @@ export function DigitalTwinDetail(props){
                   <h3 className="fs20 bold">Specific Asset IDs</h3>
                   {twin.specificAssetIds.map(saId =>
                     <div key={saId.key} className="mt15 mb15">
-                      <DescriptionList title="Key" description={saId.key} />
+                      <DescriptionList title="Key:" description={saId.key} />
                       {saId.semanticId &&
-                        <DescriptionList title="Semantic ID" description={saId.semanticId} />
+                        <DescriptionList title="Semantic ID:" description={saId.semanticId} />
                       }
                       {saId.subjectId &&
-                        <DescriptionList title="Subject ID" description={saId.subjectId} />
+                        <DescriptionList title="Subject ID:" description={saId.subjectId} />
                       }
-                      <DescriptionList title="Value" description={saId.value} />
+                      <DescriptionList title="Value:" description={saId.value} />
                     </div>
                   )}
                 </div>
