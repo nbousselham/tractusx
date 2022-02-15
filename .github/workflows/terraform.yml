@@ -110,7 +110,7 @@ jobs:
           else 
             if [[ "${{github.repository}}" == catenax/tractusx ]]; then
               if [[ "${{github.ref}}" == refs/heads/main ]]; then
-                echo "Determined INTEGRATION"
+                echo "Determined INTEGRATION (INT)"
                 echo "::set-output name=workspace::int"
               elif [[ "${{github.ref}}" == refs/heads/feature/CATX-A1-SLDT || "${{github.ref}}" == refs/heads/feature/CAX-1-semantics || "${{github.ref}}" = refs/heads/feature/CAX-1-semantics@CXMVP-50-semantic-adapter ]]; then
                   echo "Determined SEMANTICS"
