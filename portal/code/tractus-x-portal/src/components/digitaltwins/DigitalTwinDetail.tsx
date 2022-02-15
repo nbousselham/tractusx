@@ -4,12 +4,12 @@ import DescriptionList from "../lists/DescriptionList"
 import Loading from "../loading";
 import BackLink from "../navigation/BackLink"
 import { getTwinById } from "./data"
-import { DigitalTwin } from "./interfaces";
+import { ShellDescriptor } from "./interfaces";
 import Submodels from "./Submodels";
 
 export function DigitalTwinDetail(props){
   const id = props.match.params.id;
-  const [twin, setTwin] = useState<DigitalTwin>();
+  const [twin, setTwin] = useState<ShellDescriptor>();
   const [error, setError] = useState('');
 
   useEffect(() => {
@@ -34,13 +34,6 @@ export function DigitalTwinDetail(props){
               {twin.submodelDescriptors && 
                 <DescriptionList title="Submodel Endpoints:" description={twin.submodelDescriptors.length}/>
               }
-              {twin.administration &&
-                <div className='mt20'>
-                  <h3 className="fs20 bold">Administration</h3>
-                  <DescriptionList title="Version:" description={twin.administration.version} />
-                  <DescriptionList title="Revision:" description={twin.administration.revision} />
-                </div>
-              }
               {twin.specificAssetIds.length > 0 &&
                 <div className='mt20'>
                   <h3 className="fs20 bold">Specific Asset IDs</h3>
@@ -49,9 +42,6 @@ export function DigitalTwinDetail(props){
                       <DescriptionList title="Key:" description={saId.key} />
                       {saId.semanticId &&
                         <DescriptionList title="Semantic ID:" description={saId.semanticId} />
-                      }
-                      {saId.subjectId &&
-                        <DescriptionList title="Subject ID:" description={saId.subjectId} />
                       }
                       <DescriptionList title="Value:" description={saId.value} />
                     </div>
