@@ -134,6 +134,7 @@ jobs:
       IMAGE_PULL_POLICY: Always
       IMAGE_SERVICES: "catenaxacr.azurecr.io/semantics/services${{needs.environment.outputs.workspace}}:latest"
       IMAGE_ADAPTER: "catenaxacr.azurecr.io/semantics/adapter${{needs.environment.outputs.workspace}}:latest"
+      IMAGE_ANONYMIZER: "catenaxacr.azurecr.io/semantics/anonymizer${{needs.environment.outputs.workspace}}:latest"
       GRAPHDB_SHARE_NAME: catenax${{needs.environment.outputs.workspace}}graphdb
     steps:
 
@@ -214,6 +215,17 @@ jobs:
       working-directory: ./semantics
       run: |
         docker push ${{ env.IMAGE_ADAPTER }}
+
+      # TODO: uses npm as the server for debugging purposes
+    - name: Build & Containerize the Layer (Anonymizer)
+      working-directory: ./semantics
+      run: |
+        docker build -f ./anonymizer/Dockerfile -t ${{ env.IMAGE_ANONYMIZER }} .
+
+    - name: Publish the Layer (AdapterApp)
+      working-directory: ./semantics
+      run: |
+        docker push ${{ env.IMAGE_ANONYMIZER }}
 
     - name: Deploy the Layer
       working-directory: ./infrastructure/manifests

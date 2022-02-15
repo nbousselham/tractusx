@@ -287,3 +287,68 @@ spec:
     targetPort: 3030
   selector:
     app: graphdb
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: anonymizer
+  namespace: semantics
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: anonymizer
+  template:
+    metadata:
+      labels:
+        app: anonymizer
+    spec:
+      containers:
+        - name: anonymizer
+          image: $CONTAINER_REGISTRY/semantics/anonymizer${WORKSPACE}:$VERSION
+          imagePullPolicy: $IMAGE_PULL_POLICY
+          ports:
+          env:
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: anonymizer
+  namespace: semantics
+spec:
+  type: ClusterIP
+  ports:
+    - port: 8080
+      targetPort: 8080
+  selector:
+    app: anonymizer
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: anonymizer-ingress
+  namespace: semantics
+  annotations:
+    cert-manager.io/cluster-issuer: letsencrypt-service
+    acme.cert-manager.io/http01-ingress-class: service
+    nginx.ingress.kubernetes.io/rewrite-target: /$2
+    nginx.ingress.kubernetes.io/use-regex: "true"
+    nginx.ingress.kubernetes.io/enable-cors: "true"
+    nginx.ingress.kubernetes.io/cors-allow-credentials: "true"
+spec:
+  ingressClassName: service
+  tls:
+    - hosts:
+        - ${CATENA_SERVICE_URL}
+      secretName: anonymizer-certificate-secret
+  rules:
+    - host: ${CATENA_SERVICE_URL}
+      http:
+        paths:
+          - path: /anonymizer(/|$)(.*)
+            pathType: Prefix
+            backend:
+              service:
+                name: anonymizer
+                port:
+                  number: 8080

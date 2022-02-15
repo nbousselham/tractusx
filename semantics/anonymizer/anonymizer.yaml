@@ -1,0 +1,206 @@
+---
+openapi: 3.0.3
+info:
+  title: Federated Anonymizer
+  description: The Federated Anonymizer is a fractal API to realise a federation/network of anonymization services. Anonymization means that this network can produce forgettable and unreversible pseudonyms. Both original identifiers as well as the pseudonyms should follow the URN standard consisting of a namespace/domain and a local id.
+  version: v1
+servers:
+- url: /api/{api-version}
+  variables:
+    api-version:
+      default: v1
+paths:
+  /anonymize:
+    post:
+      tags:
+      - Anonymize
+      description: The anonymize endpoint maps original identifiers (URNs) into forgettable pseudonyms (URNs).
+      operationId: anonymize
+      requestBody:
+        description: The request body contains all original identifiers that should be pseudonymized.
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/IdentifierList'
+        required: true
+      responses:
+        "201":
+          description: The response body contains the mapping to pseudonyms.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PseudonymList'
+        "400":
+          description: Bad Request
+        "401":
+          description: Unauthorized
+        "500":
+          description: Internal Server Error
+  /forget:
+    post:
+      tags:
+      - Anonymize
+      description: The forget endpoint forgets pseudonyms associated to original identifiers (URNs).
+      operationId: forget
+      requestBody:
+        description: The request body contains all original identifiers that should be forgot. Typically identifiers  should consist of a namespace/domain and an id.
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/IdentifierList'
+        required: true
+      responses:
+        "201":
+          description: The response body contains the forget statistics.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Statistics'
+        "400":
+          description: Bad Request
+        "401":
+          description: Unauthorized
+        "500":
+          description: Internal Server Error
+  /federate:
+    description: The federation endpoint registers another anonymization endpoint as delegation.
+    put:
+      tags:
+      - Federate
+      description: The federation put endpoint starts a new federation
+      operationId: federate
+      requestBody:
+        description: The request body contains a federation specification.
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/FederationSpec'
+        required: true
+      responses:
+        "200":
+          description: The response body contains the registered federation specification.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FederationSpec'
+        "400":
+          description: Bad Request
+        "401":
+          description: Unauthorized
+        "404":
+          description: Not Found
+        "500":
+          description: Internal Server Error
+  /defederate:
+    description: The defederation endpoint deregisters other anonymization endpoints.
+    post:
+      tags:
+      - Federate
+      description: The defederation post endpoint ends an existing federation
+      operationId: decouple
+      requestBody:
+        description: The request body contains the endpoint to deregister.
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/EndpointSpec'
+        required: true
+      responses:
+        "200":
+          description: The response body contains the deregistered federation specification.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FederationSpec'
+        "400":
+          description: Bad Request
+        "401":
+          description: Unauthorized
+        "404":
+          description: Not Found
+        "500":
+          description: Internal Server Error
+components:
+  schemas:
+    Endpoint:
+      type: string
+      description: The endpoint of a federated anonymization service as a URL.
+      format: url
+      example: https://catenaxintakssrv.germanywestcentral.cloudapp.azure.com/specialanonymizer
+    EndpointSpec:
+      type: object
+      properties:
+        endpoint:
+          $ref: '#/components/schemas/Endpoint'
+      description: The specification of a remote anonymization service.
+    Expression:
+      type: string
+      description: A regular expression identifying the subset of ids that the federation is reponsible for.
+      format: regexp
+      example: urn:[A-Za-z0-9]+:com\.bmw.*
+    FederationSpec:
+      required:
+      - endpoint
+      - expression
+      type: object
+      properties:
+        expression:
+          $ref: '#/components/schemas/Expression'
+        endpoint:
+          $ref: '#/components/schemas/Endpoint'
+      description: The specification of a federated service
+    Domain:
+      type: string
+      description: A domain is a urn which hosts a set of identifiers.
+      format: urn
+      example: urn:standard:org.iso:9721#
+    Identifier:
+      required:
+      - domain
+      - id
+      type: object
+      properties:
+        domain:
+          $ref: '#/components/schemas/Domain'
+        id:
+          title: Id
+          type: string
+          description: The identifying/unique part within the domain.
+          example: 3GNDA53P88S595616
+      description: A (unique) identifier is a concatenation of a domain (urn) and an id (term).
+    IdentifierList:
+      type: array
+      description: Specifies a list of identifiers.
+      items:
+        $ref: '#/components/schemas/Identifier'
+    PseudonymGroup:
+      required:
+      - identifier
+      - pseudonyms
+      type: object
+      properties:
+        identifier:
+          $ref: '#/components/schemas/Identifier'
+        pseudonyms:
+          $ref: '#/components/schemas/IdentifierList'
+      description: Specifies a mapping group of pseudonyms.
+      example:
+        identifier:
+          domain: urn:standard:org.iso:9721#
+          id: 3GNDA53P88S595616
+        pseudonyms:
+        - domain: urn:VAN:com.bmw#
+          id: 1XKADB9X7XR828450
+    PseudonymList:
+      type: array
+      description: Specifies the result of a pseudonymization run.
+      items:
+        $ref: '#/components/schemas/PseudonymGroup'
+    Statistics:
+      required:
+      - totalPseudonyms
+      type: object
+      properties:
+        totalPseudonyms:
+          title: TotalPseudonyms
+          type: integer
