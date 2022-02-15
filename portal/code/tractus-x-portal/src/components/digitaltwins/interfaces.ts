@@ -1,15 +1,13 @@
 export interface TwinList {
-  items: DigitalTwin[],
+  items: ShellDescriptor[],
   totalItems: number,
   itemCount: number,
   currentPage: number,
   totalPages: number
 }
 
-export interface DigitalTwin {
-  administration: Administration,
+export interface ShellDescriptor {
   description: Description[],
-  endpoints: Endpoints[],
   globalAssetId: {
     value: [
       string
@@ -21,17 +19,11 @@ export interface DigitalTwin {
     {
       key: string,
       semanticId: semanticId,
-      subjectId: {
-        value: [
-          string
-        ]
-      },
       value: string
     }
   ],
   submodelDescriptors: [
     {
-      administration: Administration,
       description: Description[],
       endpoints: Endpoints[],
       idShort: string,
@@ -39,11 +31,6 @@ export interface DigitalTwin {
       semanticId: semanticId
     }
   ]
-}
-
-interface Administration {
-  revision: string,
-  version: string
 }
 
 interface Description {
