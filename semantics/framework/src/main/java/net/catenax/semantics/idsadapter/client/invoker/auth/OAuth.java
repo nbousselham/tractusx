@@ -8,6 +8,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.stream.Collectors;
 
+import feign.*;
 import org.apache.oltu.oauth2.client.HttpClient;
 import org.apache.oltu.oauth2.client.OAuthClient;
 import org.apache.oltu.oauth2.client.request.OAuthClientRequest;
@@ -21,14 +22,8 @@ import org.apache.oltu.oauth2.common.exception.OAuthSystemException;
 import org.apache.oltu.oauth2.common.message.types.GrantType;
 import org.apache.oltu.oauth2.common.token.BasicOAuthToken;
 
-import feign.Client;
 import feign.Request.Options;
 import net.catenax.semantics.idsadapter.client.invoker.StringUtil;
-import feign.RequestInterceptor;
-import feign.RequestTemplate;
-import feign.Response;
-import feign.RetryableException;
-import feign.Util;
 
 
 public class OAuth implements RequestInterceptor {
@@ -95,7 +90,7 @@ public class OAuth implements RequestInterceptor {
         try {
             accessTokenResponse = oauthClient.accessToken(tokenRequestBuilder.buildBodyMessage());
         } catch (Exception e) {
-            throw new RetryableException(e.getMessage(), e,null);
+            throw new RetryableException(500,e.getMessage(), Request.HttpMethod.POST,e,null,null);
         }
         if (accessTokenResponse != null && accessTokenResponse.getAccessToken() != null) {
             setAccessToken(accessTokenResponse.getAccessToken(), accessTokenResponse.getExpiresIn());
