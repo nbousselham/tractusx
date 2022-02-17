@@ -15,7 +15,7 @@ import net.catenax.semantics.framework.IdsConnector;
 import net.catenax.semantics.framework.IdsRequest;
 import net.catenax.semantics.framework.IdsResponse;
 import net.catenax.semantics.framework.config.*;
-import org.eclipse.dataspaceconnector.core.monitor.ConsoleMonitor;
+import org.eclipse.dataspaceconnector.spi.monitor.ConsoleMonitor;
 import org.eclipse.dataspaceconnector.boot.monitor.MonitorProvider;
 //import org.eclipse.dataspaceconnector.dataloading.AssetLoader;
 //import org.eclipse.dataspaceconnector.ids.spi.descriptor.IdsDescriptorService;
