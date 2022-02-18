@@ -8,15 +8,16 @@
     See the LICENSE file(s) distributed with this work for
     additional information regarding license terms.
 -->
-
+<!-- Maven POM file to the SLDT DSC framework -->
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <parent>
         <groupId>net.catenax</groupId>
         <artifactId>semantics</artifactId>
-        <version>1.2.0-SNAPSHOT</version>
+        <version>${revision}</version>
         <relativePath>../../pom.xml</relativePath>
     </parent>
+
     <groupId>net.catenax.semantics.framework</groupId>
     <artifactId>dsc</artifactId>
     <name>Catena-X Semantic Layer DSC Framework</name>
@@ -24,8 +25,8 @@
     <packaging>jar</packaging>
 
     <organization>
-        <name>Catena-X Consortium</name>
-        <url>https://catena-x.net/</url>
+        <name>${organization}</name>
+        <url>${url}</url>
     </organization>
 
     <licenses>
@@ -33,6 +34,7 @@
             <name>${licence_name}</name>
             <url>${licence_url}</url>
             <distribution>${licence_distribution}</distribution>
+            <comments>${licence_comments}</comments>
         </license>
     </licenses>
 
@@ -61,7 +63,6 @@
             <artifactId>assertj-core</artifactId>
             <scope>test</scope>
         </dependency>
-
     </dependencies>
 
     <build>
@@ -69,32 +70,6 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
-                <version>3.8.1</version>
-                <configuration>
-                    <!--<release>${java.version}</release>-->
-                    <annotationProcessorPaths>
-                        <path>
-                            <groupId>org.projectlombok</groupId>
-                            <artifactId>lombok</artifactId>
-                            <version>${lombok.version}</version>
-                        </path>
-                        <path>
-                            <groupId>org.mapstruct</groupId>
-                            <artifactId>mapstruct-processor</artifactId>
-                            <version>1.4.2.Final</version>
-                        </path>
-                        <path>
-                            <groupId>org.projectlombok</groupId>
-                            <artifactId>lombok</artifactId>
-                            <version>${lombok.version}</version>
-                        </path>
-                        <path>
-                            <groupId>org.projectlombok</groupId>
-                            <artifactId>lombok-mapstruct-binding</artifactId>
-                            <version>0.2.0</version>
-                        </path>
-                    </annotationProcessorPaths>
-                </configuration>
             </plugin>
         </plugins>
     </build>

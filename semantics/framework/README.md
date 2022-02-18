@@ -49,6 +49,6 @@ IDS connector client stubs which have been placed under the ordinary src folder.
    <dependency>
       <groupId>net.catenax.semantics</groupId>
       <artifactId>framework</artifactId>
-      <version>${project.parent.version}</version>
+      <version>${sldt.version}</version>
    </dependency>
 ```

@@ -9,7 +9,7 @@ additional information regarding license terms.
 -->
 
 The Digital Twin & Semantic Layer is a logical and architectural component of Catena-X.
-The source code under this folder helps to realize them in the form of blueprints/frameworks as well 
+The source code under this folder helps to implement its modules in the form of blueprints/frameworks as well 
 as concrete services.
 
 If you are looking for semantic models (hosted or processed by this code), please refer to
@@ -21,8 +21,8 @@ The Semantic layer is structured into the following packages/submodules:
 - [Catena-X Semantic Framework](framework) A library for building your own semantic-enabled Catena-X components.
 - [Catena-X Semantic Adapter](adapter) A sample adapter demonstrating how to build a semantically-enabled twin & data provider.
 - [Catena-X Semantic Framework](services) Reference implementations of relevant semantic services:
-  - Digital Twin Registry and 
-  - Semantic Hub
+  - Digital Twin Registry (implementing and federating [Asset Administration Shell APIs]()) and 
+  - Semantic Hub (based on the [BAMM Aspect Meta Model]())
 
 ### Devops & Deployment:
 
