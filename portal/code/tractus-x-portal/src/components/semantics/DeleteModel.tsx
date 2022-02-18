@@ -39,7 +39,7 @@ export default function DeleteModel(props){
         history.push('/home/semantichub/');
       },
       error => {
-        setError(error.message);
+        setError(error.statusText);
         toggleHideDeleteDialog();
         toggleHideErrorDialog();
       }
