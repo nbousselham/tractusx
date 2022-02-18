@@ -15,6 +15,8 @@ import java.util.Map;
 import java.util.concurrent.ExecutionException;
 
 import net.catenax.semantics.framework.*;
+import net.catenax.semantics.framework.auth.BearerTokenOutgoingInterceptor;
+import net.catenax.semantics.framework.auth.BearerTokenWrapper;
 import net.catenax.semantics.framework.config.*;
 import org.apache.commons.io.IOUtils;
 import org.apache.http.HttpHost;
@@ -36,14 +38,17 @@ import javax.annotation.PostConstruct;
 @Service
 public class TwinRegistryAdapter<Cmd extends Command, O extends Offer, Ct extends Catalog, Co extends Contract, T extends Transformation> extends BaseAdapter<Cmd,O,Ct,Co,T> {
 
+    private final BearerTokenOutgoingInterceptor interceptor;
+
     /**
      * delegate to super
      * @param configurationData
      * @param connector
      */
-    public TwinRegistryAdapter(Config<Cmd,O,Ct,Co,T> configurationData, IdsConnector connector) {
+    public TwinRegistryAdapter(Config<Cmd,O,Ct,Co,T> configurationData, IdsConnector connector, BearerTokenOutgoingInterceptor interceptor) {
         super(configurationData);
         setIdsConnector(connector);
+        this.interceptor=interceptor;
     }
 
     /**
@@ -91,6 +96,7 @@ public class TwinRegistryAdapter<Cmd extends Command, O extends Offer, Ct extend
                     DefaultProxyRoutePlanner routePlanner = new DefaultProxyRoutePlanner(proxyHost);
                     HttpClientBuilder clientBuilder = HttpClients.custom();
                     clientBuilder = clientBuilder.setRoutePlanner(routePlanner);
+                    clientBuilder.addInterceptorFirst(interceptor);
                     httpclient = clientBuilder.build();
                 }
             }

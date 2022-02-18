@@ -13,13 +13,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
-package net.catenax.semantics;
+package net.catenax.semantics.adapter;
 
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
+
 
 @Configuration
 public class OAuthSecurityConfig extends WebSecurityConfigurerAdapter {
@@ -28,9 +28,7 @@ public class OAuthSecurityConfig extends WebSecurityConfigurerAdapter {
         http
           .authorizeRequests(auth -> auth
             .antMatchers(HttpMethod.OPTIONS).permitAll()
-            .antMatchers("/**/registry/**").authenticated()
-            .antMatchers("/**/lookup/**").authenticated()
-            .antMatchers("/**/models/**").authenticated())
+            .antMatchers("/**/adapter/**").authenticated())
           .oauth2ResourceServer()
           .jwt();
     }

@@ -15,7 +15,7 @@
 #   Windows, (git)-bash shell, java 11 (java) and maven (mvn) in the $PATH.
 #
 # Synposis: 
-#   ./run_local.sh (-build)? (clean)? (-suspend)? (-debug)?
+#   ./run_local.sh (-build)? (clean)? (-suspend)? (-debug)? (-proxy)?
 #
 # Comments: 
 #
@@ -25,6 +25,7 @@ DEBUG_SUSPEND=n
 DEBUG_OPTIONS=
 DB_FILE=./target/db_semantics
 CLEAN_DB=n
+PROXY=
 
 for var in "$@"
 do
@@ -40,6 +41,10 @@ do
           if [ "$var" == "-clean" ]; then
             CLEAN_DB=y
             mvn clean
+          else
+            if [ "$var" == "-proxy" ]; then
+              PROXY="-Dhttp.proxyHost=${HTTP_PROXY_HOST} -Dhttp.proxyPort=${HTTP_PROXY_PORT} -Dhttps.proxyHost=${HTTP_PROXY_HOST} -Dhttps.proxyPort=${HTTP_PROXY_PORT}"
+            fi
           fi
         fi
       fi
@@ -52,10 +57,10 @@ if [ "$CLEAN_DB" == "y" ]; then
   rm -f ${DB_FILE}*
 fi
 
-CALL_ARGS="-classpath ./src/main/resources;target/services-1.2.0-SNAPSHOT.jar \
+CALL_ARGS="-classpath target/services-1.3.0-SNAPSHOT.jar \
            -Dspring.datasource.url=$H2_URL\
-           -Dserver.ssl.enabled=false $DEBUG_OPTIONS\
-           org.springframework.boot.loader.JarLauncher" 
+           -Dserver.ssl.enabled=false $DEBUG_OPTIONS $PROXY\
+           org.springframework.boot.loader.JarLauncher"
 
 java ${CALL_ARGS}
 

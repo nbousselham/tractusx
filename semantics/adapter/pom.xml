@@ -14,7 +14,7 @@
     <parent>
         <groupId>net.catenax</groupId>
         <artifactId>semantics</artifactId>
-        <version>${revision}</version>
+        <version>1.3.0-SNAPSHOT</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
 
@@ -43,19 +43,19 @@
         <dependency>
             <groupId>net.catenax.semantics</groupId>
             <artifactId>framework</artifactId>
-            <version>${project.version}</version>
+            <version>${project.parent.version}</version>
         </dependency>
 
         <dependency>
             <groupId>net.catenax.semantics.framework</groupId>
             <artifactId>dsc</artifactId>
-            <version>${project.version}</version>
+            <version>${project.parent.version}</version>
         </dependency>
 
         <dependency>
             <groupId>net.catenax.semantics.framework</groupId>
             <artifactId>edc</artifactId>
-            <version>${project.version}</version>
+            <version>${project.parent.version}</version>
         </dependency>
 
         <!-- Spring -->
@@ -76,6 +76,11 @@
             <artifactId>spring-boot-starter-test</artifactId>
             <scope>test</scope>
         </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-oauth2-resource-server</artifactId>
+        </dependency>
+
 
         <!-- persistence -->
         <dependency>

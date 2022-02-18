@@ -40,6 +40,10 @@ do
           if [ "$var" == "-clean" ]; then
             CLEAN_DB=y
             mvn clean
+          else
+            if [ "$var" == "-proxy" ]; then
+              PROXY="-Dhttp.proxyHost=${HTTP_PROXY_HOST} -Dhttp.proxyPort=${HTTP_PROXY_PORT} -Dhttps.proxyHost=${HTTP_PROXY_HOST} -Dhttps.proxyPort=${HTTP_PROXY_PORT}"
+            fi
           fi
         fi
       fi
@@ -52,9 +56,9 @@ if [ "$CLEAN_DB" == "y" ]; then
   rm -f ${DB_FILE}*
 fi
 
-CALL_ARGS="-classpath ./src/main/resources;target/adapter-1.2.0-SNAPSHOT.jar \
+CALL_ARGS="-classpath ./src/main/resources;target/adapter-1.3.0-SNAPSHOT.jar \
            -Dspring.datasource.url=$H2_URL\
-           -Dserver.ssl.enabled=false $DEBUG_OPTIONS\
+           -Dserver.ssl.enabled=false $DEBUG_OPTIONS $PROXY\
            org.springframework.boot.loader.JarLauncher" 
 
 java ${CALL_ARGS}
