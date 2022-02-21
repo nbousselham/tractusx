@@ -96,15 +96,17 @@ public class TwinRegistryAdapter<Cmd extends Command, O extends Offer, Ct extend
                     DefaultProxyRoutePlanner routePlanner = new DefaultProxyRoutePlanner(proxyHost);
                     HttpClientBuilder clientBuilder = HttpClients.custom();
                     clientBuilder = clientBuilder.setRoutePlanner(routePlanner);
-                    clientBuilder.addInterceptorFirst(interceptor);
+                    clientBuilder = clientBuilder.addInterceptorFirst(interceptor);
                     httpclient = clientBuilder.build();
                 }
             }
 
             if(httpclient==null) {
-                httpclient = HttpClients.createDefault();
+                HttpClientBuilder clientBuilder = HttpClients.custom();
+                clientBuilder.addInterceptorFirst(interceptor);
+                httpclient = clientBuilder.build();
             }
-            HttpPost httppost = new HttpPost(configurationData.getServiceUrl() + "/twins");
+            HttpPost httppost = new HttpPost(configurationData.getServiceUrl() + "/registry/shell-descriptors");
             httppost.addHeader("accept", responseMessage.getMediaType());
             httppost.setHeader("Content-type", responseMessage.getMediaType());
             httppost.setEntity(new StringEntity(responseMessage.getPayload()));

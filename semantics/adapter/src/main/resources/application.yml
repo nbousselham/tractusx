@@ -117,7 +117,7 @@ idsadapter:
   connectorPassword: password
   publisher: http://t-systems.com
   # our callback address exposed
-  serviceUrl: http://localhost:4242/api/v1
+  serviceUrl: http://localhost:4242
   adapterUrl: http://localhost:4243/api/v1
   callbackPattern: "%1$s/%2$s/download?offer=%3$s&representation=%4$s&artifact=%5$s"
   portalUrl: http://localhost:3000
