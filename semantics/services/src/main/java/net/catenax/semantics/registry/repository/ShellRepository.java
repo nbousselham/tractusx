@@ -15,8 +15,12 @@
  */
 package net.catenax.semantics.registry.repository;
 
+import net.catenax.semantics.aas.registry.model.AssetAdministrationShellDescriptor;
+import net.catenax.semantics.registry.mapper.ShellMapperCustomization;
 import net.catenax.semantics.registry.model.Shell;
 import net.catenax.semantics.registry.model.projection.ShellMinimal;
+import org.mapstruct.AfterMapping;
+import org.mapstruct.MappingTarget;
 import org.springframework.data.jdbc.repository.query.Query;
 import org.springframework.data.repository.PagingAndSortingRepository;
 import org.springframework.data.repository.query.Param;
@@ -36,4 +40,5 @@ public interface ShellRepository extends PagingAndSortingRepository<Shell, UUID>
 
     @Query("select distinct s.id_external from shell s where s.id in (select distinct si.fk_shell_id from shell_identifier si where CONCAT(si.key, ':', si.value) in (:keyValueCombinations))")
     List<String> findExternalShellIdsByIdentifiers(@Param("keyValueCombinations") Set<String> keyValueCombinations);
+
 }

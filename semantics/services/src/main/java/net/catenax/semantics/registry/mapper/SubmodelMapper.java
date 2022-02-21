@@ -67,9 +67,6 @@ public interface SubmodelMapper {
 
     @AfterMapping
     default Submodel convertGlobalAssetIdToShellIdentifier(SubmodelDescriptor apiDto, @MappingTarget Submodel subModel){
-        if(subModel.getId()==null && subModel.getIdExternal()!=null) {
-            subModel=subModel.withId(UUID.fromString(subModel.getIdExternal()));
-        }
         return subModel;
     }
 

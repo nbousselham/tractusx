@@ -41,12 +41,14 @@ public class ShellMapperCustomization {
         }
         ShellIdentifier shellIdentifier = shellIdentifierOptional.get();
         if(shell.getIdentifiers() == null){
-            return shell.withIdentifiers(Set.of(shellIdentifier));
+            shell.setIdentifiers(Set.of(shellIdentifier));
+            return shell;
         }
-        return shell.withIdentifiers( new HashSet<>(){{
+        shell.setIdentifiers( new HashSet<>(){{
             addAll( shell.getIdentifiers());
             add(shellIdentifier);
         }});
+        return shell;
     }
 
     public static void shellIdentifierToGlobalAssetId(Shell shell, AssetAdministrationShellDescriptor apiDto) {

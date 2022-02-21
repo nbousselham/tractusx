@@ -9,15 +9,7 @@
 #
 
 ###########################################################
-# Configuration of the Semantic Layer including the 
-# Semantic Hub
-#    Managing Aspect Models
-# Twin Registry 
-#    Listing Digital Twins and their Aspect Implementations
-# Simple Semantic Adapter Service
-#    Connecting Backend Systems to Catena-X IDS
-#    Providing Aspect Implementations = IDS Artifacts
-#    Registering Owned Digitial Twins
+# Configuration of the Semantic Layer
 ###########################################################
 
 #  Endpoint configuration for service provisioning and data pull

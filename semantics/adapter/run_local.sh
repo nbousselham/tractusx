@@ -20,7 +20,7 @@
 # Comments: 
 #
 
-DEBUG_PORT=8888
+DEBUG_PORT=8889
 DEBUG_SUSPEND=n
 DEBUG_OPTIONS=
 DB_FILE=./target/db_semantics

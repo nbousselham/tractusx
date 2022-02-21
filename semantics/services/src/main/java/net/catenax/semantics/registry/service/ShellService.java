@@ -29,6 +29,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.data.relational.core.conversion.DbActionExecutionException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -85,9 +86,9 @@ public class ShellService {
     @Transactional
     public Shell update(String externalShellId, Shell shell){
         ShellMinimal shellFromDb = findShellMinimalByExternalId(externalShellId);
-        return shellRepository.save(
-                shell.withId(shellFromDb.getId()).withCreatedDate(shellFromDb.getCreatedDate())
-        );
+        shell.setId(shellFromDb.getId());
+        shell.setCreatedDate(shellFromDb.getCreatedDate());
+        return shellRepository.save(shell);
     }
 
     @Transactional
@@ -121,17 +122,17 @@ public class ShellService {
     @Transactional
     public Submodel save(String externalShellId, Submodel submodel){
         ShellMinimal shellId = findShellMinimalByExternalId(externalShellId);
-        return submodelRepository.save(submodel.withShellId(shellId.getId()));
+        submodel.setShellId(shellId.getId());
+        return submodelRepository.save(submodel);
     }
 
     @Transactional
     public Submodel update(String externalShellId, String externalSubmodelId, Submodel submodel){
         ShellMinimal shellId = findShellMinimalByExternalId(externalShellId);
         SubmodelMinimal subModelId = findSubmodelMinimalByExternalId(shellId.getId(), externalSubmodelId);
-        return submodelRepository.save(submodel
-                .withId(subModelId.getId())
-                .withShellId(shellId.getId())
-        );
+        submodel.setId(subModelId.getId());
+        submodel.setShellId(shellId.getId());
+        return submodelRepository.save(submodel);
     }
 
     @Transactional

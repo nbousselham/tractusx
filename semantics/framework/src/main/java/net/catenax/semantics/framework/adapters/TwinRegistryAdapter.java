@@ -14,6 +14,13 @@ import java.io.UnsupportedEncodingException;
 import java.util.Map;
 import java.util.concurrent.ExecutionException;
 
+import com.fasterxml.jackson.core.JsonFactory;
+import com.fasterxml.jackson.core.JsonParser;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonMappingException;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ArrayNode;
 import net.catenax.semantics.framework.*;
 import net.catenax.semantics.framework.auth.BearerTokenOutgoingInterceptor;
 import net.catenax.semantics.framework.auth.BearerTokenWrapper;
@@ -42,13 +49,14 @@ public class TwinRegistryAdapter<Cmd extends Command, O extends Offer, Ct extend
 
     /**
      * delegate to super
+     *
      * @param configurationData
      * @param connector
      */
-    public TwinRegistryAdapter(Config<Cmd,O,Ct,Co,T> configurationData, IdsConnector connector, BearerTokenOutgoingInterceptor interceptor) {
+    public TwinRegistryAdapter(Config<Cmd, O, Ct, Co, T> configurationData, IdsConnector connector, BearerTokenOutgoingInterceptor interceptor) {
         super(configurationData);
         setIdsConnector(connector);
-        this.interceptor=interceptor;
+        this.interceptor = interceptor;
     }
 
     /**
@@ -57,12 +65,12 @@ public class TwinRegistryAdapter<Cmd extends Command, O extends Offer, Ct extend
      */
     @PostConstruct
     public void setup() {
-        if(configurationData.isRegisterOnStart()) {
-            for(TwinSource twin : configurationData.getTwinSources()) {
+        if (configurationData.isRegisterOnStart()) {
+            for (TwinSource twin : configurationData.getTwinSources()) {
                 try {
-                    System.out.println(registerTwins(twin.getProtocol(),twin.getCommand(),twin.getParameters()));
-                } catch(Exception e) {
-                    log.error("Could not register twins from command "+twin.getCommand()+" and protocol "+twin.getProtocol()+" in connector. Maybe it is not active?",e);
+                    System.out.println(registerTwins(twin.getProtocol(), twin.getCommand(), twin.getParameters()));
+                } catch (Exception e) {
+                    log.error("Could not register twins from command " + twin.getCommand() + " and protocol " + twin.getProtocol() + " in connector. Maybe it is not active?", e);
                 }
             }
         }
@@ -70,13 +78,14 @@ public class TwinRegistryAdapter<Cmd extends Command, O extends Offer, Ct extend
 
     /**
      * registers new twins
-     * @param protocol use the backend protocol
-     * @param command use the backend command
+     *
+     * @param protocol   use the backend protocol
+     * @param command    use the backend command
      * @param parameters a map of parameters
      * @return the registration response from the registry copied
      */
-    public String registerTwins(String protocol, String command, Map<String,String> parameters) throws StatusException {
-        IdsRequest request=new IdsRequest();
+    public String registerTwins(String protocol, String command, Map<String, String> parameters) throws StatusException {
+        IdsRequest request = new IdsRequest();
         request.setProtocol(protocol);
         request.setCommand(command);
         request.setParameters(parameters);
@@ -85,8 +94,8 @@ public class TwinRegistryAdapter<Cmd extends Command, O extends Offer, Ct extend
         IdsResponse response = idsConnector.perform(request);
         try {
             IdsMessage responseMessage = response.getMessage().get();
-            HttpClient httpclient=null;
-            if(configurationData.getProxyUrl()!=null) {
+            HttpClient httpclient = null;
+            if (configurationData.getProxyUrl() != null) {
                 boolean noProxy = false;
                 for (String noProxyHost : configurationData.getNoProxyHosts()) {
                     noProxy = noProxy || configurationData.getServiceUrl().contains(noProxyHost);
@@ -101,31 +110,54 @@ public class TwinRegistryAdapter<Cmd extends Command, O extends Offer, Ct extend
                 }
             }
 
-            if(httpclient==null) {
+            if (httpclient == null) {
                 HttpClientBuilder clientBuilder = HttpClients.custom();
                 clientBuilder.addInterceptorFirst(interceptor);
                 httpclient = clientBuilder.build();
             }
-            HttpPost httppost = new HttpPost(configurationData.getServiceUrl() + "/registry/shell-descriptors");
-            httppost.addHeader("accept", responseMessage.getMediaType());
-            httppost.setHeader("Content-type", responseMessage.getMediaType());
-            httppost.setEntity(new StringEntity(responseMessage.getPayload()));
-            log.info("Accessing Twin Registry via " + httppost.getRequestLine());
-            HttpResponse twinResponse = httpclient.execute(httppost);
-            log.info("Received Twin Registry response " + twinResponse.getStatusLine());
-            String finalResult = IOUtils.toString(twinResponse.getEntity().getContent());
-            if (twinResponse.getStatusLine().getStatusCode() != 200) {
-                if(finalResult==null || finalResult.isEmpty()) {
-                    finalResult=twinResponse.getStatusLine().getReasonPhrase();
+            ObjectMapper om = new ObjectMapper();
+            JsonNode[] nodes = new JsonNode[]{om.readTree(responseMessage.getPayload())};
+            if (nodes[0].isArray()) {
+                ArrayNode arrayNode = (ArrayNode) nodes[0];
+                nodes = new JsonNode[arrayNode.size()];
+                for (int i = 0; i < arrayNode.size(); i++) {
+                    nodes[i] = arrayNode.get(i);
                 }
-                throw new StatusException(finalResult,twinResponse.getStatusLine().getStatusCode());
             }
-            return finalResult;
-        } catch(InterruptedException | ExecutionException e) {
-            throw new StatusException("Could not synchronize on twin backend request",e,501);
-        } catch(IOException e) {
-            throw new StatusException("Could not perform twin registration request",e,501);
+            StringBuilder finalResult = new StringBuilder();
+            finalResult.append("[");
+            for (int count = 0; count < nodes.length; count++) {
+                HttpPost httppost = new HttpPost(configurationData.getServiceUrl() + "/registry/shell-descriptors");
+                httppost.addHeader("accept", responseMessage.getMediaType());
+                httppost.setHeader("Content-type", responseMessage.getMediaType());
+                String thatPayLoad=om.writeValueAsString(nodes[count]);
+                httppost.setEntity(new StringEntity(thatPayLoad));
+                log.info("Accessing Twin Registry via " + httppost.getRequestLine());
+                HttpResponse twinResponse = httpclient.execute(httppost);
+                log.info("Received Twin Registry response " + twinResponse.getStatusLine());
+                int statusCode = twinResponse.getStatusLine().getStatusCode();
+                if (statusCode < 200 || statusCode >= 300) {
+                    if (nodes.length == 1) {
+                        finalResult.append("\"");
+                        finalResult.append(twinResponse.getStatusLine().getReasonPhrase());
+                        finalResult.append("\"]");
+                        throw new StatusException(finalResult.toString(), twinResponse.getStatusLine().getStatusCode());
+                    } else {
+                        log.warn("Got a status of " + statusCode + " for intermediate twin " + count + " Ignoring.");
+                    }
+                } else {
+                    if (count > 0) {
+                        finalResult.append(",");
+                    }
+                    finalResult.append(IOUtils.toString(twinResponse.getEntity().getContent()));
+                }
+            }
+            finalResult.append("]");
+            return finalResult.toString();
+        } catch (InterruptedException | ExecutionException e) {
+            throw new StatusException("Could not synchronize on twin backend request", e, 501);
+        } catch (IOException e) {
+            throw new StatusException("Could not perform twin registration request", e, 501);
         }
     }
-
 }

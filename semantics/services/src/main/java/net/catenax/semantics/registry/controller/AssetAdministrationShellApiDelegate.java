@@ -105,17 +105,21 @@ public class AssetAdministrationShellApiDelegate implements RegistryApiDelegate,
 
     @Override
     public ResponseEntity<Void> putAssetAdministrationShellDescriptorById(String aasIdentifier, AssetAdministrationShellDescriptor assetAdministrationShellDescriptor) {
-        shellService.update(aasIdentifier, shellMapper.fromApiDto(assetAdministrationShellDescriptor)
+        Shell dto= shellMapper.fromApiDto(assetAdministrationShellDescriptor);
+        dto.setIdExternal(aasIdentifier);
+        shellService.update(aasIdentifier,
                 // the external id in the payload must not differ from the path parameter and will be overridden
-                .withIdExternal(aasIdentifier));
+                dto);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 
     @Override
     public ResponseEntity<Void> putSubmodelDescriptorById(String aasIdentifier, String submodelIdentifier, SubmodelDescriptor submodelDescriptor) {
-        shellService.update(aasIdentifier, submodelIdentifier, submodelMapper.fromApiDto(submodelDescriptor)
+        Submodel submodel=submodelMapper.fromApiDto(submodelDescriptor);
+        submodel.setIdExternal(submodelIdentifier);
+        shellService.update(aasIdentifier, submodelIdentifier,
                 // the external id in the payload must not differ from the path parameter and will be overridden
-                .withIdExternal(submodelIdentifier));
+                submodel);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 

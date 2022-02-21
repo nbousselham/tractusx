@@ -54,9 +54,6 @@ public interface ShellMapper {
 
     @AfterMapping
     default Shell convertGlobalAssetIdToShellIdentifier(AssetAdministrationShellDescriptor apiDto, @MappingTarget Shell shell){
-        if(shell.getId()==null && shell.getIdExternal()!=null) {
-            shell=shell.withId(UUID.fromString(shell.getIdExternal()));
-        }
         return ShellMapperCustomization.globalAssetIdToShellIdentifier(apiDto, shell);
     }
 
