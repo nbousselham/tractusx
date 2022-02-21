@@ -21,6 +21,7 @@ import org.mapstruct.*;
 
 import java.util.List;
 import java.util.Set;
+import java.util.UUID;
 
 @Mapper(componentModel = "spring", injectionStrategy = InjectionStrategy.CONSTRUCTOR)
 public interface SubmodelMapper {
@@ -63,5 +64,14 @@ public interface SubmodelMapper {
         reference.setValue(List.of(semanticId));
         return reference;
     }
+
+    @AfterMapping
+    default Submodel convertGlobalAssetIdToShellIdentifier(SubmodelDescriptor apiDto, @MappingTarget Submodel subModel){
+        if(subModel.getId()==null && subModel.getIdExternal()!=null) {
+            subModel=subModel.withId(UUID.fromString(subModel.getIdExternal()));
+        }
+        return subModel;
+    }
+
 
 }
