@@ -14,10 +14,10 @@
 
 # Exposed Web Server (Incoming)
 server:
-  port: 4243
+  port: 4242
 openapi:
   dotAASPart2HTTPRESTRegistryAndDiscovery:
-    base-path: semantics
+    base-path:
 # Delegatied Web Server (Outgoing)
 aasproxy:
   noProxyHosts: localhost
