@@ -546,7 +546,7 @@ components:
         endpointAddress:
           type: string
           minLength: 1
-          maxLength: 300
+          maxLength: 512
         endpointProtocol:
           type: string
           minLength: 1
@@ -608,7 +608,7 @@ components:
   #    - $ref: '#/components/schemas/Reference'
     Identifier:
       type: string
-      minLength: 1
+      minLength: 0
       maxLength: 200
     ModelReference:
       required:
@@ -668,7 +668,7 @@ components:
         properties:
           key:
             type: string
-            minLength: 1
+            minLength: 0
             maxLength: 200
           subjectId:
             $ref: '#/components/schemas/Reference'

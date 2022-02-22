@@ -10232,12 +10232,11 @@
 											}
 										],
 										"url": {
-											"raw": "{{serviceUrl}}/semantics/registry/shell-descriptors?page=0&pageSize=10",
+											"raw": "{{semanticServicesUrl}}/registry/shell-descriptors?page=0&pageSize=10",
 											"host": [
-												"{{serviceUrl}}"
+												"{{semanticServicesUrl}}"
 											],
 											"path": [
-												"semantics",
 												"registry",
 												"shell-descriptors"
 											],
@@ -10310,7 +10309,7 @@
 										],
 										"body": {
 											"mode": "raw",
-											"raw": "{\n  \"description\": [\n    {\n      \"language\": \"en\",\n      \"text\": \"The shell for a vehicle\"\n    }\n  ],\n  \"globalAssetId\": {\n    \"value\": [\n      \"VIN1230941209423423\"\n    ]\n  },\n  \"idShort\": \"future concept x\",\n  \"identification\": \"882fc530-b69b-4707-95f6-5dbc5e9baaa8\",\n  \"specificAssetIds\": [\n    {\n      \"key\": \"engineserialid\",\n      \"value\": \"12309481209312\"\n    }\n  ],\n  \"submodelDescriptors\": [\n    {\n      \"description\": [\n        {\n          \"language\": \"en\",\n          \"text\": \"Provides base vehicle information\"\n        }\n      ],\n      \"idShort\": \"vehicle base details\",\n      \"identification\": \"4a738a24-b7d8-4989-9cd6-387772f40565\",\n      \"semanticId\": {\n        \"value\": [\n          \"urn:bamm:com.catenax.vehicle:0.1.1\"\n        ]\n      },\n      \"endpoints\": [\n        {\n          \"interface\": \"HTTP\",\n          \"protocolInformation\": {\n            \"endpointAddress\": \"https://catena-x.net/vehicle/basedetails/\",\n            \"endpointProtocol\": \"HTTPS\",\n            \"endpointProtocolVersion\": \"1.0\"\n          }\n        }\n      ]\n    },\n    {\n      \"description\": [\n        {\n          \"language\": \"en\",\n          \"text\": \"Provides base vehicle information\"\n        }\n      ],\n      \"idShort\": \"vehicle part details\",\n      \"identification\": \"dae4d249-6d66-4818-b576-bf52f3b9ae90\",\n      \"semanticId\": {\n        \"value\": [\n          \"urn:bamm:com.catenax.vehicle:0.1.1#PartDetails\"\n        ]\n      },\n      \"endpoints\": [\n        {\n          \"interface\": \"HTTP\",\n          \"protocolInformation\": {\n            \"endpointAddress\": \"https://catena-x.net/vehicle/partdetails/\",\n            \"endpointProtocol\": \"HTTPS\",\n            \"endpointProtocolVersion\": \"1.0\"\n          }\n        }\n      ]\n    }\n  ]\n}",
+											"raw": "{\"description\":[{\"language\":\"en\",\"text\":\"BMW 520e Plugin-Hybrid\"}],\"globalAssetId\":{\"value\":[\"urn:ID:com.BMW#69ab0d77-c981-41fe-8c0f-bd0c8256228d\"]},\"idShort\":\"BMW 520e Plugin-Hybrid\",\"identification\":\"69ab0d77-c981-41fe-8c0f-bd0c8256228d\",\"specificAssetIds\":[{\"key\":\"urn:iso:std:iso:4030:ed-3:v1:en\",\"value\":\"5UXFE43588L890072\"},{\"key\":\"urn:bom:com.BMW:part-serial\",\"value\":\"ABOlhjidrBYndEZPJ9xXZzH2MbSBHI6EzfO6UF8AnnHvFKWBTTO5MrhHXUgTHmNhz9SAn3qxGSIbLGI14K3FhHGzVNMawdOeaItJ0EeNy4Mi3g\"},{\"key\":\"urn:bom:com.BMW:part-number\",\"value\":\"31BK\"}],\"submodelDescriptors\":[{\"description\":[{\"language\":\"en\",\"text\":\"Catena-X Traceability Aspect Implementation\"}],\"idShort\":\"sql-traceability\",\"identification\":\"\",\"semanticId\":{\"value\":[\"urn:bamm:com.catenaX:0.0.1#Traceability\"]},\"endpoints\":[{\"interface\":\"IDS\",\"protocolInformation\":{\"endpointAddress\":\"urn:Vocabulary:com.ids:Connector?recipient=https://w3id.org/idsa/autogen/connectorEndpoint/a73d2202-cb77-41db-a3a6-05ed251c0b&offer=offer-tdm&representation=bom-aspect&artifact=bom-vehicle&manufacturer=BMW&serial=ABOlhjidrBYndEZPJ9xXZzH2MbSBHI6EzfO6UF8AnnHvFKWBTTO5MrhHXUgTHmNhz9SAn3qxGSIbLGI14K3FhHGzVNMawdOeaItJ0EeNy4Mi3g\",\"endpointProtocol\":\"GET\",\"endpointProtocolVersion\":\"1.0\"}}]},{\"description\":[{\"language\":\"en\",\"text\":\"Catena-X Material Aspect Implementation\"}],\"idShort\":\"sql-material\",\"identification\":\"\",\"semanticId\":{\"value\":[\"urn:bamm:com.catenaX:0.0.1#Material\"]},\"endpoints\":[{\"interface\":\"IDS\",\"protocolInformation\":{\"endpointAddress\":\"urn:Vocabulary:com.ids:Connector?recipient=https://w3id.org/idsa/autogen/connectorEndpoint/a73d2202-cb77-41db-a3a6-05ed251c0b&offer=offer-tdm&representation=material-aspect&artifact=material-vehicle&manufacturer=BMW&number=31BK\",\"endpointProtocol\":\"GET\",\"endpointProtocolVersion\":\"1.0\"}}]}]}",
 											"options": {
 												"raw": {
 													"language": "json"
@@ -10318,9 +10317,9 @@
 											}
 										},
 										"url": {
-											"raw": "{{baseUrl}}/registry/shell-descriptors",
+											"raw": "{{semanticServicesUrl}}/registry/shell-descriptors",
 											"host": [
-												"{{baseUrl}}"
+												"{{semanticServicesUrl}}"
 											],
 											"path": [
 												"registry",
@@ -11869,6 +11868,11 @@
 				"type": "oauth2",
 				"oauth2": [
 					{
+						"key": "useBrowser",
+						"value": true,
+						"type": "boolean"
+					},
+					{
 						"key": "tokenName",
 						"value": "Portal",
 						"type": "string"
@@ -11887,11 +11891,6 @@
 						"key": "clientId",
 						"value": "catenax-portal",
 						"type": "string"
-					},
-					{
-						"key": "useBrowser",
-						"value": true,
-						"type": "boolean"
 					},
 					{
 						"key": "scope",

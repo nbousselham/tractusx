@@ -1,5 +1,5 @@
 #
-# Copyright (c) 2021 T-Systems International GmbH (Catena-X Consortium)
+# Copyright (c) 2021-2022 T-Systems International GmbH (Catena-X Consortium)
 #
 # See the AUTHORS file(s) distributed with this work for additional
 # information regarding authorship.
@@ -9,15 +9,7 @@
 #
 
 ###########################################################
-# Configuration of the Semantic Layer including the 
-# Semantic Hub
-#    Managing Aspect Models
-# Twin Registry 
-#    Listing Digital Twins and their Aspect Implementations
-# Simple Semantic Adapter Service
-#    Connecting Backend Systems to Catena-X IDS
-#    Providing Aspect Implementations = IDS Artifacts
-#    Registering Owned Digitial Twins
+# Configuration of the Semantic Layer
 ###########################################################
 
 #  Endpoint configuration for service provisioning and data pull
@@ -59,7 +51,17 @@ http:
 licence_url: '@licence_url@'
 
 spring:
-  # Builtin persistence for hosting models, twins & data
+  application:
+    name: semantics-services
+  banner:
+    location: "classpath:banner.txt"
+# configuring the semantic services as a resource server and defining the corresponding IdP
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer-uri: https://catenaxdev042akssrv.germanywestcentral.cloudapp.azure.com/iamcentralidp/auth/realms/CX-Central
+# Builtin persistence for hosting models, twins & data
   sql:
     init:
       platform: h2

@@ -16,8 +16,7 @@
 package net.catenax.semantics.registry.model;
 
 
-import lombok.Value;
-import lombok.With;
+import lombok.Data;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.annotation.LastModifiedDate;
@@ -27,21 +26,20 @@ import java.time.Instant;
 import java.util.Set;
 import java.util.UUID;
 
-@Value
-@With
+@Data
 public class Shell {
     @Id
     UUID id;
     String idExternal;
     String idShort;
 
-    @MappedCollection(idColumn = "fk_shell_id")
+    @MappedCollection(idColumn = "FK_SHELL_ID")
     Set<ShellIdentifier> identifiers;
 
-    @MappedCollection(idColumn = "fk_shell_id")
+    @MappedCollection(idColumn = "FK_SHELL_ID")
     Set<ShellDescription> descriptions;
 
-    @MappedCollection(idColumn = "fk_shell_id")
+    @MappedCollection(idColumn = "FK_SHELL_ID")
     Set<Submodel> submodels;
 
     @CreatedDate
@@ -50,4 +48,25 @@ public class Shell {
     @LastModifiedDate
     Instant lastModifiedDate;
 
+    /**
+     * create a new shell
+     * @param id
+     * @param idExternal
+     * @param idShort
+     * @param identifiers
+     * @param descriptions
+     * @param submodels
+     * @param createdDate
+     * @param lastModifiedDate
+     */
+    public Shell(UUID id, String idExternal, String idShort, Set<ShellIdentifier> identifiers, Set<ShellDescription> descriptions, Set<Submodel> submodels, Instant createdDate, Instant lastModifiedDate) {
+        this.id=id;
+        this.idExternal=idExternal;
+        this.idShort=idShort;
+        this.identifiers=identifiers;
+        this.descriptions=descriptions;
+        this.submodels=submodels;
+        this.createdDate=createdDate;
+        this.lastModifiedDate=lastModifiedDate;
+    }
 }

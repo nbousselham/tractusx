@@ -12,14 +12,13 @@ import feign.Client;
 import feign.Feign;
 import lombok.Data;
 import net.catenax.semantics.aas.api.RegistryAndDiscoveryInterfaceApi;
-import net.catenax.semantics.idsadapter.client.invoker.ApiClient;
-import org.springframework.beans.factory.annotation.Value;
+import net.catenax.semantics.framework.dsc.client.invoker.ApiClient;
+import net.catenax.semantics.framework.edc.EdcService;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.*;
-import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
@@ -121,6 +120,8 @@ public class Application {
      * @param args command line
      */
     public static void main(String[] args) {
+        // bootstrap EDC
+        EdcService.bootstrap();
         new SpringApplication(Application.class).run(args);
     }
 
