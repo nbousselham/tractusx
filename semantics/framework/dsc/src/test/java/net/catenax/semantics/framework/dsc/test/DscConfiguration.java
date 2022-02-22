@@ -9,6 +9,7 @@ additional information regarding license terms.
 package net.catenax.semantics.framework.dsc.test;
 
 import net.catenax.semantics.framework.IdsConnector;
+import net.catenax.semantics.framework.auth.BearerTokenOutgoingInterceptor;
 import net.catenax.semantics.framework.config.*;
 import net.catenax.semantics.framework.test.MockConfiguration;
 import net.catenax.semantics.framework.test.MockConnector;
@@ -35,4 +36,9 @@ public class DscConfiguration extends MockConfiguration {
         return super.getDataSource();
     }
 
+    @Bean
+    @Override
+    public BearerTokenOutgoingInterceptor getInterceptor() {
+        return super.getInterceptor();
+    }
 }

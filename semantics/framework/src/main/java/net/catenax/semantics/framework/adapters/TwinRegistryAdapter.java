@@ -35,23 +35,33 @@ import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.impl.conn.DefaultProxyRoutePlanner;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
 
 /**
- * adapts a remote twin registry to the IDS connector.
+ * adapts a remote twin registry (secured via Oauth2) to the IDS connector.
  */
 @Service
 public class TwinRegistryAdapter<Cmd extends Command, O extends Offer, Ct extends Catalog, Co extends Contract, T extends Transformation> extends BaseAdapter<Cmd,O,Ct,Co,T> {
 
+    /**
+     * creates a logger
+     */
+    protected final Logger logger= LoggerFactory.getLogger(getClass());
+
+    /**
+     * we need an interceptor that pushes tokens into the request
+     */
     private final BearerTokenOutgoingInterceptor interceptor;
 
     /**
-     * delegate to super
-     *
-     * @param configurationData
-     * @param connector
+     * creates a new adapter
+     * @param configurationData external config
+     * @param connector attached connector
+     * @param interceptor token interceptor that pushes tokens to the requests
      */
     public TwinRegistryAdapter(Config<Cmd, O, Ct, Co, T> configurationData, IdsConnector connector, BearerTokenOutgoingInterceptor interceptor) {
         super(configurationData);
@@ -68,7 +78,7 @@ public class TwinRegistryAdapter<Cmd extends Command, O extends Offer, Ct extend
         if (configurationData.isRegisterOnStart()) {
             for (TwinSource twin : configurationData.getTwinSources()) {
                 try {
-                    System.out.println(registerTwins(twin.getProtocol(), twin.getCommand(), twin.getParameters()));
+                    log.debug(registerTwins(twin.getProtocol(), twin.getCommand(), twin.getParameters()));
                 } catch (Exception e) {
                     log.error("Could not register twins from command " + twin.getCommand() + " and protocol " + twin.getProtocol() + " in connector. Maybe it is not active?", e);
                 }
@@ -77,23 +87,32 @@ public class TwinRegistryAdapter<Cmd extends Command, O extends Offer, Ct extend
     }
 
     /**
-     * registers new twins
-     *
+     * registers new twins. This is a two-step process.
+     * First, the given command is issues for the given protocol in the associated connector.
+     * Secondly, the result is interpreted as a set of asset descriptors which
+     * will be posted to the twin registry.
      * @param protocol   use the backend protocol
      * @param command    use the backend command
      * @param parameters a map of parameters
      * @return the registration response from the registry copied
      */
     public String registerTwins(String protocol, String command, Map<String, String> parameters) throws StatusException {
+        // Step 1
+        // create the connector request
         IdsRequest request = new IdsRequest();
         request.setProtocol(protocol);
         request.setCommand(command);
         request.setParameters(parameters);
         request.setModel("urn:com.catenaX.semantics:1.2.0-SNAPSHOT#DigitialTwins");
         request.setAccepts("application/json");
+        // perform the connector request
         IdsResponse response = idsConnector.perform(request);
         try {
             IdsMessage responseMessage = response.getMessage().get();
+            // here we are
+            // TODO check for error status codes
+            // Step 2 make outgoing calls to the registry
+
             HttpClient httpclient = null;
             if (configurationData.getProxyUrl() != null) {
                 boolean noProxy = false;
@@ -109,12 +128,13 @@ public class TwinRegistryAdapter<Cmd extends Command, O extends Offer, Ct extend
                     httpclient = clientBuilder.build();
                 }
             }
-
             if (httpclient == null) {
                 HttpClientBuilder clientBuilder = HttpClients.custom();
                 clientBuilder.addInterceptorFirst(interceptor);
                 httpclient = clientBuilder.build();
             }
+
+            // parse the twin recipe as asset descriptors
             ObjectMapper om = new ObjectMapper();
             JsonNode[] nodes = new JsonNode[]{om.readTree(responseMessage.getPayload())};
             if (nodes[0].isArray()) {
@@ -124,6 +144,7 @@ public class TwinRegistryAdapter<Cmd extends Command, O extends Offer, Ct extend
                     nodes[i] = arrayNode.get(i);
                 }
             }
+            // TODO use the batch API once it is available
             StringBuilder finalResult = new StringBuilder();
             finalResult.append("[");
             for (int count = 0; count < nodes.length; count++) {

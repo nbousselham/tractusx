@@ -9,6 +9,8 @@ additional information regarding license terms.
 package net.catenax.semantics.framework.test;
 
 import net.catenax.semantics.framework.IdsConnector;
+import net.catenax.semantics.framework.auth.BearerTokenOutgoingInterceptor;
+import net.catenax.semantics.framework.auth.BearerTokenWrapper;
 import net.catenax.semantics.framework.config.*;
 import org.springframework.context.annotation.Bean;
 
@@ -16,6 +18,14 @@ import org.springframework.context.annotation.Bean;
  * helper to build mock configurations
  */
 public class MockConfiguration {
+
+    /**
+     * @return a mock token wrapper and interceptor
+     */
+    public BearerTokenOutgoingInterceptor getInterceptor() {
+        BearerTokenWrapper wrapper=new BearerTokenWrapper();
+        return new BearerTokenOutgoingInterceptor(new BearerTokenWrapper());
+    }
 
     /**
      * @return a mock data source

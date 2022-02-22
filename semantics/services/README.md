@@ -26,7 +26,8 @@ The run script accepts the following command line options:
 - '-build' runs submodule maven before start
 - '-suspend' suspends the java machine upon startup when in debugging mode.
 - '-debug' allows the java machine to be debugged (debugging port is outputed on console)
- 
+- '-proxy' uses environment variables $HTTP_PROXY_HOST and $HTTP_PROXY_PORT to set the standard Java proxy for both http and https transports.
+
 ### Build Docker:
 
 Run `docker build -f ./Dockerfile -t $REGISTRY/semantics/services:$VERSION .`

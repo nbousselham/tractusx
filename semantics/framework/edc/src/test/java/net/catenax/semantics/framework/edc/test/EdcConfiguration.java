@@ -8,6 +8,7 @@ additional information regarding license terms.
 */
 package net.catenax.semantics.framework.edc.test;
 
+import net.catenax.semantics.framework.auth.BearerTokenOutgoingInterceptor;
 import net.catenax.semantics.framework.config.*;
 import net.catenax.semantics.framework.test.MockConfiguration;
 import org.springframework.context.annotation.Bean;
@@ -36,6 +37,12 @@ public class EdcConfiguration extends MockConfiguration {
     @Override
     public DataSource getDataSource() {
         return super.getDataSource();
+    }
+
+    @Bean
+    @Override
+    public BearerTokenOutgoingInterceptor getInterceptor() {
+        return super.getInterceptor();
     }
 
 }

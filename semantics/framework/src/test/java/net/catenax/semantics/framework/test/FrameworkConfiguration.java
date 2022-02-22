@@ -9,6 +9,8 @@ additional information regarding license terms.
 package net.catenax.semantics.framework.test;
 
 import net.catenax.semantics.framework.IdsConnector;
+import net.catenax.semantics.framework.auth.BearerTokenOutgoingInterceptor;
+import net.catenax.semantics.framework.auth.BearerTokenWrapper;
 import net.catenax.semantics.framework.config.*;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
@@ -27,6 +29,12 @@ public class FrameworkConfiguration extends MockConfiguration {
     @Override
     public Config<Command, Offer, Catalog, Contract, Transformation> getConfigurationData() {
         return super.getConfigurationData();
+    }
+
+    @Bean
+    @Override
+    public BearerTokenOutgoingInterceptor getInterceptor() {
+        return super.getInterceptor();
     }
 
     @Bean
