@@ -18,16 +18,13 @@ package net.catenax.semantics.registry.mapper;
 import net.catenax.semantics.aas.registry.model.AssetAdministrationShellDescriptor;
 import net.catenax.semantics.aas.registry.model.AssetAdministrationShellDescriptorCollection;
 import net.catenax.semantics.aas.registry.model.IdentifierKeyValuePair;
-import net.catenax.semantics.aas.registry.model.SubmodelDescriptor;
 import net.catenax.semantics.registry.dto.ShellCollectionDto;
 import net.catenax.semantics.registry.model.Shell;
 import net.catenax.semantics.registry.model.ShellIdentifier;
-import net.catenax.semantics.registry.model.Submodel;
 import org.mapstruct.*;
 
 import java.util.List;
 import java.util.Set;
-import java.util.UUID;
 
 @Mapper(uses = {SubmodelMapper.class}, componentModel = "spring", injectionStrategy = InjectionStrategy.CONSTRUCTOR)
 public interface ShellMapper {
@@ -63,8 +60,8 @@ public interface ShellMapper {
     }
 
     @AfterMapping
-    default void removeGlobalAssetIdFromIdentifiers(@MappingTarget List<IdentifierKeyValuePair> apiDto){
-        ShellMapperCustomization.removeGlobalAssetIdIdentifier(apiDto);
+    default void removeGlobalAssetIdFromIdentifiers(Set<ShellIdentifier> shellIds, @MappingTarget List<IdentifierKeyValuePair> apiDto){
+        ShellMapperCustomization.removeGlobalAssetIdIdentifier(shellIds,apiDto);
     }
 
 }

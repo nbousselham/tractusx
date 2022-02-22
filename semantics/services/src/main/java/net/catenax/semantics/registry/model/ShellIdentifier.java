@@ -32,8 +32,12 @@ public class ShellIdentifier {
 
     @Id
     UUID id;
+    @Column("DOMAIN")
     String key;
+    @Column("IDENTIFIER")
     String value;
+    @Column("IS_UNIQUE")
+    boolean unique;
 
     @Column( "FK_SHELL_ID")
     UUID shellId;

@@ -1,9 +1,0 @@
-databaseChangeLog:
-  - changeSet:
-      id: 21022022-01
-      author: cjung7
-      changes:
-      -  modifyDataType:
-          tableName: SUBMODEL_ENDPOINT
-          columnName:  ENDPOINT_ADDRESS
-          newDataType:  VARCHAR(512)

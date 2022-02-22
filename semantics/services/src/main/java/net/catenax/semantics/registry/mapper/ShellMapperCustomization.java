@@ -26,6 +26,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 /**
  * The globalAssetId of a AssetAdministrationShellDescriptor is the same as specificAssetIds from persistence point of view.
@@ -57,26 +58,35 @@ public class ShellMapperCustomization {
         globalAssetId.ifPresent(apiDto::setGlobalAssetId);
     }
 
-    public static void removeGlobalAssetIdIdentifier(List<IdentifierKeyValuePair> specificAssetIds){
-        if(specificAssetIds == null || specificAssetIds.isEmpty()){
-            return;
+    public static void removeGlobalAssetIdIdentifier(Set<ShellIdentifier> shellIds, List<IdentifierKeyValuePair> apiDto){
+        for(int count=apiDto.size()-1;count>=0;count--) {
+            IdentifierKeyValuePair kvp=apiDto.get(count);
+            ShellIdentifier shellId=shellIds.stream().filter(
+                    shellIdentifier -> {
+                        return kvp.getKey().equals(shellIdentifier.getKey()) && kvp.getValue().equals(shellIdentifier.getValue());
+                    }).findFirst().get();
+            if(shellId.isUnique() || ShellIdentifier.GLOBAL_ASSET_ID_KEY.equals(shellId.getKey())) {
+                apiDto.remove(count);
+            }
         }
-        specificAssetIds.removeIf(identifierKeyValuePair -> ShellIdentifier.GLOBAL_ASSET_ID_KEY.equals(identifierKeyValuePair.getKey()) );
     }
 
     private static Optional<Reference> extractGlobalAssetId(Set<ShellIdentifier> shellIdentifiers){
         if(shellIdentifiers == null || shellIdentifiers.isEmpty()){
             return Optional.empty();
         }
-        Optional<ShellIdentifier> globalAssetId = shellIdentifiers
+        List<String> globalAssetIds = shellIdentifiers
                 .stream()
-                .filter(shellIdentifier -> ShellIdentifier.GLOBAL_ASSET_ID_KEY.equals(shellIdentifier.getKey()))
-                .findFirst();
-        return globalAssetId.map(value -> {
-            Reference reference = new Reference();
-            reference.setValue(List.of(globalAssetId.get().getValue()));
-            return reference;
-        });
+                .filter(shellIdentifier -> shellIdentifier.isUnique() || ShellIdentifier.GLOBAL_ASSET_ID_KEY.equals(shellIdentifier.getKey()))
+                .map(shellIdentifier -> {
+                   if(ShellIdentifier.GLOBAL_ASSET_ID_KEY.equals(shellIdentifier.getKey())) {
+                       return shellIdentifier.getValue();
+                   }
+                   return shellIdentifier.getKey()+shellIdentifier.getValue();
+                }).collect(Collectors.toList());
+        Reference ref=new Reference();
+        ref.setValue(globalAssetIds);
+        return Optional.of(ref);
     }
 
     private static Optional<ShellIdentifier> extractGlobalAssetId(Reference globalAssetIdReference){
@@ -91,7 +101,13 @@ public class ShellMapperCustomization {
         if(Strings.isNullOrEmpty(globalAssetId)){
             return Optional.empty();
         }
-        return Optional.of(new ShellIdentifier(null, ShellIdentifier.GLOBAL_ASSET_ID_KEY, globalAssetId, null));
+        String namespace=ShellIdentifier.GLOBAL_ASSET_ID_KEY;
+        if(globalAssetId.contains("#")) {
+            int lastIndex=globalAssetId.lastIndexOf("#")+1;
+            namespace=globalAssetId.substring(0,lastIndex);
+            globalAssetId=globalAssetId.substring(lastIndex);
+        }
+        return Optional.of(new ShellIdentifier(null, namespace, globalAssetId, true,null));
     }
 
 }

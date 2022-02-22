@@ -57,7 +57,7 @@ spring:
     driverClassName: org.h2.Driver
     password: tractusx
     username: tractusx
-    url: jdbc:h2:file:./semantics/persistence
+    url: jdbc:h2:file:./adapter/persistence
   jpa:
     hibernate:
       ddl-auto: update

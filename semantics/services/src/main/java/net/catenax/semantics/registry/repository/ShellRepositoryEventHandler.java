@@ -28,7 +28,12 @@ public class ShellRepositoryEventHandler implements BeforeSaveCallback<Shell> {
     public Shell onBeforeSave(Shell aggregate, MutableAggregateChange<Shell> aggregateChange) {
         if(aggregate.getId()==null) {
             try {
-                aggregate.setId(UUID.fromString(aggregate.getIdExternal()));
+                String template=aggregate.getIdExternal();
+                int lastIndex=template.lastIndexOf("#")+1;
+                if(lastIndex>0) {
+                    template=template.substring(lastIndex);
+                }
+                aggregate.setId(UUID.fromString(template));
             } catch(IllegalArgumentException e) {
                 aggregate.setId(UUID.randomUUID());
             }
@@ -40,7 +45,12 @@ public class ShellRepositoryEventHandler implements BeforeSaveCallback<Shell> {
             aggregate.getSubmodels().forEach( submodel -> {
                 if(submodel.getId()==null) {
                     try {
-                        submodel.setId(UUID.fromString(submodel.getIdExternal()));
+                        String template=submodel.getIdExternal();
+                        int lastIndex=template.lastIndexOf("#")+1;
+                        if(lastIndex>0) {
+                            template=template.substring(lastIndex);
+                        }
+                        submodel.setId(UUID.fromString(template));
                     } catch(IllegalArgumentException e) {
                         submodel.setId(UUID.randomUUID());
                     }

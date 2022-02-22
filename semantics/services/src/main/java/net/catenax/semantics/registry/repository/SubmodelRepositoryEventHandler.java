@@ -26,7 +26,12 @@ public class SubmodelRepositoryEventHandler implements BeforeSaveCallback<Submod
     public Submodel onBeforeSave(Submodel aggregate, MutableAggregateChange<Submodel> aggregateChange) {
         if(aggregate.getId()==null) {
             try {
-                aggregate.setId(UUID.fromString(aggregate.getIdExternal()));
+                String template=aggregate.getIdExternal();
+                int lastIndex=template.lastIndexOf("#")+1;
+                if(lastIndex>0) {
+                    template=template.substring(lastIndex);
+                }
+                aggregate.setId(UUID.fromString(template));
             } catch(IllegalArgumentException e) {
                 aggregate.setId(UUID.randomUUID());
             }
