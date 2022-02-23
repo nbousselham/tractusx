@@ -26,6 +26,7 @@ import java.security.NoSuchAlgorithmException;
 
 import java.net.Proxy;
 import java.net.InetSocketAddress;
+import java.util.regex.Pattern;
 
 /**
  * A spring configuration / bean factory for creating typed and proxiable http client objects
@@ -42,15 +43,17 @@ public class HttpClientConfiguration {
         NaiveSSLSocketFactory naiveSSLSocketFactory = new NaiveSSLSocketFactory("localhost");
 
         Client client=null;
-        
-        if(configurationData.getProxyUrl()!=null) {
+
+        String proxyHost=System.getProperty("http.proxyHost");
+
+        if(proxyHost!=null && !proxyHost.isEmpty()) {
             boolean noProxy = false;
-            for (Object noProxyHost : configurationData.getNoProxyHosts()) {
-                noProxy = noProxy || configurationData.getConnectorUrl().contains(noProxyHost.toString());
+            for (String noProxyHost : System.getProperty("http.nonProxyHosts","localhost").split("\\|")) {
+                noProxy = noProxy || configurationData.getConnectorUrl().contains(noProxyHost.replace("*",""));
             }
             if (!noProxy) {
                 client = new Client.Proxied(naiveSSLSocketFactory, null, new Proxy(Proxy.Type.HTTP,
-                        new InetSocketAddress(configurationData.getProxyUrl(), configurationData.getProxyPort())));
+                        new InetSocketAddress(proxyHost, Integer.parseInt(System.getProperty("http.proxyPort","80")))));
             }
         }
 
@@ -67,57 +70,57 @@ public class HttpClientConfiguration {
     }
 
     @Bean
-    ConnectorApi connectorApi(Feign.Builder feignBuilder) throws Exception {
+    ConnectorApi connectorApi(Feign.Builder feignBuilder) {
         return feignBuilder.target(ConnectorApi.class, configurationData.getConnectorUrl());
     }
 
     @Bean
-    OfferedResourcesApi offersApi(Feign.Builder feignBuilder) throws Exception {
+    OfferedResourcesApi offersApi(Feign.Builder feignBuilder) {
         return feignBuilder.target(OfferedResourcesApi.class, configurationData.getConnectorUrl());
     }
 
     @Bean
-    CatalogsApi catalogApi(Feign.Builder feignBuilder) throws Exception {
+    CatalogsApi catalogApi(Feign.Builder feignBuilder) {
         return feignBuilder.target(CatalogsApi.class, configurationData.getConnectorUrl());
     }
 
     @Bean
-    ContractsApi contractApi(Feign.Builder feignBuilder) throws Exception {
+    ContractsApi contractApi(Feign.Builder feignBuilder) {
         return feignBuilder.target(ContractsApi.class, configurationData.getConnectorUrl());
     }
 
     @Bean
-    RulesApi rulesApi(Feign.Builder feignBuilder) throws Exception {
+    RulesApi rulesApi(Feign.Builder feignBuilder) {
         return feignBuilder.target(RulesApi.class, configurationData.getConnectorUrl());
     }
 
     @Bean
-    EndpointsApi endpointsApi(Feign.Builder feignBuilder) throws Exception {
+    EndpointsApi endpointsApi(Feign.Builder feignBuilder) {
         return feignBuilder.target(EndpointsApi.class, configurationData.getConnectorUrl());
     }
 
     @Bean
-    RepresentationsApi representationsApi(Feign.Builder feignBuilder) throws Exception {
+    RepresentationsApi representationsApi(Feign.Builder feignBuilder)  {
         return feignBuilder.target(RepresentationsApi.class, configurationData.getConnectorUrl());
     }
 
     @Bean
-    RequestedResourcesApi requestedResourcesApi(Feign.Builder feignBuilder) throws Exception {
+    RequestedResourcesApi requestedResourcesApi(Feign.Builder feignBuilder)  {
         return feignBuilder.target(RequestedResourcesApi.class, configurationData.getConnectorUrl());
     }
 
     @Bean
-    ArtifactsApi artifactsApi(Feign.Builder feignBuilder) throws Exception {
+    ArtifactsApi artifactsApi(Feign.Builder feignBuilder)  {
         return feignBuilder.target(ArtifactsApi.class, configurationData.getConnectorUrl());
     }
 
     @Bean
-    MessagesApi messagesApi(Feign.Builder feignBuilder) throws Exception {
+    MessagesApi messagesApi(Feign.Builder feignBuilder)  {
         return feignBuilder.target(MessagesApi.class, configurationData.getConnectorUrl());
     }
 
     @Bean
-    AgreementsApi agreementsApi(Feign.Builder feignBuilder) throws Exception {
+    AgreementsApi agreementsApi(Feign.Builder feignBuilder)  {
         return feignBuilder.target(AgreementsApi.class, configurationData.getConnectorUrl());
     }
 }

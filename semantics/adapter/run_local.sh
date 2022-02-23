@@ -15,7 +15,7 @@
 #   Windows, (git)-bash shell, java 11 (java) and maven (mvn) in the $PATH.
 #
 # Synposis: 
-#   ./run_local.sh (-build)? (clean)? (-suspend)? (-debug)?
+#   ./run_local.sh (-build)? (-clean)? (-suspend)? (-debug)? (-proxy)?
 #
 # Comments: 
 #
@@ -43,6 +43,9 @@ do
           else
             if [ "$var" == "-proxy" ]; then
               PROXY="-Dhttp.proxyHost=${HTTP_PROXY_HOST} -Dhttp.proxyPort=${HTTP_PROXY_PORT} -Dhttps.proxyHost=${HTTP_PROXY_HOST} -Dhttps.proxyPort=${HTTP_PROXY_PORT}"
+              if [ "${HTTP_NONPROXY_HOSTS}" != "" ]; then
+                PROXY="${PROXY} -Dhttp.nonProxyHosts=${HTTP_NONPROXY_HOSTS} -Dhttps.nonProxyHosts=${HTTP_NONPROXY_HOSTS}"
+              fi
             fi
           fi
         fi
@@ -58,7 +61,7 @@ fi
 
 CALL_ARGS="-classpath ./src/main/resources;target/adapter-1.3.0-SNAPSHOT.jar \
            -Dspring.datasource.url=$H2_URL\
-           -Dserver.ssl.enabled=false $DEBUG_OPTIONS $PROXY\
+           -Dserver.ssl.enabled=false $PROXY $DEBUG_OPTIONS\
            org.springframework.boot.loader.JarLauncher" 
 
 java ${CALL_ARGS}

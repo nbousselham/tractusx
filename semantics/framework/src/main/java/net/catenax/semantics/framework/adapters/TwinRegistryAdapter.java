@@ -13,6 +13,7 @@ import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.util.Map;
 import java.util.concurrent.ExecutionException;
+import java.util.regex.Pattern;
 
 import com.fasterxml.jackson.core.JsonFactory;
 import com.fasterxml.jackson.core.JsonParser;
@@ -37,6 +38,7 @@ import org.apache.http.impl.client.HttpClients;
 import org.apache.http.impl.conn.DefaultProxyRoutePlanner;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
@@ -113,15 +115,17 @@ public class TwinRegistryAdapter<Cmd extends Command, O extends Offer, Ct extend
             // TODO check for error status codes
             // Step 2 make outgoing calls to the registry
 
+            String proxyHost=System.getProperty("http.proxyHost");
+
             HttpClient httpclient = null;
-            if (configurationData.getProxyUrl() != null) {
+            if (proxyHost != null && !proxyHost.isEmpty()) {
                 boolean noProxy = false;
-                for (String noProxyHost : configurationData.getNoProxyHosts()) {
-                    noProxy = noProxy || configurationData.getServiceUrl().contains(noProxyHost);
+                for (String noProxyHost : System.getProperty("http.nonProxyHosts","localhost").split("\\|")) {
+                    noProxy = noProxy || configurationData.getServiceUrl().contains(noProxyHost.replace("*",""));
                 }
                 if (!noProxy) {
-                    HttpHost proxyHost = new HttpHost(configurationData.getProxyUrl(), configurationData.getProxyPort());
-                    DefaultProxyRoutePlanner routePlanner = new DefaultProxyRoutePlanner(proxyHost);
+                    HttpHost httpProxyHost = new HttpHost(proxyHost, Integer.parseInt(System.getProperty("http.proxyPort","80")));
+                    DefaultProxyRoutePlanner routePlanner = new DefaultProxyRoutePlanner(httpProxyHost);
                     HttpClientBuilder clientBuilder = HttpClients.custom();
                     clientBuilder = clientBuilder.setRoutePlanner(routePlanner);
                     clientBuilder = clientBuilder.addInterceptorFirst(interceptor);
