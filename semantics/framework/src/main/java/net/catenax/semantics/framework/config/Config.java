@@ -16,32 +16,29 @@ import java.util.Map;
  * represents a (part) of a configuration file, such as a spring boot yml.
  */
 public interface Config<Cmd extends Command, O extends Offer, Ct extends Catalog, Co extends Contract, T extends Transformation> {
-    public String getConnectorType();
-    public String getConnectorUrl();
-    public String getConnectorId();
-    public String getServiceUrl();
-    public String getAdapterUrl();
-    public String getPortalUrl();
-    public String getConnectorUser();
-    public String getConnectorPassword();
-    public String getPublisher();
-    public String getProxyUrl();
-    public int getProxyPort();
-    public List<String> getNoProxyHosts();
+    String getConnectorType();
+    String getConnectorUrl();
+    String getConnectorId();
+    String getServiceUrl();
+    String getAdapterUrl();
+    String getPortalUrl();
+    String getConnectorUser();
+    String getConnectorPassword();
+    String getPublisher();
     /**
      * determines the callback method to access artifacts
      */
-    public String getCallbackPattern();
+    String getCallbackPattern();
 
-    public String getServiceName();
-    public boolean isOfferOnStart();
-    public boolean isRegisterOnStart();
+    String getServiceName();
+    boolean isOfferOnStart();
+    boolean isRegisterOnStart();
 
-    public Map<String, Ct> getCatalogs();
-    public Map<String, Co> getContracts();
-    public Map<String, O> getOffers();
-    public Map<String, Cmd> getCommands();
-    public Map<String,T> getTransformations();
-    public Map<String,String> getTransformationParameters();
-    public List<TwinSource> getTwinSources();
+    Map<String, Ct> getCatalogs();
+    Map<String, Co> getContracts();
+    Map<String, O> getOffers();
+    Map<String, Cmd> getCommands();
+    Map<String,T> getTransformations();
+    Map<String,String> getTransformationParameters();
+    List<TwinSource> getTwinSources();
 }

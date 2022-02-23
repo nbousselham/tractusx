@@ -29,9 +29,6 @@ public class ConfigurationData<Cmd extends Command, O extends Offer, Ct extends 
     private String connectorUser;
     private String connectorPassword;
     private String publisher;
-    private String proxyUrl;
-    private int proxyPort;
-    private List<String> noProxyHosts=List.of("localhost");
     /**
      * determines the callback method to access artifacts
      */
