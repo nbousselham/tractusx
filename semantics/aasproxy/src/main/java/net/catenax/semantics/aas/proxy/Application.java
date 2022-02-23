@@ -12,8 +12,12 @@ import feign.Client;
 import feign.Feign;
 import lombok.Data;
 import net.catenax.semantics.aas.api.RegistryAndDiscoveryInterfaceApi;
+import net.catenax.semantics.framework.auth.BearerTokenIncomingInterceptor;
+import net.catenax.semantics.framework.auth.BearerTokenOutgoingInterceptor;
+import net.catenax.semantics.framework.auth.BearerTokenWrapper;
 import net.catenax.semantics.framework.dsc.client.invoker.ApiClient;
 import net.catenax.semantics.framework.edc.EdcService;
+import net.catenax.semantics.framework.helpers.NaiveSSLSocketFactory;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.context.properties.ConfigurationProperties;
@@ -33,7 +37,7 @@ import java.security.NoSuchAlgorithmException;
  * TODO make sure openapi description is correct, referrer-header should give us a hint.
  */
 @SpringBootApplication
-@ComponentScan(basePackages = {"net.catenax.semantics.aas", "org.openapitools.configuration"})
+@ComponentScan(basePackages = {"net.catenax.semantics.framework.auth","net.catenax.semantics.aas", "org.openapitools.configuration"})
 //@ImportResource({"classpath*:saynomore.lmx"})
 @Data
 public class Application {
@@ -88,25 +92,24 @@ public class Application {
         ApiClient apiClient = new ApiClient();
         apiClient.setBasePath(config.getTargetUrl());
         NaiveSSLSocketFactory naiveSSLSocketFactory = new NaiveSSLSocketFactory("localhost");
-        Client client = null;
-        if(config.getProxyHost()!=null) {
-            boolean isNoProxy=false;
-            for(String host : config.getNoProxyHosts().split("; ")) {
-               if(config.getTargetUrl().contains(host)) {
-                   isNoProxy=true;
-               }
+
+        Client client=null;
+
+        String proxyHost=System.getProperty("http.proxyHost");
+
+        if(proxyHost!=null && !proxyHost.isEmpty()) {
+            boolean noProxy = false;
+            for (String noProxyHost : System.getProperty("http.nonProxyHosts","localhost").split("\\|")) {
+                noProxy = noProxy || config.getTargetUrl().contains(noProxyHost.replace("*",""));
             }
-            if(!isNoProxy) {
-                Proxy proxy = new Proxy(Proxy.Type.HTTP, new InetSocketAddress(config.getProxyHost(), config.getProxyPort()));
-                if (config.getProxyUser() != null) {
-                    client = new Client.Proxied(naiveSSLSocketFactory, null, proxy, config.getProxyUser(), config.getProxyPass());
-                } else {
-                    client = new Client.Proxied(naiveSSLSocketFactory, null, proxy);
-                }
+            if (!noProxy) {
+                client = new Client.Proxied(naiveSSLSocketFactory, null, new Proxy(Proxy.Type.HTTP,
+                        new InetSocketAddress(proxyHost, Integer.parseInt(System.getProperty("http.proxyPort","80")))));
             }
         }
+
         if(client==null) {
-            client = new Client.Default(naiveSSLSocketFactory, null);
+            client = new Client.Default(naiveSSLSocketFactory,null);
         }
         Feign.Builder feignBuilder = apiClient.getFeignBuilder();
         BearerTokenOutgoingInterceptor interceptor=context.getBean(BearerTokenOutgoingInterceptor.class);

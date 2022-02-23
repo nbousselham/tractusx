@@ -15,7 +15,7 @@
 #   Windows, (git)-bash shell, java 11 (java) and maven (mvn) in the $PATH.
 #
 # Synposis:
-#   ./run_local.sh (-build)? (-clean)? (-suspend)? (-debug)?
+#   ./run_local.sh (-build)? (-clean)? (-suspend)? (-debug)? (-proxy)?
 #
 # Comments:
 #
@@ -23,7 +23,6 @@
 DEBUG_PORT=8888
 DEBUG_SUSPEND=n
 DEBUG_OPTIONS=
-PROFILE=dev042
 
 for var in "$@"
 do
@@ -38,6 +37,13 @@ do
         else
           if [ "$var" == "-clean" ]; then
             mvn clean
+          else
+            if [ "$var" == "-proxy" ]; then
+              PROXY="-Dhttp.proxyHost=${HTTP_PROXY_HOST} -Dhttp.proxyPort=${HTTP_PROXY_PORT} -Dhttps.proxyHost=${HTTP_PROXY_HOST} -Dhttps.proxyPort=${HTTP_PROXY_PORT}"
+              if [ "${HTTP_NONPROXY_HOSTS}" != "" ]; then
+                PROXY="${PROXY} -Dhttp.nonProxyHosts=${HTTP_NONPROXY_HOSTS} -Dhttps.nonProxyHosts=${HTTP_NONPROXY_HOSTS}"
+              fi
+            fi
           fi
         fi
       fi
@@ -45,7 +51,7 @@ do
 done
 
 CALL_ARGS="-classpath ./src/main/resources;target/aasproxy-1.0.0-SNAPSHOT.jar \
-           -Dspring.profiles.active=$PROFILE  $DEBUG_OPTIONS\
+           -Dserver.ssl.enabled=false $PROXY $DEBUG_OPTIONS\
            org.springframework.boot.loader.JarLauncher"
 
 java ${CALL_ARGS}

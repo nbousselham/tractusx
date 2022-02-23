@@ -18,6 +18,6 @@ server:
 openapi:
   dotAASPart2HTTPRESTRegistryAndDiscovery:
     base-path:
-# Delegatied Web Server (Outgoing)
+# Delegated Web Server (Outgoing)
 aasproxy:
-  noProxyHosts: localhost
+  targetUrl: https://catenaxdev042akssrv.germanywestcentral.cloudapp.azure.com/semantics/

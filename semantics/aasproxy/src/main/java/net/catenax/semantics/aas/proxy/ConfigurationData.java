@@ -15,10 +15,5 @@ import lombok.Data;
  */
 @Data
 public class ConfigurationData {
-    protected String proxyHost;
-    protected int proxyPort;
-    protected String proxyUser;
-    protected String proxyPass;
-    protected String noProxyHosts="localhost";
     protected String targetUrl;
 }
