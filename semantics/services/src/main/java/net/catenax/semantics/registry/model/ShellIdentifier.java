@@ -32,7 +32,7 @@ public class ShellIdentifier {
 
     @Id
     UUID id;
-    @Column("domain")
+    @Column("namespace")
     String key;
     @Column("identifier")
     String value;
