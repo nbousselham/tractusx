@@ -32,22 +32,22 @@
   	],
   	"globalAssetId": {
     	"value": [
-      		"urn:ID:com.</xsl:text><xsl:value-of select="./MANUFACTURER"/><xsl:text>#</xsl:text><xsl:value-of select="./UUID"/><xsl:text>"
+      		"urn:twin:com.</xsl:text><xsl:value-of select="./MANUFACTURER"/><xsl:text>#</xsl:text><xsl:value-of select="./UUID"/><xsl:text>"
     	]
   	},
   	"idShort": "</xsl:text><xsl:value-of select="./DESCRIPTION"/><xsl:text>",
-  	"identification": "</xsl:text><xsl:value-of select="./UUID"/><xsl:text>",
+  	"identification": "urn:twin:com.</xsl:text><xsl:value-of select="./MANUFACTURER"/><xsl:text>#</xsl:text><xsl:value-of select="./UUID"/><xsl:text>",
   	"specificAssetIds": [
         </xsl:text><xsl:if test="./CUSTOMER = 'VIN'"><xsl:text>{
           		"key": "urn:iso:std:iso:4030:ed-3:v1:en",
            		"value": "</xsl:text><xsl:value-of select="./CUSTOMERNUMBER"/><xsl:text>"
         },</xsl:text></xsl:if><xsl:text>
         {
-           		"key": "urn:bom:com.</xsl:text><xsl:choose><xsl:when test="./CUSTOMER = 'VIN'"><xsl:value-of select="./MANUFACTURER"/></xsl:when><xsl:otherwise><xsl:value-of select="./CUSTOMER"/></xsl:otherwise></xsl:choose><xsl:text>:part-serial",
+           		"key": "urn:serial:com.</xsl:text><xsl:choose><xsl:when test="./CUSTOMER = 'VIN'"><xsl:value-of select="./MANUFACTURER"/></xsl:when><xsl:otherwise><xsl:value-of select="./CUSTOMER"/></xsl:otherwise></xsl:choose><xsl:text>:part-serial",
            		"value": "</xsl:text><xsl:value-of select="./PARTSERIAL"/><xsl:text>"
         },
 		{
-           		"key": "urn:bom:com.</xsl:text><xsl:value-of select="./MANUFACTURER"/><xsl:text>:part-number",
+           		"key": "urn:part:com.</xsl:text><xsl:value-of select="./MANUFACTURER"/><xsl:text>:part-number",
            		"value": "</xsl:text><xsl:value-of select="./PARTNUMBER"/><xsl:text>"
         }
   	],
@@ -60,7 +60,7 @@
         		}
       		],
       		"idShort": "sql-traceability",
-      		"identification": "",
+      		"identification": "urn:bamm:com.catenaX:0.0.1#Traceability#</xsl:text><xsl:value-of select="./UUID"/><xsl:text>",
       		"semanticId": {
         		"value": [
           			"urn:bamm:com.catenaX:0.0.1#Traceability"
@@ -85,7 +85,7 @@
         		}
       		],
       		"idShort": "sql-material",
-      		"identification": "",
+      		"identification": "urn:bamm:com.catenaX:0.0.1#Material#</xsl:text><xsl:value-of select="./UUID"/><xsl:text>",
       		"semanticId": {
         		"value": [
           			"urn:bamm:com.catenaX:0.0.1#Material"

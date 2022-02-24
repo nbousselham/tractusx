@@ -29,11 +29,11 @@
   ],
   "globalAssetId": {
     "value": [
-      "urn:ID:com.tsystems#3c7556f7-6956-4360-8036-d03e5a79c3c8"
+      "urn:twin:com.tsystems#3c7556f7-6956-4360-8036-d03e5a79c3c8"
     ]
   },
   "idShort": "brake_dt_2019_snr.asm",
-  "identification": "3c7556f7-6956-4360-8036-d03e5a79c3c8",
+  "identification": "urn:twin:com.tsystems#3c7556f7-6956-4360-8036-d03e5a79c3c8",
   "specificAssetIds": [
         {
             "key": "http://pwc.t-systems.com/datamodel/common",
@@ -53,7 +53,7 @@
         }
       ],
       "idShort": "brake-traceability",
-      "identification": "4a738a24-b7d8-4989-9cd6-387772f40565",
+      "identification": "urn:bamm:com.catenaX:0.0.1#Traceability#4a738a24-b7d8-4989-9cd6-387772f40565",
       "semanticId": {
         "value": [
           "urn:bamm:com.catenaX:0.0.1#Traceability"
@@ -78,7 +78,7 @@
         }
       ],
       "idShort": "brake-material",
-      "identification": "dae4d249-6d66-4818-b576-bf52f3b9ae90",
+      "identification": "urn:bamm:com.catenaX:0.0.1#Material#dae4d249-6d66-4818-b576-bf52f3b9ae90",
       "semanticId": {
         "value": [
           "urn:bamm:com.catenaX:0.0.1#Material"

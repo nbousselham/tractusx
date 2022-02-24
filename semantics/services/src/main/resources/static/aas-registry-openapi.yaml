@@ -608,7 +608,7 @@ components:
   #    - $ref: '#/components/schemas/Reference'
     Identifier:
       type: string
-      minLength: 0
+      minLength: 1
       maxLength: 200
     ModelReference:
       required:
@@ -668,7 +668,7 @@ components:
         properties:
           key:
             type: string
-            minLength: 0
+            minLength: 1
             maxLength: 200
           subjectId:
             $ref: '#/components/schemas/Reference'

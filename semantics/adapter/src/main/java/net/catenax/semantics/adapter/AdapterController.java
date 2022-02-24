@@ -40,7 +40,7 @@ import io.swagger.annotations.*;
  * It uses the IDS connector directly for exposing some debugging endpoints.
  */
 @Controller
-@RequestMapping("${openapi.semanticHub.base-path:/api/v1/adapter}")
+@RequestMapping("${openapi.semanticHub.base-path:/adapter}")
 @AllArgsConstructor
 @Slf4j
 @Api(tags="Adapter", value = "adapter", description = "Simple Semantic Adapter API")
@@ -73,6 +73,7 @@ public class AdapterController {
             try {
                 downloadService.download("get",response, headers.getOrDefault("Accept","*/*"), parameters);
             } catch (StatusException e) {
+                e.printStackTrace(System.err);
             }
         };
         return ResponseEntity.ok(streamingResponseBody);
@@ -82,7 +83,7 @@ public class AdapterController {
      * publish twins on demand/trigger
      * @param protocol  source specification
      * @param command Source
-     * @param parameters
+     * @param parameters set of headers
      * @return register response
      */
     @PostMapping(value = "/register/{protocol}/{command}", produces = MediaType.APPLICATION_JSON_VALUE)

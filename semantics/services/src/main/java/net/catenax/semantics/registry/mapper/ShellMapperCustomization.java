@@ -26,7 +26,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 /**
  * The globalAssetId of a AssetAdministrationShellDescriptor is the same as specificAssetIds from persistence point of view.
@@ -42,14 +41,12 @@ public class ShellMapperCustomization {
         }
         ShellIdentifier shellIdentifier = shellIdentifierOptional.get();
         if(shell.getIdentifiers() == null){
-            shell.setIdentifiers(Set.of(shellIdentifier));
-            return shell;
+            return shell.withIdentifiers(Set.of(shellIdentifier));
         }
-        shell.setIdentifiers( new HashSet<>(){{
+        return shell.withIdentifiers( new HashSet<>(){{
             addAll( shell.getIdentifiers());
             add(shellIdentifier);
         }});
-        return shell;
     }
 
     public static void shellIdentifierToGlobalAssetId(Shell shell, AssetAdministrationShellDescriptor apiDto) {
@@ -59,12 +56,10 @@ public class ShellMapperCustomization {
     }
 
     public static void removeGlobalAssetIdIdentifier(Set<ShellIdentifier> shellIds, List<IdentifierKeyValuePair> apiDto){
+        ShellIdentifier[] sis=shellIds.toArray(new ShellIdentifier[0]);
         for(int count=apiDto.size()-1;count>=0;count--) {
             IdentifierKeyValuePair kvp=apiDto.get(count);
-            ShellIdentifier shellId=shellIds.stream().filter(
-                    shellIdentifier -> {
-                        return kvp.getKey().equals(shellIdentifier.getKey()) && kvp.getValue().equals(shellIdentifier.getValue());
-                    }).findFirst().get();
+            ShellIdentifier shellId=sis[count];
             if(shellId.isUnique() || ShellIdentifier.GLOBAL_ASSET_ID_KEY.equals(shellId.getKey())) {
                 apiDto.remove(count);
             }
@@ -75,7 +70,7 @@ public class ShellMapperCustomization {
         if(shellIdentifiers == null || shellIdentifiers.isEmpty()){
             return Optional.empty();
         }
-        List<String> globalAssetIds = shellIdentifiers
+        Optional<String> globalAssetId = shellIdentifiers
                 .stream()
                 .filter(shellIdentifier -> shellIdentifier.isUnique() || ShellIdentifier.GLOBAL_ASSET_ID_KEY.equals(shellIdentifier.getKey()))
                 .map(shellIdentifier -> {
@@ -83,10 +78,12 @@ public class ShellMapperCustomization {
                        return shellIdentifier.getValue();
                    }
                    return shellIdentifier.getKey()+shellIdentifier.getValue();
-                }).collect(Collectors.toList());
-        Reference ref=new Reference();
-        ref.setValue(globalAssetIds);
-        return Optional.of(ref);
+                }).findFirst();
+        return globalAssetId.map(value -> {
+            Reference reference = new Reference();
+            reference.setValue(List.of(globalAssetId.get()));
+            return reference;
+        });
     }
 
     private static Optional<ShellIdentifier> extractGlobalAssetId(Reference globalAssetIdReference){

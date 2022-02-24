@@ -65,10 +65,4 @@ public interface SubmodelMapper {
         return reference;
     }
 
-    @AfterMapping
-    default Submodel convertGlobalAssetIdToShellIdentifier(SubmodelDescriptor apiDto, @MappingTarget Submodel subModel){
-        return subModel;
-    }
-
-
 }

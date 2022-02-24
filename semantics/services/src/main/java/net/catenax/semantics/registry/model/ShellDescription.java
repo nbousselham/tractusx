@@ -15,13 +15,11 @@
  */
 package net.catenax.semantics.registry.model;
 
-import lombok.Data;
 import lombok.Value;
 import org.springframework.data.annotation.Id;
 
 import java.util.UUID;
 
-@Data
 @Value
 public class ShellDescription {
     @Id
