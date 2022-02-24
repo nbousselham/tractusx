@@ -266,3 +266,4 @@ jobs:
       working-directory: ./infrastructure/manifests
       run: |
         kubectl rollout restart deployment semantics -n semantics
+        kubectl rollout restart deployment adapter -n semantics
