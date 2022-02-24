@@ -16,7 +16,6 @@
 package net.catenax.semantics.registry.model;
 
 
-import lombok.Data;
 import lombok.Value;
 import lombok.With;
 import org.springframework.data.annotation.Id;
@@ -26,7 +25,8 @@ import org.springframework.data.relational.core.mapping.MappedCollection;
 import java.util.Set;
 import java.util.UUID;
 
-@Data
+@Value
+@With
 public class Submodel {
     @Id
     UUID id;
@@ -35,32 +35,12 @@ public class Submodel {
     String idShort;
     String semanticId;
 
-    @MappedCollection(idColumn = "FK_SUBMODEL_ID")
+    @MappedCollection(idColumn = "fk_submodel_id")
     Set<SubmodelDescription> descriptions;
 
-    @MappedCollection(idColumn = "FK_SUBMODEL_ID")
+    @MappedCollection(idColumn = "fk_submodel_id")
     Set<SubmodelEndpoint> endpoints;
 
-    @Column( "FK_SHELL_ID")
+    @Column( "fk_shell_id")
     UUID shellId;
-
-    /**
-     * create a new submodel
-     * @param id
-     * @param idExternal
-     * @param idShort
-     * @param semanticId
-     * @param descriptions
-     * @param endpoints
-     * @param shellId
-     */
-    public Submodel(UUID id, String idExternal, String idShort, String semanticId, Set<SubmodelDescription> descriptions, Set<SubmodelEndpoint> endpoints, UUID shellId) {
-        this.id=id;
-        this.idExternal=idExternal;
-        this.idShort=idShort;
-        this.semanticId=semanticId;
-        this.descriptions=descriptions;
-        this.endpoints=endpoints;
-        this.shellId=shellId;
-    }
 }

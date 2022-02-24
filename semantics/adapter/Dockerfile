@@ -9,21 +9,6 @@
 #
 
 # Docker buildfile to containerize the semantics layer
- 
-# Compile/Build the jar
-FROM maven:3-jdk-11 AS maven
-
-ARG MAVEN_OPTS=""
-
-ARG MAVEN_PROFILE=""
-
-WORKDIR /app
-
-COPY . .
-
-RUN mvn clean install -Dmaven.javadoc.skip=true -DskipTests -q ${MAVEN_PROFILE}
-
-# Deploy the service
 FROM openjdk:11-jre-buster
 
 ARG HTTP_PROXY=""
@@ -47,7 +32,7 @@ WORKDIR /adapter
 
 RUN mkdir persistence
 
-COPY --from=maven /app/adapter/target/adapter*.jar app.jar
+COPY ./adapter/target/adapter*.jar app.jar
 
 ENV SERVER_PORT 4243
 ENV SPRING_DATASOURCE_URL "jdbc:h2:file:/adapter/persistence/persistence"

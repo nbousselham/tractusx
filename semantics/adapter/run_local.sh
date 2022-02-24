@@ -64,6 +64,7 @@ CALL_ARGS="-classpath ./src/main/resources;target/adapter-1.3.0-SNAPSHOT.jar \
            -Dserver.ssl.enabled=false $PROXY $DEBUG_OPTIONS\
            org.springframework.boot.loader.JarLauncher" 
 
+echo ${CALL_ARGS}
 java ${CALL_ARGS}
 
     
