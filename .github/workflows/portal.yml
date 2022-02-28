@@ -56,7 +56,7 @@ on:
       - feature/CATX-A1-SLDT
       # Onboarding Dev Space
       - feature/CAX-portal
-      - feature/sonarcloud-portal
+      - branch-sonarcloudportal
       # ADAPT HERE TO ADD NEW WORKSPACES
 
 ###############################################################
