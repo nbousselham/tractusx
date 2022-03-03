@@ -14,7 +14,7 @@ jobs:
 
       - name: ZIP Assets
         run: |
-          zip -r tractus-x-portal.zip ./portal/code/tractus-x-portal/
+          zip -r tractus-x-portal.zip .
 
       - run: ls -l
 
