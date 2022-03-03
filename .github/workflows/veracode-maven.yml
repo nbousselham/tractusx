@@ -39,7 +39,7 @@ jobs:
       - run: ls -l
         if: always()
 
-      - cat: cat results.json
+      - run: cat results.json
 
       - name: Convert pipeline scan output to SARIF format
         id: convert
