@@ -28,4 +28,4 @@ jobs:
           create-issues: true
           fail-on-cvss: 1
           min-cvss-for-issue: 1
-          path: "./tractus-x-portal.zip"
+          # path: "./tractus-x-portal.zip"
