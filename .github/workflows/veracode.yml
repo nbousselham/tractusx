@@ -12,6 +12,12 @@ jobs:
       - name: Check out main branch
         uses: actions/checkout@v2
 
+      - name: ZIP Assets
+        run: |
+          zip -r tractus-x-portal.zip ./portal/code/tractus-x-portal/
+
+      - run: ls -l
+
       - name: Veracode Upload And Scan
         uses: veracode/veracode-uploadandscan-action@0.2.1
         with:
@@ -20,10 +26,10 @@ jobs:
           filepath: "./portal/code/tractus-x-portal/"
           vid: "${{ secrets.API_ID }}"
           vkey: "${{ secrets.API_KEY }}"
-      #          createsandbox: 'true'
-      #          sandboxname: 'SANDBOXNAME'
-      #          scantimeout: 0
-      #          exclude: '*.js'
+          #          createsandbox: 'true'
+          #          sandboxname: 'SANDBOXNAME'
+          #          scantimeout: 0
+          # exclude: "*.png"
       #          include: '*.war'
       #          criticality: 'VeryHigh'
 
