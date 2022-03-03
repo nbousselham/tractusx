@@ -17,7 +17,7 @@ jobs:
         with:
           appname: "tractusx"
           createprofile: false
-          filepath: "/tractusx/portal/code/tractus-x-portal\/"
+          filepath: "/tractusx/portal/code/tractus-x-portal"
           vid: "${{ secrets.API_ID }}"
           vkey: "${{ secrets.API_KEY }}"
       #          createsandbox: 'true'
