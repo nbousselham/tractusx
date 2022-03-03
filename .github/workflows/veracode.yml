@@ -1,4 +1,4 @@
-name: Veracode Upload
+name: Veracode upload
 on:
   push:
     branches: [develop, master, main]
