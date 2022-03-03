@@ -15,7 +15,7 @@ jobs:
       - name: Veracode Upload And Scan
         uses: veracode/veracode-uploadandscan-action@0.2.1
         with:
-          # appname: "VeraDemo"
+          appname: "tractusx"
           createprofile: false
           filepath: "."
           vid: "${{ secrets.API_ID }}"
