@@ -2,6 +2,8 @@ name: Veracode upload
 on:
   push:
     branches: [develop, master, main]
+  schedule:
+    - cron: 15 14 * * 6
 
 jobs:
   static_analysis:
