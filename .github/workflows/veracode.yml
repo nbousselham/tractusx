@@ -1,0 +1,30 @@
+name: Veracode Static Analysis
+on:
+  push:
+    branches: [develop, master, main]
+
+jobs:
+  static_analysis:
+    name: Static Analysis
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out main branch
+        uses: actions/checkout@v2
+
+      - name: Veracode Upload And Scan
+        uses: veracode/veracode-uploadandscan-action@0.2.1
+        with:
+          # appname: "VeraDemo"
+          createprofile: false
+          filepath: "."
+          vid: "${{ secrets.API_ID }}"
+          vkey: "${{ secrets.API_KEY }}"
+      #          createsandbox: 'true'
+      #          sandboxname: 'SANDBOXNAME'
+      #          scantimeout: 0
+      #          exclude: '*.js'
+      #          include: '*.war'
+      #          criticality: 'VeryHigh'
+
+      - run: ls -l
