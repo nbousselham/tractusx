@@ -22,10 +22,11 @@ jobs:
         env:
           SRCCLR_API_TOKEN: ${{ secrets.SRCCLR_API_TOKEN }}
           SRCCLR_WORKSPACE_SLUG: ${{ secrets.SRCCLR_WORKSPACE_SLUG }}
-        uses: lerer/veracode-sca@v1.0.6
+        uses: lerer/veracode-sca@v1.0.1
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           create-issues: true
           fail-on-cvss: 1
           min-cvss-for-issue: 1
+          url: "https://github.com/Lerer/veracode-pipeline-scan-results-to-sarif"
           # path: "./tractus-x-portal.zip"
