@@ -1,4 +1,4 @@
-name: Veracode Static Analysis
+name: Veracode Upload
 on:
   push:
     branches: [develop, master, main]
@@ -18,14 +18,14 @@ jobs:
 
       - run: ls -l
 
-      #- name: Veracode Upload And Scan
-      #   uses: veracode/veracode-uploadandscan-action@0.2.1
-      #   with:
-      #     appname: "tractusx"
-      #     createprofile: false
-      #      filepath: "./tractus-x-portal.zip"
-      #     vid: "${{ secrets.API_ID }}"
-      #     vkey: "${{ secrets.API_KEY }}"
+      - name: Veracode Upload And Scan
+         uses: veracode/veracode-uploadandscan-action@0.2.1
+         with:
+           appname: "tractusx"
+           createprofile: false
+           filepath: "./tractus-x-portal.zip"
+           vid: "${{ secrets.API_ID }}"
+           vkey: "${{ secrets.API_KEY }}"
       #          createsandbox: 'true'
       #          sandboxname: 'SANDBOXNAME'
       #          scantimeout: 0

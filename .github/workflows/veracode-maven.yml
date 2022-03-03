@@ -1,4 +1,4 @@
-name: Manual :( Veracode Static Analysis
+name: Veracode to code scanning alerts
 on:
   push:
     branches: [develop, master, main]
@@ -48,7 +48,7 @@ jobs:
           pipeline-results-json: results.json
           output-results-sarif: veracode-results.sarif
 
-      - name: upload sarif file to repository
+      - name: Upload sarif file to repository
         uses: github/codeql-action/upload-sarif@v1
         with: # Path to SARIF file relative to the root of the repository
           sarif_file: veracode-results.sarif

@@ -1,4 +1,4 @@
-name: Semgrep Static Analysis
+name: Semgrep to code scanning alerts
 on:
   push:
     branches: [develop, master, main]
@@ -21,6 +21,8 @@ jobs:
             p/r2c
             p/react
             p/secrets
+            p/docker
+            p/typescript
           generateSarif: "1"
 
       - run: ls -l
