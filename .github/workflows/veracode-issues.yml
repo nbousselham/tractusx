@@ -14,6 +14,10 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v2
 
+      - name: ZIP Assets
+        run: |
+          zip -r tractus-x-portal.zip .
+
       - name: Run Veracode SCA
         env:
           SRCCLR_API_TOKEN: ${{ secrets.SRCCLR_API_TOKEN }}
@@ -24,4 +28,4 @@ jobs:
           create-issues: true
           fail-on-cvss: 1
           min-cvss-for-issue: 1
-          path: "package.json"
+          path: "./tractus-x-portal.zip"
