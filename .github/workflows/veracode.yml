@@ -26,7 +26,7 @@ jobs:
           filepath: "./tractus-x-portal.zip"
           vid: "${{ secrets.API_ID }}"
           vkey: "${{ secrets.API_KEY }}"
-          deleteIncompleteScan: "true"
+          deleteIncompleteScan: true
           #          createsandbox: 'true'
           #          sandboxname: 'SANDBOXNAME'
           #          scantimeout: 0
