@@ -26,7 +26,7 @@ jobs:
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           create-issues: true
-          fail-on-cvss: 1
-          min-cvss-for-issue: 1
+          # fail-on-cvss: 1
+          # min-cvss-for-issue: 1
           url: "https://github.com/Lerer/veracode-pipeline-scan-results-to-sarif"
           # path: "./tractus-x-portal.zip"
