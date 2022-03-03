@@ -29,7 +29,8 @@ jobs:
       - run: ls -l
 
       - name: Unzip the Pipeline Scanner
-        run: unzip pipeline-scan-LATEST.zip
+        # Overwrite everything
+        run: unzip -o pipeline-scan-LATEST.zip
 
       - name: Run Pipeline Scanner
         run: java -Dpipeline.debug=true -jar pipeline-scan.jar --veracode_api_id "${{secrets.VERACODE_API_ID}}" --veracode_api_key "${{secrets.VERACODE_API_KEY}}" --file "tractus-x-portal.zip" -jo true
